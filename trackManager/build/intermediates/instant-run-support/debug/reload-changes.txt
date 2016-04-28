@@ -1,0 +1,4 @@
+CHANGED,C:\development\android\projects\TrackManager\trackManager\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\at\dcosta\tracks\TrackOnMap$1$override.class
+CHANGED,C:\development\android\projects\TrackManager\trackManager\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\at\dcosta\tracks\TrackOnMap$TrackPainter$override.class
+CHANGED,C:\development\android\projects\TrackManager\trackManager\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\com\android\tools\fd\runtime\AppPatchesLoaderImpl.class
+CHANGED,C:\development\android\projects\TrackManager\trackManager\build\intermediates\transforms\instantRun\debug\folders\4000\5\enhanced\at\dcosta\tracks\TrackOnMap$override.class

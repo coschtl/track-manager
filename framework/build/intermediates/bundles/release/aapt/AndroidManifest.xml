@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="at.dcosta.android.fw"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="8" />
+    <!--
+    <application android:icon="@drawable/icon" 
+        android:debuggable="true">
+        <activity android:name=".props.gui.PropertyList">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".props.gui.PropertyEditor"></activity>
+        <activity android:name=".props.gui.TextPropertyEditor"></activity>
+        <activity android:name=".props.gui.ValueCollectionPropertyEditor"></activity>
+        <activity android:name=".props.gui.BooleanPropertyEditor"></activity>
+        <activity android:name=".props.gui.FileFolderPropertyEditor"></activity>
+        <activity android:name=".props.gui.FileChooser"></activity>
+        <activity android:name=".props.gui.DatePropertyEditor"></activity>
+    </application>
+    -->
+
+</manifest>

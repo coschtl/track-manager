@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\property_list.xml",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\layout\\property_list.xml"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\property_list_line.xml",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\layout\\property_list_line.xml"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\main.xml",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\layout\\main.xml"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\property_edit_full.xml",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\layout\\property_edit_full.xml"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\layout\\property_edit.xml",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\layout\\property_edit.xml"
+    }
+]

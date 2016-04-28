@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+
+    <ImageView
+        android:id="@+id/calendar_header"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:scaleType="fitXY"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/calendar_head" />
+
+    <TextView
+        android:id="@+id/month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ec1313"
+        android:layout_below="@+id/calendar_header"
+        android:gravity="center"
+        android:height="20dp" >
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_from_top"
+        android:paddingBottom="2dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp" 
+        android:layout_below="@+id/month">
+
+        <GridView
+            android:id="@+id/days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            android:columnWidth="43dp"
+            android:gravity="center"
+            android:horizontalSpacing="2dp"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="7"
+            android:stretchMode="none"
+            android:verticalSpacing="2dp" />
+    </LinearLayout> 
+    
+  <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/but_list"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:src="@drawable/list" />
+        
+        <ImageButton
+            android:id="@+id/but_search"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:src="@drawable/search" />
+        
+        <ImageButton
+            android:id="@+id/but_track_recording"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:src="@drawable/chart_area" />
+        
+        <ImageButton
+            android:id="@+id/but_reload"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:layout_weight="1"
+            android:src="@drawable/reload" />
+    </LinearLayout>  
+</RelativeLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainlayout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <!--
+       <com.google.android.maps.MapView xmlns:tools="http://schemas.android.com/tools"
+           android:id="@+id/mapview"
+           android:layout_width="fill_parent"
+           android:layout_height="fill_parent"
+           android:clickable="true"
+           tools:context="at.dcosta.tracks.MapsActivity"
+           android:apiKey="AIzaSyDUm8F0qN44w7BjHWtI4SWJDA9GzshuSqw"
+           />
+
+           android:apiKey="0eHlQcubdyjwnda0GpGk8Z73_1fJkk1dfi_VRug"
+           -->
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools" android:layout_width="fill_parent"
+        android:layout_height="fill_parent" android:id="@+id/map"
+        tools:context="at.dcosta.tracks.MapsActivity"
+        android:name="com.google.android.gms.maps.MapFragment" />
+
+</RelativeLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<instant-run
+    abi="x86_64,x86"
+    api-level="22"
+    density="420dpi"
+    format="7"
+    timestamp="778105241284799" >
+
+    <task
+        name="javac"
+        duration="928" />
+    <task
+        name="instant-run-dex"
+        duration="0" />
+    <task
+        name="instant-run-transform"
+        duration="23" />
+    <task
+        name="verifier"
+        duration="4" />
+
+    <artifact
+        location="C:\development\android\projects\TrackManager\trackManager\build\intermediates\transforms\dex\debug\folders\1000\5\slice_7\classes.dex"
+        type="DEX" />
+
+    <build timestamp="776970384443870" >
+        <artifact
+            location="C:\development\android\projects\TrackManager\trackManager\build\outputs\apk\trackManager-debug.apk"
+            type="MAIN" />
+    </build>
+    <build timestamp="778105241284799" >
+        <artifact
+            location="C:\development\android\projects\TrackManager\trackManager\build\intermediates\transforms\dex\debug\folders\1000\5\slice_7\classes.dex"
+            type="DEX" />
+    </build>
+
+</instant-run>

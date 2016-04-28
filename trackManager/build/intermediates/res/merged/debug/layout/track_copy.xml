@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:background="@drawable/round_from_top"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+        android:text="@string/menu_copy_track"
+        android:textColor="#000000"
+        android:textStyle="bold" >
+    </TextView>
+ 	<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/name_label" />
+
+        <AutoCompleteTextView
+            android:id="@+id/name"
+            android:layout_width="253dp"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false" 
+            android:inputType="text"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_date_label" />
+
+        <EditText
+            android:id="@+id/date"
+            android:layout_width="253dp"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false" />
+    </LinearLayout>
+     <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/start_time_label" />
+
+        <EditText
+            android:id="@+id/time"
+            android:layout_width="253dp"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel" />
+
+        <Button
+            android:id="@+id/confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm" />
+    </LinearLayout>
+
+</LinearLayout>

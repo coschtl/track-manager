@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<properties>
+    <property name="workingDir" access="change_value" multivalue="false" position="1" type="at.dcosta.android.fw.props.Folder">
+        <displayname>Working dir: </displayname>
+        <help>Base folder used for application data.</help>
+    </property>
+    <property name="trackFolder" access="full" multivalue="true" position="2" type="at.dcosta.android.fw.props.Folder">
+        <displayname>Track folder: </displayname>
+        <help>Folder to scan for tracks (multiple folders allowed).</help>
+    </property>
+    <property name="photoFolder" access="full" multivalue="true" position="3" type="at.dcosta.android.fw.props.Folder">
+        <displayname>Photo folder: </displayname>
+        <help>Folder to scan for photos (multiple folders allowed).</help>
+    </property>
+    
+    <property name="mapType" access="change_value" multivalue="false" position="100" type="at.dcosta.android.fw.props.ValueCollection">
+        <displayname>Map type: </displayname>
+        <defaultValue>OSM</defaultValue>
+        <help>The map used for track visualization.</help>
+        <possibleValue>OSM</possibleValue>
+        <possibleValue>Google Maps</possibleValue>
+    </property>
+    <property name="trackColor" access="change_value" multivalue="false" position="101" type="at.dcosta.android.fw.props.ValueCollection">
+        <displayname>Track color: </displayname>
+        <defaultValue>Blue</defaultValue>
+        <help>The track-color when drawing tracks on maps.</help>
+        <possibleValue>Blue</possibleValue>
+        <possibleValue>Red</possibleValue>
+        <possibleValue>Green</possibleValue>
+        <possibleValue>Black</possibleValue>
+        <possibleValue>Cyan</possibleValue>
+        <possibleValue>Magenta</possibleValue>
+        <possibleValue>Yellow</possibleValue>
+    </property>
+    <property name="trackingServer" access="change_value" multivalue="false" position="1000" type="java.lang.String">
+        <displayname>Tracking Server: </displayname>
+        <defaultValue></defaultValue>
+        <help>DNS name or IP address of the tracking server.</help>
+    </property>
+    <property name="serverSavePath" access="change_value" multivalue="false"  position="1001" type="java.lang.String">
+        <displayname>Server-Path for saving tracks: </displayname>
+        <defaultValue></defaultValue>
+        <help>Path relative to the tracking server to which the track points will be posted.</help>
+    </property>
+    <property name="serverClosePath" access="change_value" multivalue="false" position="1002" type="java.lang.String">
+        <displayname>Server-Path for closing tracks: </displayname>
+        <defaultValue></defaultValue>
+        <help>Path relative to the tracking server which is used to close the track.</help>
+    </property>
+    <property name="trackingProtocol" access="change_value" multivalue="false" position="1003" type="at.dcosta.android.fw.props.ValueCollection">
+        <displayname>Tracking Protocol: </displayname>
+        <defaultValue>http</defaultValue>
+        <help>Protocol used to post the track points.</help>
+        <possibleValue>http</possibleValue>
+        <possibleValue>udp</possibleValue>
+    </property>
+    
+     <property name="btActivatedByApp" access="read_only" multivalue="false" position="10001" type="java.lang.Boolean">
+        <value>false</value>
+    </property>
+    <property name="bluetoothSendTimeoutSeconds" access="read_only" multivalue="false" position="10002" type="java.lang.Integer">
+        <defaultValue>30</defaultValue>
+    </property>
+    <property name="lastBluetoothPartner" access="read_only" multivalue="false" position="10003" type="java.lang.String">
+    </property>
+    <property name="heightFlattenerDisabled" access="change_value" multivalue="false" position="10004" type="java.lang.Boolean">
+        <value>false</value>
+    </property>
+    <property name="photo.sampleSize" access="change_value" multivalue="false" position="10005" type="java.lang.Integer">
+        <defaultValue>2</defaultValue>
+        <help>If set to a value > 1, requests the decoder to subsample the original image, returning a smaller image to save memory.</help>
+    </property>
+</properties>

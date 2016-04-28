@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<properties>
+    <property name="property1" access="read_only" multivalue="false"  type="java.lang.String">
+        <displayname>String Property readonly</displayname>
+        <defaultValue>test</defaultValue>
+        <help>Das ist ein String Test</help>
+    </property>
+    <property name="property11" access="change_value" multivalue="false"  type="java.lang.String">
+        <displayname>String Property rw</displayname>
+        <defaultValue>test</defaultValue>
+        <help>Das ist ein neuer String Test</help>
+    </property>
+    <property name="property2" access="full" multivalue="false"  type="java.util.Date">
+        <displayname>Date Property 1</displayname>
+        <defaultValue>now</defaultValue>
+        <help>Das ist ein Date Test</help>
+    </property>
+    <property name="property22" access="full" multivalue="false"  type="java.lang.Integer">
+        <displayname>Integer Property 1</displayname>
+        <defaultValue>55</defaultValue>
+        <help>Das ist ein Date Test</help>
+    </property>
+    <property name="property3" access="read_only" multivalue="false"  type="java.io.File">
+        <displayname>File Property readonly</displayname>
+        <help>Das ist ein readonly Test</help>
+    </property>
+    <property name="property4" access="change_value" multivalue="true"  type="at.dcosta.android.fw.props.Folder">
+        <displayname>Folder Property</displayname>
+        <help>Das ist ein multivalue Test</help>
+    </property>
+    <property name="property44" access="change_value" multivalue="true"  type="java.io.File">
+        <displayname>File Property</displayname>
+        <help>Das ist ein multivalue Test</help>
+    </property>
+    <property name="property5" access="change_value" multivalue="false"  type="at.dcosta.android.fw.props.ValueCollection">
+        <displayname>ValueCollection Property 1</displayname>
+        <help>Das ist ein File Test</help>
+        <possibleValue displayname="Der Wert 1">Wert 1</possibleValue>
+        <possibleValue displayname="Der Wert 2">Wert 2</possibleValue>
+        <possibleValue displayname="Der Wert 3">Wert 3</possibleValue>
+    </property>
+    <property name="property6" access="change_value" multivalue="false"  type="java.lang.Boolean">
+        <displayname>Boolean Property</displayname>
+        <help>Das ist ein Boolean Test</help>
+    </property>
+    <property name="property8" access="change_value" multivalue="true"  type="java.lang.Boolean">
+        <displayname>Boolean Property mv</displayname>
+        <help>Das ist ein Boolean Test</help>
+    </property>
+</properties>

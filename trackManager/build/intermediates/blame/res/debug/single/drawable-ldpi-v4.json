@@ -1,0 +1,58 @@
+[
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\androidmarker.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\androidmarker.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\spirale.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\spirale.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\calendar_head.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\calendar_head.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\bikeandhike.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\bikeandhike.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\hiking.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\hiking.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\biking.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\biking.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\climbing.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\climbing.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\icon.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\icon.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\mountainbiking.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\mountainbiking.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\sledging.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\sledging.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\folder.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\folder.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\skiing.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\skiing.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\skitour.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\skitour.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\trackManager\\build\\intermediates\\res\\merged\\debug\\drawable-ldpi-v4\\running.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\trackManager\\src\\main\\res\\drawable-ldpi\\running.png"
+    }
+]

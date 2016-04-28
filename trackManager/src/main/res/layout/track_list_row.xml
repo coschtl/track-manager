@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	android:id="@+id/lineItem"
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:gravity="center_vertical">
+
+	<ImageView
+		android:id="@+id/line_icon"
+		android:layout_width="40dip"
+		android:layout_height="40dip"
+		android:layout_alignParentLeft="true"
+		android:contentDescription="Tracks"/>
+
+	<TextView
+		android:id="@+id/line_head"
+		android:layout_width="fill_parent"
+		android:layout_height="20dip"
+		android:layout_toRightOf="@id/line_icon"
+		android:layout_alignParentTop="true"
+		android:layout_alignParentRight="true"
+		android:singleLine="true"
+		android:textStyle="bold"
+		android:paddingLeft="5dp"
+		android:gravity="center_vertical" />
+	<ImageView
+		android:id="@+id/additional_icon_head"
+		android:layout_width="15dip"
+		android:layout_height="15dip"
+		android:layout_alignRight="@id/line_head"/>
+		
+	<TextView
+		android:id="@+id/line_body"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/line_icon"
+		android:layout_below="@id/line_head"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentRight="true"
+		android:paddingLeft="15dp"
+		android:ellipsize="marquee" />
+	<ImageView
+		android:id="@+id/additional_icon"
+		android:layout_width="20dip"
+		android:layout_height="20dip"
+		android:layout_below="@id/line_icon" 
+		android:layout_alignParentBottom="@id/line_icon"/>
+
+</RelativeLayout>

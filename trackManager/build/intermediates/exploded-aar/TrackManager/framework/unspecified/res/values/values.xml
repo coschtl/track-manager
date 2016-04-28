@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="actual_directory">Actual Directory</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">OK</string>
+    <string name="header_Preferencies">Preferencies:</string>
+    <string name="menu_select">Select</string>
+    <string name="parent_directory">Parent Directory</string>
+    <string name="property_name_label">Property name:</string>
+    <string name="property_value_label">Property value:</string>
+</resources>

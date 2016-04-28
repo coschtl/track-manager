@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:background="@android:color/background_dark"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp" >
+
+    <TableRow
+        android:id="@+id/row_photo_path"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/text_photo_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/property_path" />
+
+        <TextView
+            android:id="@+id/photo_path"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxLines="4"
+            android:paddingLeft="5dp" />
+
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/row_photo_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/text_photo_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/property_date" />
+
+        <TextView
+            android:id="@+id/photo_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:paddingLeft="5dp"/>
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/row_property_size"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/text_property_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/property_size" />
+
+        <TextView
+            android:id="@+id/photo_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/row_photo_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/text_photo_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/property_location" />
+
+        <TextView
+            android:id="@+id/photo_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/row_photo_address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp" >
+
+        <TextView
+            android:id="@+id/text_photo_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/property_address" />
+
+        <TextView
+            android:id="@+id/photo_address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp" />
+    </TableRow>
+
+    <TableRow
+        android:id="@+id/row_ok"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="5dp" >
+
+        <Button
+            android:id="@+id/ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/confirm" />
+    </TableRow>
+
+
+</TableLayout>

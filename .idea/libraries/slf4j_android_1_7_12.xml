@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="slf4j-android-1.7.12">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/trackManager/libs/slf4j-android-1.7.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

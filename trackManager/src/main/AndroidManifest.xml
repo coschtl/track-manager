@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="at.dcosta.tracks"
+    android:installLocation="auto"
+    android:versionCode="4"
+    android:versionName="v0.1.2" >
+
+    <uses-sdk android:minSdkVersion="10" />
+
+    <permission
+        android:name="at.dcosta.tracks.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature"/>
+
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <!-- start OSM -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+
+    <uses-permission
+        android:name="at.dcosta.tracks.permission.MAPS_RECEIVE"/>
+
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
+
+    <!-- end OSM -->
+        <!--
+    <application
+        android:debuggable="true"
+        -->
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/appName" >
+        <uses-library
+            android:name="com.google.android.maps"
+            android:required="false" />
+
+        <activity
+            android:name=".TrackManager"
+            android:label="@string/appName" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".PropertyList" />
+
+        <!-- start props -->
+        <activity android:name="at.dcosta.android.fw.props.gui.PropertyList" />
+        <activity android:name="at.dcosta.android.fw.props.gui.PropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.TextPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.ValueCollectionPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.BooleanPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.FileFolderPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.FileChooser" />
+        <activity android:name="at.dcosta.android.fw.props.gui.DatePropertyEditor" />
+        <!-- end props -->
+
+        <activity android:name=".TrackList" />
+        <activity android:name=".TrackEdit" />
+        <activity
+            android:name=".TrackOnMap"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity android:name=".graph.TrackProfile" />
+        <activity android:name=".TrackSearch" />
+        <activity android:name=".TrackCopy" />
+        <activity
+            android:name=".ViewPhotos"
+            android:screenOrientation="portrait" />
+        <activity android:name=".Loader" />
+        <activity
+            android:name=".RecordTrack"
+            android:alwaysRetainTaskState="true"
+            android:enabled="true"
+            android:launchMode="singleTask" />
+        <activity android:name=".TrackDetails" />
+        <activity android:name=".TrackOnOsmMap" />
+        <activity android:name=".track.share.BluetoothSender" />
+        <activity android:name=".track.share.BluetoothReceiver" />
+
+        <service android:name="at.dcosta.tracker.TrackerService" />
+        <service
+            android:name="org.andnav.osm.services.OpenStreetMapTileProviderService"
+            android:label="OpenStreetMapTileProviderService"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="org.andnav.osm.services.IOpenStreetMapTileProviderService" />
+            </intent-filter>
+        </service>
+<!--
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+            -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_maps_key" />
+
+    </application>
+
+</manifest>

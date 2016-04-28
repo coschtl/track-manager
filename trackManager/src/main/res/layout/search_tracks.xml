@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:stretchColumns="1" >
+
+        <TableRow android:layout_width="match_parent" >
+
+            <TextView
+                android:layout_span="3"
+                android:background="@drawable/round_from_top"
+                android:gravity="center"
+                android:text="@string/search_tracks"
+                android:textColor="#000000"
+                android:textStyle="bold" >
+            </TextView>
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/name_label" />
+
+            <AutoCompleteTextView
+                android:id="@+id/track_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_span="2"
+                android:layout_weight="1" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/activity_label" />
+
+            <Spinner
+                android:id="@+id/activity"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_span="2"
+                android:prompt="@string/activity_select" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date_from_label" />
+
+            <EditText
+                android:id="@+id/dateFrom"
+                android:layout_width="253dp"
+                android:layout_height="wrap_content"
+                android:layout_span="2"
+                android:cursorVisible="false" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date_to_label" />
+
+            <EditText
+                android:id="@+id/dateTo"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_span="2"
+                android:cursorVisible="false" />
+        </TableRow>
+
+        <TableRow>
+
+            <Button
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:text="@string/search_tracks" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <EditText
+            android:id="@+id/alias"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false"
+            android:layout_weight="10"
+            android:gravity="bottom"
+            android:singleLine="true"
+            android:hint="@string/enter_alias_name" />
+
+        <ImageButton
+            android:id="@+id/but_delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:scaleType="centerInside"
+            android:src="@drawable/delete" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,50 @@
+[
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\settings.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\settings.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\icon.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\icon.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\accept.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\accept.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\file.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\file.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\old_folder.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\old_folder.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\add.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\add.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\arrow_left.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\arrow_left.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\delete.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\delete.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\folder.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\folder.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\checkmark.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\checkmark.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\cancel.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\cancel.png"
+    },
+    {
+        "merged": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable-hdpi-v4\\plus.png",
+        "source": "C:\\development\\android\\projects\\TrackManager\\framework\\build\\intermediates\\bundles\\debug\\res\\drawable-hdpi-v4\\plus.png"
+    }
+]

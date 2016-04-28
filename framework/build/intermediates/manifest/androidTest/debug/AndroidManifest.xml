@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="at.dcosta.android.fw.test" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="8" />
+
+    <instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:functionalTest="false"
+        android:handleProfiling="false"
+        android:label="Tests for at.dcosta.android.fw.test"
+        android:targetPackage="at.dcosta.android.fw.test" />
+
+    <application
+        android:debuggable="true"
+        android:icon="@drawable/icon" >
+        <uses-library android:name="android.test.runner" />
+
+        <activity android:name="at.dcosta.android.fw.props.gui.PropertyList" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="at.dcosta.android.fw.props.gui.PropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.TextPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.ValueCollectionPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.BooleanPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.FileFolderPropertyEditor" />
+        <activity android:name="at.dcosta.android.fw.props.gui.FileChooser" />
+        <activity android:name="at.dcosta.android.fw.props.gui.DatePropertyEditor" />
+    </application>
+
+</manifest>

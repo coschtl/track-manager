@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent"
+	android:layout_width="fill_parent">
+
+	<TextView
+		android:id="@+id/list_header"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentTop="true"
+		android:background="@drawable/round_from_top"
+		android:textColor="#000000"
+		android:gravity="left"
+		android:textStyle="bold">
+	</TextView>
+        
+	<ListView
+		android:id="@+id/android:list"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="10dip"
+		android:layout_below="@+id/list_header"
+		android:layout_above="@+id/buttons"
+		android:drawSelectorOnTop="false"
+		android:cacheColorHint="#00000000" />
+
+	<LinearLayout
+	    android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/but_day"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:src="@drawable/day" />
+
+        <ImageButton
+            android:id="@+id/but_week"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:src="@drawable/week" />
+
+        <ImageButton
+            android:id="@+id/but_month"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:src="@drawable/month" />
+
+        <ImageButton
+            android:id="@+id/but_search"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:background="#000000"
+            android:src="@drawable/search" />
+    </LinearLayout>
+</RelativeLayout>
