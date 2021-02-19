@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#8B8282</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#ffffff</color>
+    <color name="colorBackground">#000000</color>
+
+    <color name="pulse_0">#2196F3</color>
+    <color name="pulse_1">#98FB98</color>
+    <color name="pulse_2">#006400</color>
+    <color name="pulse_3">#FFFACD</color>
+    <color name="pulse_4">#FFFF00</color>
+    <color name="pulse_5">#E9967A</color>
+    <color name="pulse_6">#FF7256</color>
+    <color name="pulse_7">#FF1493</color>
+    <color name="pulse_8">#8B0A50</color>
+</resources>

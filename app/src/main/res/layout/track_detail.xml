@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="45dip"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:paddingTop="5dp">
+
+        <ImageView
+            android:id="@+id/activity_icon"
+            android:layout_width="40dip"
+            android:layout_height="40dip"
+            android:layout_alignParentLeft="true"
+            android:contentDescription="activity" />
+
+        <TextView
+            android:id="@+id/track_name"
+            android:layout_width="fill_parent"
+            android:layout_height="20dip"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_toRightOf="@id/activity_icon"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColor="#CCCCCC"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/track_activity"
+            android:layout_width="fill_parent"
+            android:layout_height="25dip"
+            android:layout_below="@id/track_name"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@id/activity_icon"
+            android:gravity="center_vertical"
+            android:paddingLeft="5dp"
+            android:singleLine="true"
+            android:textColor="#CCCCCC" />
+    </RelativeLayout>
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons"
+        android:layout_below="@+id/title"
+        android:layout_marginTop="10dip"
+        android:cacheColorHint="#00000000"
+        android:drawSelectorOnTop="false" />
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/but_edit"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="edit track"
+            android:scaleType="centerInside"
+            android:src="@mipmap/edit" />
+
+        <ImageButton
+            android:id="@+id/but_map"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="view map"
+            android:scaleType="centerInside"
+            android:src="@mipmap/map" />
+
+        <ImageButton
+            android:id="@+id/but_chart"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="view chart"
+            android:scaleType="centerInside"
+            android:src="@mipmap/chart" />
+
+        <ImageButton
+            android:id="@+id/but_ekg"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="view ekg"
+            android:scaleType="centerInside"
+            android:src="@mipmap/ekg" />
+
+        <ImageButton
+            android:id="@+id/but_photos"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="view photos"
+            android:scaleType="centerInside"
+            android:src="@mipmap/camera" />
+    </LinearLayout>
+
+</RelativeLayout>

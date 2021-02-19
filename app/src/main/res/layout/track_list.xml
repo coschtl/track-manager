@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"></android.support.v7.widget.Toolbar>
+
+    <TextView
+        android:id="@+id/list_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/round_from_top"
+        android:gravity="left"
+        android:textStyle="bold"></TextView>
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons"
+        android:layout_below="@+id/list_header"
+        android:layout_marginTop="10dip"
+        android:drawSelectorOnTop="false" />
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/but_day"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:scaleType="centerInside"
+            android:src="@mipmap/day" />
+
+        <ImageButton
+            android:id="@+id/but_week"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:scaleType="centerInside"
+            android:src="@mipmap/week" />
+
+        <ImageButton
+            android:id="@+id/but_month"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:scaleType="centerInside"
+            android:src="@mipmap/month" />
+
+        <ImageButton
+            android:id="@+id/but_search"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:scaleType="centerInside"
+            android:src="@mipmap/search" />
+    </LinearLayout>
+</RelativeLayout>

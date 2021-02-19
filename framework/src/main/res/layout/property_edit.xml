@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/row"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/property_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <CheckBox
+                android:id="@+id/onOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/property_name"
+                android:visibility="gone" />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/property_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="textValue"
+            android:visibility="gone" />
+
+        <Spinner
+            android:id="@+id/property_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <DatePicker
+            android:id="@+id/property_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:calendarViewShown="false"
+            android:datePickerMode="spinner"
+            android:startYear="1920"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/help_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="helpValue"
+            android:visibility="gone" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <ImageButton
+            android:id="@+id/but_cancel"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="cancel"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/arrow_left" />
+
+        <ImageButton
+            android:id="@+id/but_add"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="add"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/plus" />
+
+        <ImageButton
+            android:id="@+id/but_delete"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="delete"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/delete" />
+
+        <ImageButton
+            android:id="@+id/but_accept"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="#000000"
+            android:contentDescription="accept"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/checkmark" />
+    </LinearLayout>
+
+</LinearLayout>

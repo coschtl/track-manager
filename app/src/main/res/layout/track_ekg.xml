@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/ap_black">
+
+    <com.androidplot.pie.PieChart
+        android:id="@+id/myPieChart"
+        androidPlot.title.labelPaint.textSize="@dimen/title_font_size"
+        androidPlot.title.text="@string/label_pulse_zones"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
+
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/myPieChart"
+        android:padding="5dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp" />
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_0" />
+
+            <TextView
+                android:id="@+id/text_pulse_0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="@string/label_pulse_0"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/ap_white"
+                android:textSize="12dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_1" />
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_2" />
+
+            <TextView
+                android:id="@+id/text_pulse_1_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="@string/label_pulse_1_2"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/ap_white"
+                android:textSize="12dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_3" />
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_4" />
+
+            <TextView
+                android:id="@+id/text_pulse_3_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="@string/label_pulse_3_4"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/ap_white"
+                android:textSize="12dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_5" />
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_6" />
+
+            <TextView
+                android:id="@+id/text_pulse_5_6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="@string/label_pulse_5_6"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/ap_white"
+                android:textSize="12dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_7" />
+
+            <View
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:background="@color/pulse_8" />
+
+            <TextView
+                android:id="@+id/text_pulse_7_8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:text="@string/label_pulse_7_8"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/ap_white"
+                android:textSize="12dp" />
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>

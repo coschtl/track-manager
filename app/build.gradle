@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+android {
+    compileSdkVersion 'Google Inc.:Google APIs:23'
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        applicationId "dcosta.at.tracks"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //multiDexEnabled true
+        // ...
+        // Set the properties within `local.properties` into a `Properties` class so that values
+        // within `local.properties` (e.g. Maps API key) are accessible in this file.
+        Properties properties = new Properties()
+        if (rootProject.file("local.properties").exists()) {
+            properties.load(rootProject.file("local.properties").newDataInputStream())
+        }
+
+        // Inject the Maps API key into the manifest
+        manifestPlaceholders = [ mapsApiKey : properties.getProperty("MAPS_API_KEY", "") ]
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '30.0.3'
+    // buildToolsVersion '28.0.3'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':framework')
+    implementation 'com.androidplot:androidplot-core:1.5.7'
+    implementation 'org.osmdroid:osmdroid-android:6.0.2'
+    implementation 'com.android.support:support-v4:23.0.0'
+    implementation 'com.android.support:appcompat-v7:23.0.0'
+    implementation 'com.google.android.gms:play-services:9.+'
+}
