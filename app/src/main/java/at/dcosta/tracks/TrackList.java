@@ -260,13 +260,12 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 				return true;
 			case CONTEXT_SHARE_VIA_BT:
 				intent = createIntentForTrack(bean, BluetoothSender.class);
-				startActivityForResult(intent, CONTEXT_COPY);
+				startActivityForResult(intent, CONTEXT_SHARE_VIA_BT);
 				// NetworkSender sender = new NetworkSender("192.168.1.150", 10856, null);
 				// TrackDescription descr = trackDbAdapter.fetchEntry((Long) bean.getExtra(TrackDescription.KEY_ID));
 				// try {
 				// sender.send(new TrackToShare(descr, TrackIO.loadTrack(new File(descr.getPath()))));
 				// } catch (ParsingException e) {
-				// // TODO Auto-generated catch block
 				// e.printStackTrace();
 				// }
 				return true;

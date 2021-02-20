@@ -128,15 +128,14 @@ public class PhotoIdexer {
                         trackDbAdapter.updateEntry(entry);
                     }
                 } catch (ParseException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
+                   throw new RuntimeException("error while processing path "+ path, e);
                 }
             }
-            // TODO: Wenn sich die Toleranz �ndert, muss die PhotoRegistry gel�scht werden
             photoRegistry.add(path);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new RuntimeException("error while processing path "+ path, e);
         }
     }
 
