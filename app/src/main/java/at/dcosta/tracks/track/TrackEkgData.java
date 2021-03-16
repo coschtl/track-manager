@@ -61,13 +61,16 @@ public class TrackEkgData implements TrackListener {
     }
 
     private PulseZone getZone(double pulse) {
+        if (pulse < 1.0) {
+            return PulseZone.CALM;
+        }
         double perc = pulse / maxPulse;
         for (PulseZone zone : PulseZone.values()) {
             if (perc >= zone.getMinPercent() && perc < zone.getMaxPercent()) {
                 return zone;
             }
         }
-        return null;
+        return PulseZone.MAXIMUM_HIGH;
     }
 
     @Override
