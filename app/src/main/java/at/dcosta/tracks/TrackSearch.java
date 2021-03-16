@@ -37,13 +37,14 @@ public class TrackSearch extends AppCompatActivity implements OnClickListener {
     public static final String ACTIVITY = "activity";
     public static final String DATE_FROM = "dateFrom";
     public static final String DATE_TO = "dateTo";
+    public static final String COMMENT = "comment";
     public static final String MULTIACTIVITY_DAYS_ONLY = "showOnlyMultiActivityDays";
     private static final int DATE_FROM_DIALOG_ID = 1;
     private static final int DATE_TO_DIALOG_ID = 2;
     private final Configuration config = Configuration.getInstance(this);
     private AutoCompleteTextView trackName;
     private ImageButton deleteButton;
-    private EditText dateFrom, dateTo, alias;
+    private EditText dateFrom, dateTo, alias, comment;
     private Spinner activitySpinner;
     private SavedSearchesDbAdapter savedSearchesDbAdapter;
     private List<String> savedSearches;
@@ -64,24 +65,15 @@ public class TrackSearch extends AppCompatActivity implements OnClickListener {
 
     private void addOnClickListener(EditText et, final int dialogId) {
         et.setInputType(InputType.TYPE_NULL);
-        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    showDialog(dialogId);
-                }
+        et.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                showDialog(dialogId);
             }
         });
 
-        et.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                if (v.hasFocus()) {
-                    showDialog(dialogId);
-                }
-
+        et.setOnClickListener(v -> {
+            if (v.hasFocus()) {
+                showDialog(dialogId);
             }
         });
     }
@@ -121,6 +113,7 @@ public class TrackSearch extends AppCompatActivity implements OnClickListener {
         addExtra(intent, ACTIVITY, activityIcon);
         addDateExtra(intent, DATE_FROM, dateFrom);
         addDateExtra(intent, DATE_TO, dateTo);
+        addExtra(intent, COMMENT, getValue(comment));
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -152,6 +145,8 @@ public class TrackSearch extends AppCompatActivity implements OnClickListener {
 
         dateTo = (EditText) findViewById(R.id.dateTo);
         addOnClickListener(dateTo, DATE_TO_DIALOG_ID);
+
+        comment = (EditText) findViewById(R.id.comment);
 
         Button search = (Button) findViewById(R.id.search);
         search.setOnClickListener(this);

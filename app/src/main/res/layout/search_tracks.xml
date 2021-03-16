@@ -88,6 +88,21 @@
 
         <TableRow>
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/comment_label" />
+
+            <EditText
+                android:id="@+id/comment"
+                android:layout_width="253dp"
+                android:layout_height="wrap_content"
+                android:layout_span="2"
+                android:cursorVisible="false" />
+        </TableRow>
+
+        <TableRow>
+
             <Button
                 android:id="@+id/search"
                 android:layout_width="match_parent"

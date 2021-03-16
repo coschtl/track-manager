@@ -70,6 +70,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 	private Date dateEnd;
 	private String activity;
 	private String nameLike;
+	private String commentLike;
 	private String headline;
 	private List<IconListBean> beanItems;
 	private int actualMenuId = R.id.but_day;
@@ -81,7 +82,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 
 	public TrackList() {
 		super(LayoutDescription.TRACK_LIST);
-		toMerge = new HashSet<Long>();
+		toMerge = new HashSet<>();
 	}
 
 	private void addSavedSearchesToMenu(Menu menu) {
@@ -126,7 +127,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 		long distV = 0;
 		beanItems.clear();
 		boolean first = true;
-		Iterator<TrackDescriptionNG> it = trackDbAdapter.findEntries(dateStart, dateEnd, activity, nameLike);
+		Iterator<TrackDescriptionNG> it = trackDbAdapter.findEntries(dateStart, dateEnd, activity, nameLike, commentLike);
 		int i = 0;
 		Map<Date, TrackDescriptionNG> trackDates = new HashMap<>();
 		while (it.hasNext()) {
@@ -181,6 +182,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 			activity = extras.getString(TrackSearch.ACTIVITY);
 			dateStart = (Date) extras.get(TrackSearch.DATE_FROM);
 			dateEnd = (Date) extras.get(TrackSearch.DATE_TO);
+			commentLike = extras.getString(TrackSearch.COMMENT);
 		}
 	}
 
@@ -346,7 +348,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 		findViewById(R.id.but_search).setOnClickListener(this);
 		registerForContextMenu(getList());
 
-		if (extras.getBoolean(KEY_USER_SEARCH, false)) {
+		if (extras != null && extras.getBoolean(KEY_USER_SEARCH, false)) {
 			isUserdefinedSearch = true;
 			startUserdefinedSearch();
 		} else {
@@ -403,7 +405,6 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 			activity = savedSearch.getActivity();
 			dateStart = savedSearch.getDateStart();
 			dateEnd = savedSearch.getDateEnd();
-
 			loadAndShowTracks();
 		}
 		return true;
@@ -438,6 +439,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 		bundle.putString(TrackSearch.ACTIVITY, activity);
 		bundle.putSerializable(TrackSearch.DATE_FROM, dateStart);
 		bundle.putSerializable(TrackSearch.DATE_TO, dateEnd);
+		bundle.putSerializable(TrackSearch.COMMENT, commentLike);
 	}
 
 	private void setDate(long dateMillis) {
@@ -457,6 +459,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 				break;
 		}
 		nameLike = null;
+		commentLike = null;
 		activity = null;
 	}
 
