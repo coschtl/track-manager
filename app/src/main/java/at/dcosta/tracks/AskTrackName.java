@@ -26,7 +26,6 @@ public class AskTrackName extends AlertDialog implements OnItemSelectedListener,
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
 
 	private String trackName;
-	private TrackDbAdapter trackDbAdapter;
 	private Spinner existingTracks;
 	private EditText newTrack;
 	private ArrayAdapter<String> adapter;
@@ -63,7 +62,7 @@ public class AskTrackName extends AlertDialog implements OnItemSelectedListener,
 		newTrack.addTextChangedListener(this);
 		setDefaultTrackname();
 
-		trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), getContext());
+		TrackDbAdapter trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), getContext());
 		Set<String> names = trackDbAdapter.getAllTrackNames();
 		trackDbAdapter.close();
 		adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item);

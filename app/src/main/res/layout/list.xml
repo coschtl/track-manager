@@ -11,7 +11,7 @@
         android:background="@drawable/round_from_top"
         android:gravity="left"
         android:textColor="#000000"
-        android:textStyle="bold"></TextView>
+        android:textStyle="bold" />
 
     <ListView
         android:id="@android:id/list"

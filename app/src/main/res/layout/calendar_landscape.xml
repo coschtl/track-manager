@@ -18,7 +18,7 @@
         android:layout_below="@+id/calendar_header"
         android:height="20dp"
         android:background="#ec1313"
-        android:gravity="center"></TextView>
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="317dp"

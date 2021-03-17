@@ -62,8 +62,8 @@ public class TrackDescriptionNG implements Serializable {
     public TrackDescriptionNG(long id, String name, String path, long startEpochSecs, long endEpochSecs, int movingTimeSeconds, long horizontalDistance,
                               int verticalUp, int avgPulse, int maxPulse, ActivityFactory activityFactory) {
         this.id = id;
-        startTime = new Date(startEpochSecs * 1000l);
-        endTime = new Date(endEpochSecs * 1000l);
+        startTime = new Date(startEpochSecs * 1000L);
+        endTime = new Date(endEpochSecs * 1000L);
         this.name = name;
         this.path = path;
         this.movingTimeSeconds = movingTimeSeconds;

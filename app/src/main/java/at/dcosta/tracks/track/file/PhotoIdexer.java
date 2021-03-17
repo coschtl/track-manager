@@ -52,7 +52,7 @@ public class PhotoIdexer {
             addFilePaths(new File(path), fileList);
         }
         maxId = fileList.size() - 1;
-        tolerance = 60000l * Configuration.getInstance().getTrack_foto_tolerance();
+        tolerance = 60000L * Configuration.getInstance().getTrack_foto_tolerance();
         pathRegistry = new TreeSet<String>();
     }
 

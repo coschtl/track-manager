@@ -8,7 +8,7 @@ import at.dcosta.tracks.util.MinMaxValue;
 public class GraphUtil {
 
     public static MinMaxValue getGraphBoundaries(MinMaxValue timeMinMax, int rasterCount) {
-        int minsPerRaster = (int) (timeMinMax.diffAsLong() / 60000l) / rasterCount;
+        int minsPerRaster = (int) (timeMinMax.diffAsLong() / 60000L) / rasterCount;
         int shift = 0;
         if (minsPerRaster > 60) {
             minsPerRaster = 120;
@@ -41,7 +41,7 @@ public class GraphUtil {
             cal.set(Calendar.MINUTE, shift);
         }
         long minTime = cal.getTimeInMillis();
-        long maxTime = minTime + rasterCount * minsPerRaster * 60000l;
+        long maxTime = minTime + rasterCount * minsPerRaster * 60000L;
         return new MinMaxValue().update(minTime).update(maxTime);
     }
 }

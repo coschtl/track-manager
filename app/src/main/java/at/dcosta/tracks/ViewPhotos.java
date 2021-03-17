@@ -64,8 +64,7 @@ public class ViewPhotos extends Activity implements OnGestureListener, OnDoubleT
         bitmapOptions.outWidth = bitmapUtil.getDisplayWidth();
         bitmapOptions.outHeight = bitmapUtil.getDisplayHeight();
         bitmapOptions.inTargetDensity = (int) bitmapUtil.getDisplayDensity();
-        int sampleSize = Configuration.getInstance().getSingleValueDbProperty("photo.sampleSize").getIntValue(2);
-        bitmapOptions.inSampleSize = sampleSize;
+        bitmapOptions.inSampleSize = Configuration.getInstance().getSingleValueDbProperty("photo.sampleSize").getIntValue(2);
         setContentView(R.layout.photos);
 
         photoView = (ImageView) findViewById(R.id.photo);

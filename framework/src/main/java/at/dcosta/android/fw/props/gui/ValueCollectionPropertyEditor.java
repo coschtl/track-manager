@@ -20,7 +20,6 @@ import at.dcosta.android.fw.R;
 
 public class ValueCollectionPropertyEditor extends PropertyEditor implements OnItemSelectedListener {
 
-	private Spinner spinner;
 	private Map<String, String> nameToValue;
 	private List<String> names;
 
@@ -37,7 +36,7 @@ public class ValueCollectionPropertyEditor extends PropertyEditor implements OnI
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		spinner = (Spinner) findViewById(R.id.property_spinner);
+		Spinner spinner = (Spinner) findViewById(R.id.property_spinner);
 		nameToValue = new HashMap<String, String>();
 		for (NameValuePair nvp : property.getPossibleValues()) {
 			nameToValue.put(nvp.getName(), nvp.getValue());

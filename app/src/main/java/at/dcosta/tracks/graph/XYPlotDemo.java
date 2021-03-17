@@ -139,7 +139,7 @@ public class XYPlotDemo extends Activity {
                         if (i == 0) {
                             return toAppendTo;
                         }
-                        return toAppendTo.append(i * 20 + "~" + i / 5f);
+                        return toAppendTo.append(i * 20).append("~").append(i / 5f);
                     }
 
                     @Override

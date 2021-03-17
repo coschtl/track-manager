@@ -1,8 +1,10 @@
 package at.dcosta.tracker;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,6 +15,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 
 import java.io.File;
@@ -27,12 +30,13 @@ import at.dcosta.tracker.TrackerCommand.StopSending;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.file.TmgrReader;
 import at.dcosta.tracks.util.Configuration;
+import at.dcosta.tracks.util.PermissionUtil;
 import at.dcosta.tracks.util.TrackIO;
 
 public class TrackerService extends Service implements LocationListener {
 
 	public static final int MSG_GET_TRACK = 1;
-	private static final long SAVE_INTERVAL_MILLIS = 1000l * 60 * 5;
+	private static final long SAVE_INTERVAL_MILLIS = 1000L * 60 * 5;
 	private static final int SAVE_INTERVAL_LENGTH = 60;
 	private final Messenger messenger = new Messenger(new IncomingHandler(this));
 	private List<Point> recordedTrack;
@@ -55,6 +59,11 @@ public class TrackerService extends Service implements LocationListener {
 
 	private void connectIfNecessary(long minUpdateTime, float minDistance) {
 		// minUpdateTime = 1000l;
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+				&& ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			PermissionUtil.showLocationPermissionMissingWarning(this);
+			return;
+		}
 		if (TrackerStatus.connected) {
 			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, minUpdateTime, minDistance, this);
 		} else if (minUpdateTime != this.minUpdateTime || minDistance != this.minDistance) {
@@ -64,7 +73,7 @@ public class TrackerService extends Service implements LocationListener {
 	}
 
 	private void connectOnline() {
-		connectIfNecessary(1000l, 10f);
+		connectIfNecessary(1000L, 10f);
 	}
 
 	@Override
@@ -79,6 +88,10 @@ public class TrackerService extends Service implements LocationListener {
 		trackOnMap = new ArrayList<Location>();
 
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			PermissionUtil.showLocationPermissionMissingWarning(this);
+			return;
+		}
 		gpsStatus = lm.getGpsStatus(gpsStatus);
 
 		transmission = LocationTransmissionFactory.getLocationTransmission(Configuration.getInstance(this).getServerProperties().getTrackingProtocol());
@@ -155,7 +168,7 @@ public class TrackerService extends Service implements LocationListener {
 			case STOP_TRACK:
 				TrackerStatus.recording = false;
 				saveTrack();
-				if (!TrackerStatus.isActive()) {
+				if (TrackerStatus.isNotActive()) {
 					stopSelf();
 				}
 				break;
@@ -167,7 +180,7 @@ public class TrackerService extends Service implements LocationListener {
 			case STOP_SENDING:
 				TrackerStatus.sending = false;
 				transmission.endTrack((StopSending) command, deviceId);
-				if (!TrackerStatus.isActive()) {
+				if (TrackerStatus.isNotActive()) {
 					stopSelf();
 				}
 				break;
@@ -188,7 +201,7 @@ public class TrackerService extends Service implements LocationListener {
 	}
 
 	private void pauseGps() {
-		connectIfNecessary(10000l, 50f);
+		connectIfNecessary(10000L, 50f);
 	}
 
 	private void saveTrack() {
@@ -208,17 +221,15 @@ public class TrackerService extends Service implements LocationListener {
 
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-				case MSG_GET_TRACK:
-					try {
-						msg.replyTo.send(Message.obtain(null, MSG_GET_TRACK, trackerServiceRef.get().trackOnMap));
-					} catch (RemoteException e) {
-						e.printStackTrace();
-						// ignore
-					}
-					break;
-				default:
-					super.handleMessage(msg);
+			if (msg.what == MSG_GET_TRACK) {
+				try {
+					msg.replyTo.send(Message.obtain(null, MSG_GET_TRACK, trackerServiceRef.get().trackOnMap));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+					// ignore
+				}
+			} else {
+				super.handleMessage(msg);
 			}
 		}
 	}

@@ -82,7 +82,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
         return cvs;
     }
 
-    private static final ContentValues toContentValues(TrackDescriptionNG descr) {
+    private static ContentValues toContentValues(TrackDescriptionNG descr) {
         ContentValues cv = new ContentValues();
         if (descr.getId() > 0) {
             cv.put(DB.COL_ID, descr.getId());
@@ -109,8 +109,8 @@ public class TrackDbAdapter extends AbstractDbAdapter {
     }
 
     public long copyEntry(TrackDescriptionNG orig, String nameOfCopy, String pathOfCopy, long microsecondsAfterOriginal) {
-        TrackDescriptionNG copy = new TrackDescriptionNG(-1l, nameOfCopy, pathOfCopy, (orig.getStartTime().getTime() + microsecondsAfterOriginal) / 1000l, (orig
-                .getEndTime().getTime() + microsecondsAfterOriginal) / 1000l, orig.getMovingTimeSeconds(), orig.getHorizontalDistance(), orig.getVerticalUp(), orig.getAvgPulse(), orig.getMaxPulse(),
+        TrackDescriptionNG copy = new TrackDescriptionNG(-1L, nameOfCopy, pathOfCopy, (orig.getStartTime().getTime() + microsecondsAfterOriginal) / 1000L, (orig
+                .getEndTime().getTime() + microsecondsAfterOriginal) / 1000L, orig.getMovingTimeSeconds(), orig.getHorizontalDistance(), orig.getVerticalUp(), orig.getAvgPulse(), orig.getMaxPulse(),
                 activityFactory);
         Iterator<Entry<String, String>> it = orig.getSingleValueExtras().entrySet().iterator();
         while (it.hasNext()) {
@@ -183,11 +183,11 @@ public class TrackDbAdapter extends AbstractDbAdapter {
         return s;
     }
 
-    private final TrackDescriptionNG createTrackDescription(Cursor cursor) {
+    private TrackDescriptionNG createTrackDescription(Cursor cursor) {
         return createTrackDescription(cursor, true);
     }
 
-    private final TrackDescriptionNG createTrackDescription(Cursor cursor, boolean closeCursor) {
+    private TrackDescriptionNG createTrackDescription(Cursor cursor, boolean closeCursor) {
         if (cursor != null && !cursor.isClosed()) {
             // look if path is still valid
             String dbPath = cursor.getString(DB.COL_MAPPING.get(DB.COL_PATH));
@@ -367,7 +367,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
         if (args.size() == 0) {
             cursor = fetchAllEntriesAsCursor(false);
         } else {
-            cursor = db().query(true, DB.DATABASE_TABLE, DB.COL_NAMES, where.toString(), args.toArray(new String[args.size()]), null, null,
+            cursor = db().query(true, DB.DATABASE_TABLE, DB.COL_NAMES, where.toString(), args.toArray(new String[0]), null, null,
                     DB.COL_START_TIME + " ASC ", null);
         }
 
@@ -385,7 +385,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
                 while (trackIterator.hasNext() && akt == null) {
                     TrackDescriptionNG next = trackIterator.next();
                     String icon = next.getSingleValueExtra(TrackDescriptionNG.EXTRA_ICON);
-                    if (activity == null || icon != null && activity.equals(icon)) {
+                    if (activity == null || activity.equals(icon)) {
                         akt = next;
                         return true;
                     }
@@ -410,7 +410,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
         if (d == null) {
             return null;
         }
-        Cursor cursor = db().query(true, DB.DATABASE_TABLE, DB.COL_NAMES, DB.COL_START_TIME + "=?", new String[]{Long.toString(d.getTime() / 1000l)}, null,
+        Cursor cursor = db().query(true, DB.DATABASE_TABLE, DB.COL_NAMES, DB.COL_START_TIME + "=?", new String[]{Long.toString(d.getTime() / 1000L)}, null,
                 null, null, "1");
         if (cursor != null) {
             try {
@@ -463,7 +463,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
             return null;
         }
         Cursor cursor = db().query(true, DB.DATABASE_TABLE, DB.COL_NAMES, DB.COL_START_TIME + "> ? and " + DB.COL_STATUS + ">=0",
-                new String[]{Long.toString(d.getTime() / 1000l)}, null, null, DB.COL_START_TIME, "1");
+                new String[]{Long.toString(d.getTime() / 1000L)}, null, null, DB.COL_START_TIME, "1");
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {
@@ -481,7 +481,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
             return null;
         }
         Cursor cursor = db().query(true, DB.DATABASE_TABLE, DB.COL_NAMES, DB.COL_START_TIME + "< ? and " + DB.COL_STATUS + ">=0",
-                new String[]{Long.toString(d.getTime() / 1000l)}, null, null, DB.COL_START_TIME + " DESC", "1");
+                new String[]{Long.toString(d.getTime() / 1000L)}, null, null, DB.COL_START_TIME + " DESC", "1");
         if (cursor != null) {
             try {
                 if (cursor.moveToFirst()) {

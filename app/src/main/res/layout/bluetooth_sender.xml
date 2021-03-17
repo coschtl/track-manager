@@ -14,7 +14,7 @@
     <RadioGroup
         android:id="@+id/devices"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></RadioGroup>
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/send_buton"

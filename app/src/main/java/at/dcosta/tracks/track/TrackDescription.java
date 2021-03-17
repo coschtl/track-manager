@@ -44,8 +44,8 @@ public class TrackDescription implements Serializable {
 	public TrackDescription(long id, String name, String path, long startEpochSecs, long endEpochSecs, int movingTimeSeconds, long horizontalDistance,
 							int verticalUp, int avgPulse, ActivityFactory activityFactory) {
 		this.id = id;
-		startTime = new Date(startEpochSecs * 1000l);
-		endTime = new Date(endEpochSecs * 1000l);
+		startTime = new Date(startEpochSecs * 1000L);
+		endTime = new Date(endEpochSecs * 1000L);
 		this.name = name;
 		this.path = path;
 		this.movingTimeSeconds = movingTimeSeconds;

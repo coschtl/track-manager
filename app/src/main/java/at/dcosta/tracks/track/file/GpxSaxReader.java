@@ -80,10 +80,7 @@ public class GpxSaxReader extends TrackReader {
 			} else if (ELM_TIME.equals(qName)) {
 				status = STATUS.TIME;
 				text = new StringBuilder();
-			} else if (ELM_TRKPT.equals(qName)) {
-				status = STATUS.TRKSEG;
-				text = new StringBuilder();
-			} else if (ELM_TRKSEG.equals(qName)) {
+			} else {
 				status = STATUS.START;
 			}
 		}

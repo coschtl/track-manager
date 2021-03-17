@@ -7,18 +7,18 @@ import java.util.Date;
 
 public class DateUtil {
 
-    public static final long SECOND_MILLIS = 1000l;
-    public static final long MINUTE_MILLIS = SECOND_MILLIS * 60l;
-    public static final long HOUR_MILLIS = MINUTE_MILLIS * 60l;
-    public static final long DAY_MILLIS = HOUR_MILLIS * 24l;
-    public static final long YEAR_MILLIS = DAY_MILLIS * 365l;
+    public static final long SECOND_MILLIS = 1000L;
+    public static final long MINUTE_MILLIS = SECOND_MILLIS * 60L;
+    public static final long HOUR_MILLIS = MINUTE_MILLIS * 60L;
+    public static final long DAY_MILLIS = HOUR_MILLIS * 24L;
+    public static final long YEAR_MILLIS = DAY_MILLIS * 365L;
     public static final SimpleDateFormat DATE_FORMAT_NUMERIC = new SimpleDateFormat("dd.MM.yyyy");
     public static final SimpleDateFormat TIME_FORMAT_SHORT = new SimpleDateFormat("HH:mm");
     public static final SimpleDateFormat TIME_FORMAT_MEDIUM = new SimpleDateFormat("HH:mm:ss");
     public static final SimpleDateFormat DATE_TIME_FORMAT_NUMERIC_LONG = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     public static final SimpleDateFormat DATE_TIME_FORMAT_NUMERIC_SHORT = new SimpleDateFormat("dd.MM.yy HH:mm");
 
-    private static final void addText(long value, String s, String plural, StringBuilder b) {
+    private static void addText(long value, String s, String plural, StringBuilder b) {
         if (b.length() > 0) {
             b.append(", ");
         }
@@ -28,7 +28,7 @@ public class DateUtil {
         }
     }
 
-    public static final String durationMillisToString(long duration) {
+    public static String durationMillisToString(long duration) {
         StringBuilder b = new StringBuilder();
         duration = process(duration, YEAR_MILLIS, "Jahr", "e", b);
         duration = process(duration, DAY_MILLIS, "Tag", "e", b);
@@ -41,11 +41,11 @@ public class DateUtil {
         return b.toString();
     }
 
-    public static final String durationSecondsToString(long duration) {
-        return durationMillisToString(duration * 1000l);
+    public static String durationSecondsToString(long duration) {
+        return durationMillisToString(duration * 1000L);
     }
 
-    public static final String formatDateRange(Date start, Date end, Format format) {
+    public static String formatDateRange(Date start, Date end, Format format) {
         DateFormat df;
         switch (format) {
             case SHORT:
@@ -73,7 +73,7 @@ public class DateUtil {
         return c;
     }
 
-    public static final Date getDate(int day, int month, int year, int hour, int min, int sec, int millis) {
+    public static Date getDate(int day, int month, int year, int hour, int min, int sec, int millis) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, day);
         c.set(Calendar.MONTH, month);
@@ -85,7 +85,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getDay(Date date) {
+    public static Date getDay(Date date) {
         Calendar c = getCalendar(date);
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
@@ -94,7 +94,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getDay(int day, int month, int year) {
+    public static Date getDay(int day, int month, int year) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, day);
         c.set(Calendar.MONTH, month);
@@ -106,18 +106,18 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getDayEnd(Date date) {
+    public static Date getDayEnd(Date date) {
         Calendar c = getCalendar(date);
         setDayEnd(c);
         return c.getTime();
     }
 
-    public static final Date getDayStart(Date date) {
+    public static Date getDayStart(Date date) {
         Calendar c = getCalendar(date);
         return c.getTime();
     }
 
-    public static final Date getEndOfMonth(Date d) {
+    public static Date getEndOfMonth(Date d) {
         Calendar c = getCalendar(d);
         c.set(Calendar.DAY_OF_MONTH, 1);
         setDayEnd(c);
@@ -125,7 +125,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getEndOfMonth(int month, int year) {
+    public static Date getEndOfMonth(int month, int year) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, 1);
         c.set(Calendar.MONTH, month);
@@ -135,7 +135,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getEndOfWeek(Date d) {
+    public static Date getEndOfWeek(Date d) {
         Calendar c = getCalendar(d);
         setDayEnd(c);
         while (c.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
@@ -144,7 +144,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getEndOfYear(Date d) {
+    public static Date getEndOfYear(Date d) {
         Calendar c = getCalendar(d);
         setDayEnd(c);
         c.set(Calendar.MONTH, Calendar.JANUARY);
@@ -158,17 +158,17 @@ public class DateUtil {
         if (date == null) {
             return 0;
         }
-        return date.getTime() / 1000l;
+        return date.getTime() / 1000L;
     }
 
-    public static final Date getStartOfMonth(Date d) {
+    public static Date getStartOfMonth(Date d) {
         Calendar c = getCalendar(d);
         c.set(Calendar.DAY_OF_MONTH, 1);
         setDayStart(c);
         return c.getTime();
     }
 
-    public static final Date getStartOfMonth(int month, int year) {
+    public static Date getStartOfMonth(int month, int year) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.DAY_OF_MONTH, 1);
         c.set(Calendar.MONTH, month);
@@ -177,7 +177,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getStartOfWeek(Date d) {
+    public static Date getStartOfWeek(Date d) {
         Calendar c = getCalendar(d);
         setDayStart(c);
         while (c.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
@@ -186,7 +186,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    public static final Date getStartOfYear(Date d) {
+    public static Date getStartOfYear(Date d) {
         Calendar c = getCalendar(d);
         c.set(Calendar.MONTH, Calendar.JANUARY);
         c.set(Calendar.DAY_OF_MONTH, 1);
@@ -194,7 +194,7 @@ public class DateUtil {
         return c.getTime();
     }
 
-    private static final long process(long duration, long constant, String stringForConstant, String stringForPlural, StringBuilder b) {
+    private static long process(long duration, long constant, String stringForConstant, String stringForPlural, StringBuilder b) {
         if (duration >= constant) {
             long result = duration / constant;
             long modulo = duration % constant;
@@ -210,7 +210,7 @@ public class DateUtil {
         c.add(Calendar.MILLISECOND, -1);
     }
 
-    private static final void setDayStart(Calendar c) {
+    private static void setDayStart(Calendar c) {
         c.set(Calendar.HOUR_OF_DAY, 0);
         c.set(Calendar.MINUTE, 0);
         c.set(Calendar.SECOND, 0);

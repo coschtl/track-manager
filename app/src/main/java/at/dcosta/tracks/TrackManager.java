@@ -404,7 +404,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
             case MENU_SHOW_MULTI_DAYS:
                 intent = new Intent(TrackManager.this, TrackList.class);
                 intent.putExtra(TrackSearch.MULTIACTIVITY_DAYS_ONLY, true);
-                intent.putExtra(TrackList.KEY_DATE, 1l);
+                intent.putExtra(TrackList.KEY_DATE, 1L);
                 startActivity(intent);
                 return true;
             case MENU_RESCAN_PHOTOS:

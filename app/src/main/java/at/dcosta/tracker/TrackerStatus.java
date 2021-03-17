@@ -12,22 +12,22 @@ public class TrackerStatus implements Serializable {
     public static boolean connected;
     public static Location lastLocation;
 
-    public static final void clear() {
+    public static void clear() {
         connected = false;
         recording = false;
         sending = false;
     }
 
-    public static final boolean isActive() {
-        return connected || sending || recording;
+    public static boolean isNotActive() {
+        return !connected && !sending && !recording;
     }
 
-    public static final void setRecording() {
+    public static void setRecording() {
         recording = true;
         connected = true;
     }
 
-    public static final void setSending() {
+    public static void setSending() {
         sending = true;
         connected = true;
     }

@@ -31,7 +31,7 @@ public class NetworkReceiver {
         acceptThread.start();
     }
 
-    private class AcceptThread extends ReceiverThread {
+    private static class AcceptThread extends ReceiverThread {
         private ServerSocket serverSocket;
 
         public AcceptThread(TrackSharingListener listener, int port, TrackDbAdapter trackDbAdapter) {

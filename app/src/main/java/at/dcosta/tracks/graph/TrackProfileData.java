@@ -12,7 +12,7 @@ public abstract class TrackProfileData implements TrackListener {
 
 	protected long findLengthInterval(long diff) {
 		// System.out.println("find length interval for : " + diff);
-		diff = diff / 10l;
+		diff = diff / 10L;
 		if (diff >= 600) {
 			return 1000;
 		}

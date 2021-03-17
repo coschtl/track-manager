@@ -12,11 +12,10 @@ public class PropertyEditor extends Activity implements OnClickListener {
 
     public static final String NAME_IS_READONLY = "nameIsReadonly";
 
-    private String type, name, value;
+    private String type;
     private int status;
     private long id;
     private EditText nameView, valueView;
-    private PropertyIds ids;
 
     @Override
     public void onClick(View v) {
@@ -43,10 +42,10 @@ public class PropertyEditor extends Activity implements OnClickListener {
         }
 
         Object idObject = extras.get(PropertyIds.class.getName());
-        if (idObject == null || !(idObject instanceof PropertyIds)) {
+        if (!(idObject instanceof PropertyIds)) {
             throw new IllegalArgumentException(err);
         }
-        ids = (PropertyIds) idObject;
+        PropertyIds ids = (PropertyIds) idObject;
 
         setContentView(ids.getEditView());
         nameView = (EditText) findViewById(ids.getEditTextName());
@@ -54,14 +53,14 @@ public class PropertyEditor extends Activity implements OnClickListener {
 
         id = extras.getLong(PropertyDbAdapter.DB.COL_ID);
         type = extras.getString(PropertyDbAdapter.DB.COL_TYPE);
-        name = extras.getString(PropertyDbAdapter.DB.COL_NAME);
+        String name = extras.getString(PropertyDbAdapter.DB.COL_NAME);
         if (name != null) {
             nameView.setText(name);
             if (extras.getBoolean(NAME_IS_READONLY)) {
                 nameView.setEnabled(false);
             }
         }
-        value = extras.getString(PropertyDbAdapter.DB.COL_VALUE);
+        String value = extras.getString(PropertyDbAdapter.DB.COL_VALUE);
         if (value != null) {
             valueView.setText(value);
         }

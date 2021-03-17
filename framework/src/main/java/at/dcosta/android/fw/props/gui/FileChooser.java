@@ -39,7 +39,6 @@ public class FileChooser extends IconListActivity {
         IGNORE_DIRS.add("/etc");
         IGNORE_DIRS.add("/cache");
         IGNORE_DIRS.add("/config");
-        IGNORE_DIRS.add("/dev");
         IGNORE_DIRS.add("/proc");
         IGNORE_DIRS.add("/root");
         IGNORE_DIRS.add("/sbin");
@@ -105,7 +104,6 @@ public class FileChooser extends IconListActivity {
     }
 
     private void handleFileClicked(Option optionItem) {
-        System.out.println("File clicked. isFileMode: " + isFileMode());
         if (isFileMode()) {
             returnResult(optionItem);
         }
@@ -117,12 +115,11 @@ public class FileChooser extends IconListActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case SELECT_ID:
-                AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-                Option optionItem = (Option) getItem((int) info.id);
-                handleDirClicked(optionItem);
-                return true;
+        if (item.getItemId() == SELECT_ID) {
+            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+            Option optionItem = (Option) getItem((int) info.id);
+            handleDirClicked(optionItem);
+            return true;
         }
         return super.onContextItemSelected(item);
     }

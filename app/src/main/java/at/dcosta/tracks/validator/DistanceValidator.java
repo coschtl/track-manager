@@ -37,7 +37,7 @@ public class DistanceValidator {
             valid = true;
             moving = true;
         } else if (distance.getTime() > 0) {
-            double secs = distance.getTime() / 1000;
+            double secs = distance.getTime() / 1000f;
             double verticalPerSec = distance.getVertical() / secs;
             double horizontalPerSec = Math.abs(distance.getHorizontal() / secs);
 

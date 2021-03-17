@@ -16,11 +16,6 @@ public class PropertyDbAdapter extends AbstractDbAdapter {
 
 	private final PropertyConfiguration propertyConfiguration;
 
-	/**
-	 * Constructor - takes the context to allow the database to be opened/created
-	 *
-	 * @param ctx the Context within which to work
-	 */
 	public PropertyDbAdapter(Context context, PropertyConfiguration propertyConfiguration) {
 		super(new PropertyDatabaseHelper(context));
 		this.propertyConfiguration = propertyConfiguration;

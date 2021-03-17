@@ -167,7 +167,8 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
                         if (i == 0) {
                             return toAppendTo;
                         }
-                        return toAppendTo.append((int) (i * heightFactor + heightData.getMinMax().minAsInt()) + "~" + df.format(i * speedFactor));
+                        return toAppendTo.append((int) (i * heightFactor + heightData.getMinMax().minAsInt())).append("~").append(df.format(i * speedFactor));
+//                        return toAppendTo.append((int) (i * heightFactor + heightData.getMinMax().minAsInt())).append("~").append(df.format(i * speedFactor));
                     }
 
                     @Override
@@ -224,7 +225,6 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
 
         plot.getGraph().setLineLabelRenderer(XYGraphWidget.Edge.RIGHT, new XYGraphWidget.LineLabelRenderer() {
             private float textSize;
-            private float textMove;
 
             @Override
             protected void drawLabel(Canvas canvas, String text, Paint paint, float x, float y, boolean isOrigin) {
@@ -233,7 +233,6 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
                 }
                 if (textSize == 0f) {
                     textSize = paint.getTextSize() * 0.8f;
-                    textMove = textSize / 1.9f;
                 }
                 paint.setTextSize(textSize);
                 int pos = text.indexOf('~');

@@ -97,14 +97,16 @@
         <activity android:name="at.dcosta.tracks.track.share.BluetoothReceiver" />
 
         <service android:name="at.dcosta.tracker.TrackerService" />
+        <!--
         <service
             android:name="org.andnav.osm.services.OpenStreetMapTileProviderService"
             android:label="OpenStreetMapTileProviderService"
             android:process=":remote">
             <intent-filter>
-                <action android:name="org.andnav.osm.services.IOpenStreetMapTileProviderService" />
+                    <action android:name="org.andnav.osm.services.IOpenStreetMapTileProviderService" />
             </intent-filter>
         </service>
+        -->
         <!--
                 <meta-data
                     android:name="com.google.android.gms.version"

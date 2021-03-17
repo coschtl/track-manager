@@ -15,7 +15,7 @@ public abstract class AbstractCursorIterator<T> implements Iterator<T> {
         this.cursor = cursor;
     }
 
-    public static final <T> Iterator<T> emptyIterator() {
+    public static <T> Iterator<T> emptyIterator() {
         return new Iterator<T>() {
             @Override
             public boolean hasNext() {

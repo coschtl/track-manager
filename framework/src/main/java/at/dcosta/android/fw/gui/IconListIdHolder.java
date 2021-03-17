@@ -1,8 +1,5 @@
 package at.dcosta.android.fw.gui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import at.dcosta.android.fw.ExtraBased;
 
 public class IconListIdHolder extends ExtraBased<IconListIdHolder> {
@@ -10,20 +7,7 @@ public class IconListIdHolder extends ExtraBased<IconListIdHolder> {
 	public static final String KEY_ADDITIONAL_ICON1 = "additionalIcon1";
 	public static final String KEY_ADDITIONAL_ICON2 = "additionalIcon2";
 	private static final long serialVersionUID = 1L;
-	private final Map<String, Integer> extras;
 	private int listLayoutId, listRowLayoutId, headerId, lineHeadId, lineBodyId, lineIconId;
-
-	public IconListIdHolder() {
-		extras = new HashMap<String, Integer>();
-	}
-
-	public int getExtra(String key, int defaultValue) {
-		Integer integer = extras.get(key);
-		if (integer == null) {
-			return defaultValue;
-		}
-		return integer.intValue();
-	}
 
 	public int getHeaderId() {
 		return headerId;

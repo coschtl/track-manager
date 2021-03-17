@@ -26,7 +26,7 @@ public class NetworkSender {
         System.out.println("sender Thread started");
     }
 
-    private class SendingThread extends SenderThread {
+    private static class SendingThread extends SenderThread {
         private final String targetIp;
         private final int port;
         private Socket socket;

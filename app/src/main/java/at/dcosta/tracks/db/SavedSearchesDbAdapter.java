@@ -25,11 +25,6 @@ import at.dcosta.tracks.util.SavedSearch;
  */
 public class SavedSearchesDbAdapter extends AbstractDbAdapter {
 
-	/**
-	 * Constructor - takes the context to allow the database to be opened/created
-	 *
-	 * @param ctx the Context within which to work
-	 */
 	public SavedSearchesDbAdapter(SQLiteOpenHelper databaseHelper, Context context) {
 		super(databaseHelper);
 	}
@@ -49,7 +44,7 @@ public class SavedSearchesDbAdapter extends AbstractDbAdapter {
 		return db().delete(DB.DATABASE_TABLE, null, null);
 	}
 
-	private final SavedSearch createSavedSearch(Cursor cursor) {
+	private SavedSearch createSavedSearch(Cursor cursor) {
 		if (cursor != null && !cursor.isClosed()) {
 			return new SavedSearch(cursor.getString(DB.COL_MAPPING.get(DB.COL_ALIAS)), cursor.getString(DB.COL_MAPPING.get(DB.COL_NAME)),
 					cursor.getString(DB.COL_MAPPING.get(DB.COL_ACTIVITY)), cursor.getLong(DB.COL_MAPPING.get(DB.COL_DATE_FROM)), cursor.getLong(DB.COL_MAPPING

@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"></android.support.v7.widget.Toolbar>
+        android:theme="?attr/actionBarTheme" />
 
     <TableLayout
         android:layout_width="fill_parent"
@@ -23,7 +23,7 @@
                 android:gravity="center"
                 android:text="@string/search_tracks"
                 android:textColor="#000000"
-                android:textStyle="bold"></TextView>
+                android:textStyle="bold" />
         </TableRow>
 
         <TableRow>

@@ -24,7 +24,7 @@ public class TrackStatistic implements TrackListener {
 	}
 
 	public int getMovingTimeSeconds() {
-		return (int) (timeMoving / 1000l);
+		return (int) (timeMoving / 1000L);
 	}
 
 	public Date getStartTime() {
@@ -79,7 +79,7 @@ public class TrackStatistic implements TrackListener {
 				.toString();
 	}
 
-	private class PulseStatistic {
+	private static class PulseStatistic {
 		private long sum;
 		private int max;
 		private int count;

@@ -22,11 +22,6 @@ public class PropertyDbAdapter extends AbstractDbAdapter {
 
 	private final PropertyIds ids;
 
-	/**
-	 * Constructor - takes the context to allow the database to be opened/created
-	 *
-	 * @param ctx the Context within which to work
-	 */
 	public PropertyDbAdapter(SQLiteOpenHelper databaseHelper, PropertyIds ids) {
 		super(databaseHelper);
 		this.ids = ids;

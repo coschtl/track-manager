@@ -22,7 +22,7 @@ public class PropertyTemplate implements Serializable {
         this(name, getTypeClass(type));
     }
 
-    private static final Class<?> getTypeClass(String type) {
+    private static Class<?> getTypeClass(String type) {
         Class<?> c = null;
         try {
             c = Class.forName(type);

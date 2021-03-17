@@ -27,6 +27,7 @@ public class Point implements Serializable {
 		this(location.getLatitude(), location.getLongitude(), (int) location.getAltitude(), location.getTime());
 	}
 
+	@SuppressWarnings("CopyConstructorMissesField")
 	public Point(Point point) {
 		this(point.getLat(), point.getLon(), point.getHeight(), point.getTimeStampAsLong());
 	}
@@ -129,8 +130,8 @@ public class Point implements Serializable {
 	}
 
 	public Point setTimestamp(long timestamp) {
-		if (timestamp < 10000000000l) {
-			this.timestamp = 1000l * timestamp;
+		if (timestamp < 10000000000L) {
+			this.timestamp = 1000L * timestamp;
 		} else {
 			this.timestamp = timestamp;
 		}

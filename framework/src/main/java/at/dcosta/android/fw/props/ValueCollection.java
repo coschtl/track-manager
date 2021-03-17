@@ -1,5 +1,7 @@
 package at.dcosta.android.fw.props;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,14 +22,11 @@ public class ValueCollection implements Serializable, Iterable<NameValuePair> {
 		values.add(new NameValuePair(displayname, value));
 	}
 
-	public boolean contains(String s) {
-		return values.contains(s);
-	}
-
 	public Set<NameValuePair> getValues() {
 		return values;
 	}
 
+	@NonNull
 	@Override
 	public Iterator<NameValuePair> iterator() {
 		return values.iterator();

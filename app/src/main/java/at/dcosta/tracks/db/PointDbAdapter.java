@@ -23,7 +23,7 @@ public class PointDbAdapter extends AbstractDbAdapter {
 		super(new DatabaseHelper(context));
 	}
 
-	private static final ContentValues toContentValues(Point point) {
+	private static ContentValues toContentValues(Point point) {
 		ContentValues cv = new ContentValues();
 		if (point.getId() > 0) {
 			cv.put(DB.COL_ID, point.getId());
@@ -60,14 +60,14 @@ public class PointDbAdapter extends AbstractDbAdapter {
 		return db().insert(DB.DATABASE_TABLE, null, toContentValues(point));
 	}
 
-	private final Point createPoint(Cursor cursor) {
+	private Point createPoint(Cursor cursor) {
 		return createPoint(cursor, true);
 	}
 
-	private final Point createPoint(Cursor cursor, boolean closeCursor) {
+	private Point createPoint(Cursor cursor, boolean closeCursor) {
 		if (cursor != null && !cursor.isClosed()) {
 			Point p = new Point(cursor.getDouble(DB.COL_MAPPING.get(DB.COL_LAT)), cursor.getDouble(DB.COL_MAPPING.get(DB.COL_LON)),
-					cursor.getInt(DB.COL_MAPPING.get(DB.COL_HEIGHT)), 1000l * cursor.getLong(DB.COL_MAPPING.get(DB.COL_TIME)));
+					cursor.getInt(DB.COL_MAPPING.get(DB.COL_HEIGHT)), 1000L * cursor.getLong(DB.COL_MAPPING.get(DB.COL_TIME)));
 			p.setId(cursor.getLong(DB.COL_MAPPING.get(DB.COL_ID)));
 			p.setId(cursor.getLong(DB.COL_MAPPING.get(DB.COL_TRK_ID)));
 			if (closeCursor) {

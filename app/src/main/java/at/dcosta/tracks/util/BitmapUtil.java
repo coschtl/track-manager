@@ -34,16 +34,13 @@ public class BitmapUtil {
 	public float getScaleFactor(Bitmap bitmapImage) {
 		float h = (float) getDisplayHeight() / bitmapImage.getHeight();
 		float w = (float) getDisplayWidth() / bitmapImage.getWidth();
-		return h < w ? h : w;
+		return Math.min(h, w);
 	}
 
 	public int getScaleFactor(String path) throws IOException {
 		ExifInterface exif = new ExifInterface(path);
 		int l = exif.getAttributeInt(ExifInterface.TAG_IMAGE_LENGTH, -1);
-		// int w = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
-		int scaleFactor = Math.max(Math.max(displayHeight, displayWidth) / Math.max(l, l), Math.min(displayHeight, displayWidth) / Math.min(l, l));
-		// System.out.println("l: " + l + ", w: " + w + ", scaleFactor=" + scaleFactor);
-		return scaleFactor;
+		return Math.max(Math.max(displayHeight, displayWidth) / l, Math.min(displayHeight, displayWidth) / l);
 	}
 
 }

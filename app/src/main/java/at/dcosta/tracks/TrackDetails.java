@@ -30,7 +30,6 @@ import at.dcosta.tracks.util.TrackActivity;
 
 public class TrackDetails extends ListActivity implements OnClickListener {
 
-	private EfficientAdapter adap;
 	private TrackDbAdapter trackDbAdapter;
 	private long trackId;
 	private long listDateStart;
@@ -161,7 +160,7 @@ public class TrackDetails extends ListActivity implements OnClickListener {
 			}
 		}
 		width += pxFromDp(nameField.getPaddingLeft() + nameField.getPaddingRight());
-		adap = new EfficientAdapter(this, properties, width);
+		EfficientAdapter adap = new EfficientAdapter(this, properties, width);
 		setListAdapter(adap);
 		super.onResume();
 	}

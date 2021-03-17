@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ap="http://schemas.android.com/apk/lib/at/dcosta/tracks"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/ap_black">
 
     <com.androidplot.pie.PieChart
         android:id="@+id/myPieChart"
-        androidPlot.title.labelPaint.textSize="@dimen/title_font_size"
-        androidPlot.title.text="@string/label_pulse_zones"
+        ap:androidPlot.title.labelPaint.textSize="@dimen/title_font_size"
+        ap:androidPlot.title.text="@string/label_pulse_zones"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1" />

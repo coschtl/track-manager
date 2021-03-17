@@ -36,7 +36,6 @@ public class FileChooser extends IconListActivity {
         IGNORE_DIRS.add("/etc");
         IGNORE_DIRS.add("/cache");
         IGNORE_DIRS.add("/config");
-        IGNORE_DIRS.add("/dev");
         IGNORE_DIRS.add("/proc");
         IGNORE_DIRS.add("/root");
         IGNORE_DIRS.add("/sbin");
@@ -104,12 +103,11 @@ public class FileChooser extends IconListActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case SELECT_ID:
-                AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-                Option optionItem = (Option) getItem((int) info.id);
-                handleDirClicked(optionItem);
-                return true;
+        if (item.getItemId() == SELECT_ID) {
+            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+            Option optionItem = (Option) getItem((int) info.id);
+            handleDirClicked(optionItem);
+            return true;
         }
         return super.onContextItemSelected(item);
     }
@@ -118,13 +116,15 @@ public class FileChooser extends IconListActivity {
     public void onCreate(Bundle savedInstanceState) {
         // currentDir = new File("/sdcard/");
         Bundle extras = getIntent().getExtras();
-        type = extras.getString(PropertyDbAdapter.DB.COL_TYPE);
-        name = extras.getString(PropertyDbAdapter.DB.COL_NAME);
-        status = extras.getInt(PropertyDbAdapter.DB.COL_STATUS);
-        ids = (PropertyIds) extras.get(PropertyIds.class.getName());
-        setIdHolder((IconListIdHolder) extras.get(IconListIdHolder.class.getName()));
-        currentDir = new File("/");
-        fill();
+        if (extras != null) {
+            type = extras.getString(PropertyDbAdapter.DB.COL_TYPE);
+            name = extras.getString(PropertyDbAdapter.DB.COL_NAME);
+            status = extras.getInt(PropertyDbAdapter.DB.COL_STATUS);
+            ids = (PropertyIds) extras.get(PropertyIds.class.getName());
+            setIdHolder((IconListIdHolder) extras.get(IconListIdHolder.class.getName()));
+            currentDir = new File("/");
+            fill();
+        }
         super.onCreate(savedInstanceState);
     }
 

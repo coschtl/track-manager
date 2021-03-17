@@ -22,8 +22,8 @@ public class SavedSearch implements Serializable {
         this.alias = alias;
         this.name = name;
         this.activity = activity;
-        this.dateStart = dateStart > 0 ? new Date(dateStart * 1000l) : null;
-        this.dateEnd = dateEnd > 0 ? new Date(dateEnd * 1000l) : null;
+        this.dateStart = dateStart > 0 ? new Date(dateStart * 1000L) : null;
+        this.dateEnd = dateEnd > 0 ? new Date(dateEnd * 1000L) : null;
     }
 
     public String getActivity() {

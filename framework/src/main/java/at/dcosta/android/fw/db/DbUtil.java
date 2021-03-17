@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class DbUtil {
 
-	public static final void close(Cursor cursor) {
+	public static void close(Cursor cursor) {
 		if (cursor != null && !cursor.isClosed()) {
 			cursor.close();
 		}
 	}
 
-	public static final Map<String, Integer> createColMapping(String[] colNames) {
+	public static Map<String, Integer> createColMapping(String[] colNames) {
 		Map<String, Integer> mapping = new HashMap<String, Integer>();
 		int i = 0;
 		for (String col : colNames) {

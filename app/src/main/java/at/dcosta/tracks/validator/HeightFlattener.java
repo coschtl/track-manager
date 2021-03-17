@@ -5,13 +5,11 @@ import at.dcosta.tracks.util.Configuration;
 
 public class HeightFlattener {
 
-    private final FixedLengthLiFoBuffer<Double> buffer;
     private final boolean disabled;
     private final TwiceExpSmooth smoothener;
 
     public HeightFlattener(Configuration config) {
         disabled = config.getSingleValueDbProperty("heightFlattenerDisabled").getBooleanValue(false);
-        buffer = new FixedLengthLiFoBuffer<Double>(5);
         smoothener = new TwiceExpSmooth(0.4, 0.4);
     }
 
@@ -28,7 +26,6 @@ public class HeightFlattener {
         private double smoothedData;
         private double trend;
         private double level;
-        private double nextLevel;
 
         private int addCount;
 
@@ -50,7 +47,7 @@ public class HeightFlattener {
                 return d;
             }
             smoothedData = trend + level;
-            nextLevel = alpha * d + (1 - alpha) * (level + trend);
+            double nextLevel = alpha * d + (1 - alpha) * (level + trend);
             trend = beta * (nextLevel - level) + (1 - beta) * trend;
             level = nextLevel;
             return smoothedData;

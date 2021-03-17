@@ -166,7 +166,7 @@ public class BluetoothSender extends AbstractBluetoothTransfer implements OnClic
 			return -1;
 		}
 		try {
-			return Long.parseLong(sendTimeout.getValue()) * 1000l;
+			return Long.parseLong(sendTimeout.getValue()) * 1000L;
 		} catch (NumberFormatException e) {
 			return -1;
 		}
@@ -181,7 +181,7 @@ public class BluetoothSender extends AbstractBluetoothTransfer implements OnClic
 			BluetoothDevice selected = devices.get(radioButtonGroup.getCheckedRadioButtonId());
 			config.updateSingleValueProperty(PROPERTY_LAST_BLUETOOTH_PARTNER, selected.getName());
 			System.out.println("sending starts...");
-			Long rowId = (Long) getIntent().getExtras().get(TrackDescriptionNG.KEY_ID);
+			long rowId = getIntent().getLongExtra(TrackDescriptionNG.KEY_ID, -1);
 			TrackDescriptionNG trackDescription = trackDbAdapter.fetchEntry(rowId);
 			try {
 				TrackToShare track = new TrackToShare(trackDescription, TrackIO.loadTrack(new File(trackDescription.getPath())));

@@ -40,15 +40,13 @@ public class TrackEkg extends Activity {
     private PieChart myPieChart;
     private String path;
     private TrackDbAdapter trackDbAdapter;
-    private Configuration config;
-    private long trackId;
     private TextView donutSizeTextView;
     private boolean active;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        config = Configuration.getInstance(this);
+        Configuration config = Configuration.getInstance(this);
         setContentView(R.layout.track_ekg);
         trackDbAdapter = new TrackDbAdapter(config.getDatabaseHelper(), this);
 
@@ -57,7 +55,7 @@ public class TrackEkg extends Activity {
             path = extras.getString(TrackDescriptionNG.KEY_PATH);
         }
         TrackDescriptionNG track = trackDbAdapter.findEntryByPath(path);
-        trackId = track.getId();
+        long trackId = track.getId();
         Iterator<Point> pointIterator = config.getTrackCache().load(trackId).iterator();
         Date birthday = config.getBirthday();
         if (birthday == null) {
