@@ -7,12 +7,12 @@ import at.dcosta.tracker.TrackerCommand.StopSending;
 
 public interface LocationTransmission {
 
-	void endTrack(StopSending stopSendCmd, String deviceId);
+    void endTrack(StopSending stopSendCmd, String deviceId);
 
-	void init();
+    void init();
 
-	void send(Location location);
+    void send(Location location);
 
-	void start(SendTrack sendCmd, String deviceId);
+    void start(SendTrack sendCmd, String deviceId);
 
 }

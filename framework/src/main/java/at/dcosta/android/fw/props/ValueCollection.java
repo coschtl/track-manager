@@ -11,45 +11,45 @@ import at.dcosta.android.fw.NameValuePair;
 
 public class ValueCollection implements Serializable, Iterable<NameValuePair> {
 
-	private static final long serialVersionUID = 1L;
-	private final Set<NameValuePair> values;
+    private static final long serialVersionUID = 1L;
+    private final Set<NameValuePair> values;
 
-	public ValueCollection() {
-		values = new HashSet<NameValuePair>();
-	}
+    public ValueCollection() {
+        values = new HashSet<NameValuePair>();
+    }
 
-	public void addValue(String displayname, String value) {
-		values.add(new NameValuePair(displayname, value));
-	}
+    public void addValue(String displayname, String value) {
+        values.add(new NameValuePair(displayname, value));
+    }
 
-	public Set<NameValuePair> getValues() {
-		return values;
-	}
+    public Set<NameValuePair> getValues() {
+        return values;
+    }
 
-	@NonNull
-	@Override
-	public Iterator<NameValuePair> iterator() {
-		return values.iterator();
-	}
+    @NonNull
+    @Override
+    public Iterator<NameValuePair> iterator() {
+        return values.iterator();
+    }
 
-	public int size() {
-		return values.size();
-	}
+    public int size() {
+        return values.size();
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder b = new StringBuilder();
-		b.append("{");
-		boolean notFirst = false;
-		for (NameValuePair value : values) {
-			if (notFirst) {
-				b.append("|");
-			}
-			b.append(value);
-			notFirst = true;
-		}
-		b.append("}");
-		return b.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        b.append("{");
+        boolean notFirst = false;
+        for (NameValuePair value : values) {
+            if (notFirst) {
+                b.append("|");
+            }
+            b.append(value);
+            notFirst = true;
+        }
+        b.append("}");
+        return b.toString();
+    }
 
 }

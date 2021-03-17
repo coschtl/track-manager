@@ -133,13 +133,13 @@ public class PhotoIdexer {
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
-                   throw new RuntimeException("error while processing path "+ path, e);
+                    throw new RuntimeException("error while processing path " + path, e);
                 }
             }
             PHOTO_REGISTRY.add(path);
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("error while processing path "+ path, e);
+            throw new RuntimeException("error while processing path " + path, e);
         }
     }
 

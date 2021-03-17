@@ -37,139 +37,139 @@ import at.dcosta.tracks.util.TrackIO;
 
 public class TrackCopy extends Activity implements OnClickListener {
 
-	public static final String TRACK_ID = "trackId";
-	private static final int DATE_DIALOG_ID = 1;
-	private static final int TIME_DIALOG_ID = 2;
-	private TrackDbAdapter trackDbAdapter;
-	private AutoCompleteTextView name;
-	private EditText date, time;
-	private TrackDescriptionNG origTrack;
+    public static final String TRACK_ID = "trackId";
+    private static final int DATE_DIALOG_ID = 1;
+    private static final int TIME_DIALOG_ID = 2;
+    private TrackDbAdapter trackDbAdapter;
+    private AutoCompleteTextView name;
+    private EditText date, time;
+    private TrackDescriptionNG origTrack;
 
-	public static void copyTrack(TrackDescriptionNG origTrack, List<Point> trackOrig, String newName, long timeDiffMillis, TrackDbAdapter trackDbAdapter) {
+    public static void copyTrack(TrackDescriptionNG origTrack, List<Point> trackOrig, String newName, long timeDiffMillis, TrackDbAdapter trackDbAdapter) {
 
-		File to = new File(Configuration.getInstance().getCopiedTracksDir(), IOUtil.getFilenameNoPath(origTrack.getPathNoHash()) + TmgrReader.SUFFIX);
-		long copyId = trackDbAdapter.copyEntry(origTrack, newName, to.getAbsolutePath(), timeDiffMillis);
-		List<Point> trackCopy = new ArrayList<Point>(trackOrig.size());
-		for (Point p : trackOrig) {
-			trackCopy.add(p.shift(timeDiffMillis));
-		}
-		TrackIO.writeTmgrTrack(to, trackCopy);
-		TrackDescriptionNG copyEntry = trackDbAdapter.fetchEntry(copyId);
-		if (copyEntry.getActivity() != null) {
-			TrackEdit.updateTrack(copyEntry, copyEntry.getActivity().getIcon(), trackDbAdapter.getActivityFactory());
-		}
-	}
+        File to = new File(Configuration.getInstance().getCopiedTracksDir(), IOUtil.getFilenameNoPath(origTrack.getPathNoHash()) + TmgrReader.SUFFIX);
+        long copyId = trackDbAdapter.copyEntry(origTrack, newName, to.getAbsolutePath(), timeDiffMillis);
+        List<Point> trackCopy = new ArrayList<Point>(trackOrig.size());
+        for (Point p : trackOrig) {
+            trackCopy.add(p.shift(timeDiffMillis));
+        }
+        TrackIO.writeTmgrTrack(to, trackCopy);
+        TrackDescriptionNG copyEntry = trackDbAdapter.fetchEntry(copyId);
+        if (copyEntry.getActivity() != null) {
+            TrackEdit.updateTrack(copyEntry, copyEntry.getActivity().getIcon(), trackDbAdapter.getActivityFactory());
+        }
+    }
 
-	private void addOnClickListener(EditText et, final int dialogId) {
-		et.setInputType(InputType.TYPE_NULL);
-		et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+    private void addOnClickListener(EditText et, final int dialogId) {
+        et.setInputType(InputType.TYPE_NULL);
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (hasFocus) {
-					showDialog(dialogId);
-				}
-			}
-		});
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    showDialog(dialogId);
+                }
+            }
+        });
 
-		et.setOnClickListener(new View.OnClickListener() {
+        et.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				if (v.hasFocus()) {
-					showDialog(dialogId);
-				}
+            @Override
+            public void onClick(View v) {
+                if (v.hasFocus()) {
+                    showDialog(dialogId);
+                }
 
-			}
-		});
-	}
+            }
+        });
+    }
 
-	@Override
-	public void onClick(View v) {
-		Date startDate;
-		try {
-			startDate = DateUtil.DATE_TIME_FORMAT_NUMERIC_LONG.parse(new StringBuilder(date.getText()).append(" ").append(time.getText()).append(":00")
-					.toString());
-			long timeDiffMillis = startDate.getTime() - origTrack.getStartTime().getTime();
-			File from = new File(origTrack.getPath());
-			copyTrack(origTrack, TrackIO.loadTrack(from), name.getText().toString(), timeDiffMillis, trackDbAdapter);
-			setResult(TrackList.CONTEXT_EDIT_ID, getIntent());
-			finish();
-		} catch (ParseException e) {
-			Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-		} catch (ParsingException e) {
-			Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-		}
-	}
+    @Override
+    public void onClick(View v) {
+        Date startDate;
+        try {
+            startDate = DateUtil.DATE_TIME_FORMAT_NUMERIC_LONG.parse(new StringBuilder(date.getText()).append(" ").append(time.getText()).append(":00")
+                    .toString());
+            long timeDiffMillis = startDate.getTime() - origTrack.getStartTime().getTime();
+            File from = new File(origTrack.getPath());
+            copyTrack(origTrack, TrackIO.loadTrack(from), name.getText().toString(), timeDiffMillis, trackDbAdapter);
+            setResult(TrackList.CONTEXT_EDIT_ID, getIntent());
+            finish();
+        } catch (ParseException e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+        } catch (ParsingException e) {
+            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.track_copy);
-		trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), this);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.track_copy);
+        trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), this);
 
-		final Bundle extras = getIntent().getExtras();
-		origTrack = trackDbAdapter.fetchEntry(extras.getLong(TrackDescriptionNG.KEY_ID));
+        final Bundle extras = getIntent().getExtras();
+        origTrack = trackDbAdapter.fetchEntry(extras.getLong(TrackDescriptionNG.KEY_ID));
 
-		Button confirmButton = (Button) findViewById(R.id.confirm);
-		confirmButton.setOnClickListener(this);
+        Button confirmButton = (Button) findViewById(R.id.confirm);
+        confirmButton.setOnClickListener(this);
 
-		name = (AutoCompleteTextView) findViewById(R.id.name);
-		Set<String> allTrackNames = trackDbAdapter.getAllTrackNames();
-		String[] trackNames = new String[allTrackNames.size()];
-		allTrackNames.toArray(trackNames);
-		name.setText(origTrack.getName());
-		name.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, trackNames));
+        name = (AutoCompleteTextView) findViewById(R.id.name);
+        Set<String> allTrackNames = trackDbAdapter.getAllTrackNames();
+        String[] trackNames = new String[allTrackNames.size()];
+        allTrackNames.toArray(trackNames);
+        name.setText(origTrack.getName());
+        name.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, trackNames));
 
-		date = (EditText) findViewById(R.id.date);
-		addOnClickListener(date, DATE_DIALOG_ID);
+        date = (EditText) findViewById(R.id.date);
+        addOnClickListener(date, DATE_DIALOG_ID);
 
-		time = (EditText) findViewById(R.id.time);
-		addOnClickListener(time, TIME_DIALOG_ID);
+        time = (EditText) findViewById(R.id.time);
+        addOnClickListener(time, TIME_DIALOG_ID);
 
-		Button cancelButton = (Button) findViewById(R.id.cancel);
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.putExtras(extras);
-				setResult(TrackList.CONTEXT_EDIT_ID, intent);
-				finish();
-			}
-		});
-	}
+        Button cancelButton = (Button) findViewById(R.id.cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtras(extras);
+                setResult(TrackList.CONTEXT_EDIT_ID, intent);
+                finish();
+            }
+        });
+    }
 
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-			case DATE_DIALOG_ID:
-				return new SimpleDatePickerDialog(this, date);
-			case TIME_DIALOG_ID:
-				final Calendar c = Calendar.getInstance();
-				c.setTime(origTrack.getStartTime());
-				return new MyTimePickerDialog(this, time, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
-		}
-		return null;
-	}
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case DATE_DIALOG_ID:
+                return new SimpleDatePickerDialog(this, date);
+            case TIME_DIALOG_ID:
+                final Calendar c = Calendar.getInstance();
+                c.setTime(origTrack.getStartTime());
+                return new MyTimePickerDialog(this, time, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+        }
+        return null;
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		trackDbAdapter.close();
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        trackDbAdapter.close();
+    }
 
-	private static class MyTimePickerDialog extends TimePickerDialog {
+    private static class MyTimePickerDialog extends TimePickerDialog {
 
-		public MyTimePickerDialog(Context context, final EditText text, int hour, int minute) {
-			super(context, new TimePickerDialog.OnTimeSetListener() {
+        public MyTimePickerDialog(Context context, final EditText text, int hour, int minute) {
+            super(context, new TimePickerDialog.OnTimeSetListener() {
 
-				@Override
-				public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-					Date date = DateUtil.getDate(1, 1, 2000, hourOfDay, minute, 0, 0);
-					text.setText(DateUtil.TIME_FORMAT_SHORT.format(date));
+                @Override
+                public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                    Date date = DateUtil.getDate(1, 1, 2000, hourOfDay, minute, 0, 0);
+                    text.setText(DateUtil.TIME_FORMAT_SHORT.format(date));
 
-				}
-			}, hour, minute, true);
-		}
-	}
+                }
+            }, hour, minute, true);
+        }
+    }
 }

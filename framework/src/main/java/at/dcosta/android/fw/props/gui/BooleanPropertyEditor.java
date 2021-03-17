@@ -11,28 +11,28 @@ import at.dcosta.android.fw.R;
 
 public class BooleanPropertyEditor extends PropertyEditor implements OnCheckedChangeListener {
 
-	@Override
-	protected boolean isValid() {
-		return true;
-	}
+    @Override
+    protected boolean isValid() {
+        return true;
+    }
 
-	@Override
-	protected void onAddPropertyCall(Intent intent) {
-		// nothing to do
-	}
+    @Override
+    protected void onAddPropertyCall(Intent intent) {
+        // nothing to do
+    }
 
-	@Override
-	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-		value.setText(Boolean.toString(isChecked));
-	}
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        value.setText(Boolean.toString(isChecked));
+    }
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		CheckBox checkbox = (CheckBox) findViewById(R.id.onOff);
-		checkbox.setVisibility(View.VISIBLE);
-		checkbox.setChecked(property.getBooleanValue(false));
-		checkbox.setOnCheckedChangeListener(this);
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        CheckBox checkbox = (CheckBox) findViewById(R.id.onOff);
+        checkbox.setVisibility(View.VISIBLE);
+        checkbox.setChecked(property.getBooleanValue(false));
+        checkbox.setOnCheckedChangeListener(this);
+    }
 
 }
