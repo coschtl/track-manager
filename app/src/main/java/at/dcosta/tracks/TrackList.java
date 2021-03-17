@@ -362,7 +362,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 		if (menuInfo instanceof AdapterView.AdapterContextMenuInfo) {
 			AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 			IconListBean iconListBean = beanItems.get(info.position);
-			int photoId = iconListBean.getIntExtra(IconListBean.KEY_ADDITIONAL_ICON, -1);
+			int photoId = iconListBean.getIntExtra(IconListBean.KEY_ADDITIONAL_ICON1, -1);
 			if (photoId >= 0) {
 				menu.add(0, CONTEXT_SHOW_PHOTOS, 0, R.string.show_photos);
 			}

@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.gui.IconListBean;
+import at.dcosta.tracks.R;
 import at.dcosta.tracks.util.ActivityFactory;
 import at.dcosta.tracks.util.TrackActivity;
 
@@ -214,7 +215,10 @@ public class TrackDescriptionNG implements Serializable {
         bean.setExtra(KEY_PATH, getPath());
         List<String> extraPhotos = getMultiValueExtra(EXTRA_PHOTO);
         if (extraPhotos != null && extraPhotos.size() > 0) {
-            bean.setExtra(IconListBean.KEY_ADDITIONAL_ICON, at.dcosta.tracks.R.mipmap.camera);
+            bean.setExtra(IconListBean.KEY_ADDITIONAL_ICON1, at.dcosta.tracks.R.mipmap.camera);
+        }
+        if (getAvgPulse() > 0) {
+            bean.setExtra(IconListBean.KEY_ADDITIONAL_ICON2, R.mipmap.ekg);
         }
         return bean;
     }

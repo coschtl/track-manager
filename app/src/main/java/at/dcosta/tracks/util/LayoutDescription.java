@@ -11,7 +11,8 @@ public class LayoutDescription {
     static {
         DEFAULT = createDefaultHolder();
         TRACK_LIST = createDefaultHolder().setListLayoutId(R.layout.track_list).setListRowLayoutId(R.layout.track_list_row)
-                .setExtra(IconListIdHolder.KEY_ADDITIONAL_ICON, R.id.additional_icon);
+                .setExtra(IconListIdHolder.KEY_ADDITIONAL_ICON1, R.id.additional_icon1)
+                .setExtra(IconListIdHolder.KEY_ADDITIONAL_ICON2, R.id.additional_icon2);
     }
 
     private static final IconListIdHolder createDefaultHolder() {

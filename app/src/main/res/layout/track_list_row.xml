@@ -44,9 +44,19 @@
         android:textColor="#CCCCCC" />
 
     <ImageView
-        android:id="@+id/additional_icon"
-        android:layout_width="20dip"
-        android:layout_height="20dip"
+        android:id="@+id/additional_icon1"
+        android:layout_width="14dip"
+        android:layout_height="14dip"
+        android:layout_below="@id/line_icon"
+        android:layout_alignParentBottom="@id/line_icon"
+        android:layout_margin="3dip" />
+
+    <ImageView
+        android:id="@+id/additional_icon2"
+        android:layout_width="14dip"
+        android:layout_height="14dip"
+        android:layout_margin="3dip"
+        android:layout_toRightOf="@+id/additional_icon1"
         android:layout_below="@id/line_icon"
         android:layout_alignParentBottom="@id/line_icon" />
 

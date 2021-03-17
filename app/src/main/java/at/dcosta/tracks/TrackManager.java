@@ -61,6 +61,7 @@ import at.dcosta.tracks.backup.BackupIO;
 import at.dcosta.tracks.db.SavedSearchesDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.PhotoIdexer;
 import at.dcosta.tracks.track.share.BluetoothReceiver;
 import at.dcosta.tracks.track.share.BluetoothSender;
 import at.dcosta.tracks.util.ActivityFactory;
@@ -408,6 +409,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 return true;
             case MENU_RESCAN_PHOTOS:
                 closeDbs();
+                PhotoIdexer.clear();
                 intent = new Intent(this, Loader.class);
                 intent.putExtra(Loader.KEY_ACTION, Loader.ACTION_RESCAN_PHOTOS);
                 startActivityForResult(intent, ID_LOAD_TRACK);

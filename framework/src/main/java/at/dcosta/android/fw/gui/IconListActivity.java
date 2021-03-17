@@ -137,31 +137,30 @@ public abstract class IconListActivity extends Activity implements OnItemClickLi
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent) {
 			// A ViewHolder keeps references to children views to avoid
-			// unneccessary calls
-			// to findViewById() on each row.
+			// unneccessary calls to findViewById() on each row.
 			ViewHolder holder;
 			IconListBean bean = beans.get(position);
 
-			// When convertView is not null, we can reuse it directly, there is
-			// no need
-			// to reinflate it. We only inflate a new View when the convertView
-			// supplied
-			// by ListView is null.
+			// When convertView is not null, we can reuse it directly, there is no need to reinflate it.
+			// We only inflate a new View when the convertView supplied by ListView is null.
 			if (convertView == null) {
 				convertView = mInflater.inflate(idHolder.getListRowLayoutId(), null);
 
 				// Creates a ViewHolder and store references to the two children
-				// views
-				// we want to bind data to.
+				// views we want to bind data to.
 				holder = new ViewHolder();
 				holder.lineHead = (TextView) convertView.findViewById(idHolder.getLineHeadId());
 				holder.lineBody = (TextView) convertView.findViewById(idHolder.getLineBodyId());
 				if (idHolder.getLineIconId() > 0) {
 					holder.lineIcon = (ImageView) convertView.findViewById(idHolder.getLineIconId());
 				}
-				int icon2Id = idHolder.getIntExtra(IconListIdHolder.KEY_ADDITIONAL_ICON, -1);
-				if (icon2Id > 0) {
-					holder.additionalIcon = (ImageView) convertView.findViewById(icon2Id);
+				int icon2Id1 = idHolder.getIntExtra(IconListIdHolder.KEY_ADDITIONAL_ICON1, -1);
+				if (icon2Id1 > 0) {
+					holder.additionalIcon1 = (ImageView) convertView.findViewById(icon2Id1);
+				}
+				int icon2Id2 = idHolder.getIntExtra(IconListIdHolder.KEY_ADDITIONAL_ICON2, -1);
+				if (icon2Id2 > 0) {
+					holder.additionalIcon2 = (ImageView) convertView.findViewById(icon2Id2);
 				}
 				convertView.setTag(holder);
 			} else {
@@ -170,8 +169,7 @@ public abstract class IconListActivity extends Activity implements OnItemClickLi
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			// Bind the data efficiently with the holder.
-
+			// Bind the data efficiently with the holder
 			holder.lineHead.setText(bean.getHead());
 			holder.lineBody.setText(bean.getBody());
 			int iconId = bean.getIconId();
@@ -180,14 +178,20 @@ public abstract class IconListActivity extends Activity implements OnItemClickLi
 			} else {
 				holder.lineIcon.setImageResource(0);
 			}
-			int icon2 = bean.getIntExtra(IconListBean.KEY_ADDITIONAL_ICON, -1);
-			if (holder.additionalIcon != null) {
+			int icon2 = bean.getIntExtra(IconListBean.KEY_ADDITIONAL_ICON1, -1);
+			if (holder.additionalIcon1 != null) {
 				if (icon2 > 0) {
-					holder.additionalIcon.setImageResource(icon2);
-					holder.additionalIcon.setId((int) bean.getId());
+					holder.additionalIcon1.setImageResource(icon2);
 				} else {
-					holder.additionalIcon.setImageResource(0);
-					holder.additionalIcon.setId(-1);
+					holder.additionalIcon1.setImageResource(0);
+				}
+			}
+			int icon3 = bean.getIntExtra(IconListBean.KEY_ADDITIONAL_ICON2, -1);
+			if (holder.additionalIcon2 != null) {
+				if (icon3 > 0) {
+					holder.additionalIcon2.setImageResource(icon3);
+				} else {
+					holder.additionalIcon2.setImageResource(0);
 				}
 			}
 			return convertView;
@@ -195,7 +199,7 @@ public abstract class IconListActivity extends Activity implements OnItemClickLi
 
 		static class ViewHolder {
 			TextView lineHead, lineBody;
-			ImageView lineIcon, additionalIcon;
+			ImageView lineIcon, additionalIcon1, additionalIcon2;
 		}
 	}
 

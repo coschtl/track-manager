@@ -20,7 +20,7 @@ import at.dcosta.tracks.util.PhotoRegistry;
 public class PhotoIdexer {
 
     private static final SimpleDateFormat EXIF_DATE_FORMAT = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
-    private static final PhotoRegistry photoRegistry = new PhotoRegistry();
+    private static final PhotoRegistry PHOTO_REGISTRY = new PhotoRegistry();
 
     private final PathValidator pathValidator;
     private final TrackDbAdapter trackDbAdapter;
@@ -35,9 +35,13 @@ public class PhotoIdexer {
 
             @Override
             public boolean isValid(String path) {
-                return !photoRegistry.contains(path);
+                return !PHOTO_REGISTRY.contains(path);
             }
         });
+    }
+
+    public static void clear() {
+        PHOTO_REGISTRY.clear();
     }
 
     public PhotoIdexer(TrackDbAdapter trackDbAdapter, String path, PathValidator pathValidator) {
@@ -96,7 +100,7 @@ public class PhotoIdexer {
         if (position < maxId) {
             return true;
         }
-        photoRegistry.persist();
+        PHOTO_REGISTRY.persist();
         return false;
     }
 
@@ -132,7 +136,7 @@ public class PhotoIdexer {
                    throw new RuntimeException("error while processing path "+ path, e);
                 }
             }
-            photoRegistry.add(path);
+            PHOTO_REGISTRY.add(path);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException("error while processing path "+ path, e);

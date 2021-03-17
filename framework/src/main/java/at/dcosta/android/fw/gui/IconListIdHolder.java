@@ -7,7 +7,8 @@ import at.dcosta.android.fw.ExtraBased;
 
 public class IconListIdHolder extends ExtraBased<IconListIdHolder> {
 
-	public static final String KEY_ADDITIONAL_ICON = "additionalIcon";
+	public static final String KEY_ADDITIONAL_ICON1 = "additionalIcon1";
+	public static final String KEY_ADDITIONAL_ICON2 = "additionalIcon2";
 	private static final long serialVersionUID = 1L;
 	private final Map<String, Integer> extras;
 	private int listLayoutId, listRowLayoutId, headerId, lineHeadId, lineBodyId, lineIconId;
