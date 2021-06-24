@@ -1,25 +1,21 @@
 package at.dcosta.tracks.track;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import at.dcosta.tracks.track.file.TrackListener;
+import at.dcosta.tracks.util.Configuration;
 import at.dcosta.tracks.validator.DistanceValidator;
 
 public class TrackEkgData implements TrackListener {
 
-    private final Date birthday;
-    private final boolean male;
-    private final long[] zones = new long[PulseZone.values().length];
+    private final long[] zones = new long[PulseZoneFactory.getZoneCount()];
 
     private long lastPointTime;
     private int lastPulse;
     private long totalZoneTime;
-    private double maxPulse;
+    private final Configuration configuration;
+    private PulseZoneFactory pulseZoneFactory;
 
-    public TrackEkgData(Date birthday, boolean male) {
-        this.birthday = birthday;
-        this.male = male;
+    public TrackEkgData(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
@@ -30,22 +26,10 @@ public class TrackEkgData implements TrackListener {
         }
         long time = point.getTimeStampAsLong();
         if (lastPointTime == 0) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(time);
-            int trackYear = cal.get(Calendar.YEAR);
-            cal.setTime(birthday);
-            int age = trackYear - cal.get(Calendar.YEAR);
-            if (age < 40) {
-                maxPulse = 220 - age;
-                if (male) {
-                    maxPulse += 6;
-                }
-            } else {
-                maxPulse = 208.0 - (age * 0.7);
-            }
+            pulseZoneFactory = new PulseZoneFactory(configuration, point.getTimeStampAsDate());
         } else {
             long millis = time - lastPointTime;
-            zones[getZone(pulse).getZoneId()] += millis;
+            zones[pulseZoneFactory.getPulseZoneByPulse(pulse).getZoneId()] += millis;
             totalZoneTime += millis;
         }
         lastPointTime = time;
@@ -60,17 +44,16 @@ public class TrackEkgData implements TrackListener {
         return 100.0 / (double) totalZoneTime * (double) zones[zone];
     }
 
-    private PulseZone getZone(double pulse) {
-        if (pulse < 1.0) {
-            return PulseZone.CALM;
-        }
-        double perc = pulse / maxPulse;
-        for (PulseZone zone : PulseZone.values()) {
-            if (perc >= zone.getMinPercent() && perc < zone.getMaxPercent()) {
-                return zone;
-            }
-        }
-        return PulseZone.MAXIMUM_HIGH;
+    public long getZoneTime(int zone) {
+        return zones[zone];
+    }
+
+    public long getTotalZoneTime() {
+        return totalZoneTime;
+    }
+
+    public PulseZoneFactory getPulseZoneFactory() {
+        return pulseZoneFactory;
     }
 
     @Override

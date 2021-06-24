@@ -27,7 +27,7 @@ import java.util.List;
 import at.dcosta.tracks.R;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Point;
-import at.dcosta.tracks.track.PulseZone;
+import at.dcosta.tracks.track.PulseZoneFactory;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 import at.dcosta.tracks.track.TrackEkgData;
 import at.dcosta.tracks.util.Configuration;
@@ -40,7 +40,6 @@ public class TrackEkg extends Activity {
     private PieChart myPieChart;
     private String path;
     private TrackDbAdapter trackDbAdapter;
-    private TextView donutSizeTextView;
     private boolean active;
 
     @Override
@@ -66,7 +65,7 @@ public class TrackEkg extends Activity {
             return;
         }
         active = true;
-        TrackEkgData ekg = new TrackEkgData(birthday, config.isMale());
+        TrackEkgData ekg = new TrackEkgData(config);
         while (pointIterator.hasNext()) {
             ekg.processPoint(pointIterator.next());
         }
@@ -119,8 +118,9 @@ public class TrackEkg extends Activity {
         EmbossMaskFilter emf = new EmbossMaskFilter(
                 new float[]{1, 1, 1}, 0.4f, 10, 8.2f);
 
-        for (int i = 0; i < PulseZone.values().length; i++) {
-            addSegment(PulseZone.fromZoneId(i), ekg, emf);
+        PulseZoneFactory pulseZoneFactory = ekg.getPulseZoneFactory();
+        for (PulseZoneFactory.Zone zone : PulseZoneFactory.getZones()) {
+            addSegment(zone, ekg, emf);
         }
 
         myPieChart.getBorderPaint().setColor(Color.TRANSPARENT);
@@ -128,35 +128,50 @@ public class TrackEkg extends Activity {
         myPieChart.getTitle().getLabelPaint().setARGB(255, 150, 150, 150);
 
         int i = 0;
-        addPercentToLegend(R.id.text_pulse_0, ekg, i++);
-        addPercentToLegend(R.id.text_pulse_1_2, ekg, i++, i++);
-        addPercentToLegend(R.id.text_pulse_3_4, ekg, i++, i++);
-        addPercentToLegend(R.id.text_pulse_5_6, ekg, i++, i++);
-        addPercentToLegend(R.id.text_pulse_7_8, ekg, i++, i++);
+        addPercentToLegend(R.id.text_pulse_0, ekg, pulseZoneFactory, i++);
+        addPercentToLegend(R.id.text_pulse_1_2, ekg, pulseZoneFactory, i++, i++);
+        addPercentToLegend(R.id.text_pulse_3_4, ekg, pulseZoneFactory, i++, i++);
+        addPercentToLegend(R.id.text_pulse_5_6, ekg, pulseZoneFactory, i++, i++);
+        addPercentToLegend(R.id.text_pulse_7_8, ekg, pulseZoneFactory, i++, i++);
     }
 
-    private void addPercentToLegend(int id, TrackEkgData ekg, int... zoneIds) {
+    private void addPercentToLegend(int id, TrackEkgData ekg, PulseZoneFactory pulseZoneFactory, int... zoneIds) {
         TextView tf = (TextView) findViewById(id);
-        float sum = 0;
+        float sumPercent = 0;
+        long sumTime = 0;
+
         for (int zoneId : zoneIds) {
-            sum += ekg.getZonePercentExact(zoneId);
+            sumPercent += ekg.getZonePercentExact(zoneId);
+            sumTime += ekg.getZoneTime(zoneId);
         }
-        if (sum > 0.09) {
-            tf.setText(tf.getText() + ": " + DF.format(sum) + "%");
+        if (sumPercent > 0.09) {
+            StringBuilder txt = new StringBuilder(tf.getText());
+            txt.append(" (");
+            if (zoneIds.length > 1) {
+                txt.append(pulseZoneFactory.getPulseZoneByZoneId(zoneIds[0]).getMinPulse());
+                txt.append(" - ");
+                txt.append(pulseZoneFactory.getPulseZoneByZoneId(zoneIds[zoneIds.length - 1]).getMaxPulse());
+            } else {
+                txt.append("<");
+                txt.append(pulseZoneFactory.getPulseZoneByZoneId(zoneIds[0]).getMaxPulse());
+            }
+            txt.append("), ");
+            txt.append(DF.format(sumPercent) + "% (").append((int) (sumTime / 60000)).append(" min)");
+            tf.setText(txt.toString());
         }
     }
 
-    private void addSegment(PulseZone pulseZone, TrackEkgData ekg, EmbossMaskFilter emf) {
-        int zonePercent = ekg.getZonePercent(pulseZone.getZoneId());
+    private void addSegment(PulseZoneFactory.Zone zone, TrackEkgData ekg, EmbossMaskFilter emf) {
+        int zonePercent = ekg.getZonePercent(zone.getZoneId());
         if (zonePercent > 0) {
             Context ctx = getApplicationContext();
-            int colorId = ctx.getResources().getIdentifier("pulse_" + pulseZone.getZoneId(), "color", ctx.getApplicationInfo().packageName);
+            int colorId = ctx.getResources().getIdentifier("pulse_" + zone.getZoneId(), "color", ctx.getApplicationInfo().packageName);
             int color = ctx.getResources().getColor(colorId);
             SegmentFormatter sf = new SegmentFormatter(this, R.xml.pie_segment_formatter);
             sf.getLabelPaint().setShadowLayer(3, 0, 0, Color.BLACK);
             sf.getFillPaint().setMaskFilter(emf);
             sf.getFillPaint().setColor(color);
-            myPieChart.addSegment(new Segment(pulseZone.getLabel(), zonePercent), sf);
+            myPieChart.addSegment(new Segment(zone.getLabel(), zonePercent), sf);
         }
     }
 
