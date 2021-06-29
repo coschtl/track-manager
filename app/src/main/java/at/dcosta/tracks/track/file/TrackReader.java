@@ -56,6 +56,7 @@ public abstract class TrackReader {
     }
 
     void updateListener(Point point) {
+        //System.out.print("Got raw point: " + point);
         if (lastPoint == null) {
             point.setHeight(flattener.getFattenedHeight(point));
             for (TrackListener l : listener) {
@@ -65,12 +66,13 @@ public abstract class TrackReader {
         } else {
             Distance distance = point.getDistance(lastPoint);
             distanceValidator.setDistance(distance);
-            if (distanceValidator.isValid()) {
+            if (true || distanceValidator.isValid()) {
                 int flattenedHeight = flattener.getFattenedHeight(point);
                 point.setHeight(flattenedHeight);
                 distance = point.getDistance(lastPoint);
                 lastPoint = point;
             } else {
+                System.out.println("Point is not valid: " + distanceValidator.getInvalidReason() + " : " + point);
                 if (LOGGER.isLoggable(Level.FINE)) {
                     LOGGER.fine("Point is not valid: " + distanceValidator.getInvalidReason() + " : " + point);
                 }
