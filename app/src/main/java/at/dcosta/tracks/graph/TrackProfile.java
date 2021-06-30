@@ -121,10 +121,11 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
         final DataSeries<Integer> heightData = graphData.getHeightData();
         DataSeries<Float> speedData = graphData.getSpeedData();
         DataSeries<Integer> pulseData = graphData.getPulseData();
+        final boolean pulseDataValid = !pulseData.containsOnlyZeroValues();
 
         final double heightFactor = (heightData.getMinMax().maxAsInt() - heightData.getMinMax().minAsInt()) / 95.0;
-        final double speedFactor = (speedData.getMinMax().maxAsLong() - speedData.getMinMax().minAsLong()) / 25.0;
-        final double pulseFactor = (pulseData.getMinMax().maxAsInt() - pulseData.getMinMax().minAsInt()) / 90.0;
+        final double speedFactor = (speedData.getMinMax().maxAsLong() - speedData.getMinMax().minAsLong()) / 50.0;
+        final double pulseFactor = pulseDataValid ? (pulseData.getMinMax().maxAsInt() - pulseData.getMinMax().minAsInt()) / 90.0 : 0.0;
 
         List<Integer> normalizedHeightData = new ArrayList<>();
         for (Integer h : heightData.getValues()) {
@@ -134,7 +135,7 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
         heightsSeries = createSeries(graphData, normalizedHeightData, "Height");
         final ScalingXYSeries scalingHeights = addSeries(heightsSeries, R.xml.hight_line);
         final ScalingXYSeries scalingSpeed = addSeries(createSeries(graphData, speedData.getValues(), "Speed"), R.xml.speed_line);
-        final ScalingXYSeries scalingPulses = addSeries(createSeries(graphData, pulseData.getValues(), "Pulse"), R.xml.pulse_line);
+        final ScalingXYSeries scalingPulses = pulseDataValid ? addSeries(createSeries(graphData, pulseData.getValues(), "Pulse"), R.xml.pulse_line) : null;
 
 
         plot.getGraph().setMarginRight(100);
@@ -168,7 +169,6 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
                             return toAppendTo;
                         }
                         return toAppendTo.append((int) (i * heightFactor + heightData.getMinMax().minAsInt())).append("~").append(df.format(i * speedFactor));
-//                        return toAppendTo.append((int) (i * heightFactor + heightData.getMinMax().minAsInt())).append("~").append(df.format(i * speedFactor));
                     }
 
                     @Override
@@ -176,17 +176,21 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
                         return null;
                     }
                 });
+
         plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.RIGHT)
                 .setFormat(new Format() {
                     @Override
                     public StringBuffer format(Object obj,
                                                @NonNull StringBuffer toAppendTo,
                                                @NonNull FieldPosition pos) {
-                        int i = ((Number) obj).intValue();
-                        if (i == 0) {
-                            return toAppendTo;
+                        if (pulseDataValid) {
+                            int i = ((Number) obj).intValue();
+                            if (i == 0) {
+                                return toAppendTo;
+                            }
+                            return toAppendTo.append((int) (i * pulseFactor));
                         }
-                        return toAppendTo.append((int) (i * pulseFactor));
+                        return toAppendTo;
                     }
 
                     @Override
@@ -194,6 +198,7 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
                         return null;
                     }
                 });
+
         plot.setRangeBoundaries(0, 100, BoundaryMode.FIXED);
 
         plot.getGraph().setLineLabelRenderer(XYGraphWidget.Edge.LEFT, new XYGraphWidget.LineLabelRenderer() {
@@ -223,28 +228,30 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
             }
         });
 
-        plot.getGraph().setLineLabelRenderer(XYGraphWidget.Edge.RIGHT, new XYGraphWidget.LineLabelRenderer() {
-            private float textSize;
+        if (pulseDataValid) {
+            plot.getGraph().setLineLabelRenderer(XYGraphWidget.Edge.RIGHT, new XYGraphWidget.LineLabelRenderer() {
+                private float textSize;
 
-            @Override
-            protected void drawLabel(Canvas canvas, String text, Paint paint, float x, float y, boolean isOrigin) {
-                if (text == null || text.isEmpty()) {
-                    return;
+                @Override
+                protected void drawLabel(Canvas canvas, String text, Paint paint, float x, float y, boolean isOrigin) {
+                    if (text == null || text.isEmpty()) {
+                        return;
+                    }
+                    if (textSize == 0f) {
+                        textSize = paint.getTextSize() * 0.8f;
+                    }
+                    paint.setTextSize(textSize);
+                    int pos = text.indexOf('~');
+                    paint.setColor(Color.parseColor("#00AAFF"));
+                    super.drawLabel(canvas, text, paint, x + 10, y, isOrigin);
                 }
-                if (textSize == 0f) {
-                    textSize = paint.getTextSize() * 0.8f;
-                }
-                paint.setTextSize(textSize);
-                int pos = text.indexOf('~');
-                paint.setColor(Color.parseColor("#00AAFF"));
-                super.drawLabel(canvas, text, paint, x + 10, y, isOrigin);
-            }
 
-            @Override
-            public void drawLabel(Canvas canvas, XYGraphWidget.LineLabelStyle style, Number val, float x, float y, boolean isOrigin) {
-                super.drawLabel(canvas, style, val, x, y, isOrigin);
-            }
-        });
+                @Override
+                public void drawLabel(Canvas canvas, XYGraphWidget.LineLabelStyle style, Number val, float x, float y, boolean isOrigin) {
+                    super.drawLabel(canvas, style, val, x, y, isOrigin);
+                }
+            });
+        }
         plot.setRangeStep(StepMode.SUBDIVIDE, 11);
         plot.setRangeLabel(null);
         plot.setDomainLabel(null);
@@ -268,7 +275,9 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
                 float scale = valueAnimator.getAnimatedFraction();
                 scalingHeights.setScale(scale / heightFactor);
                 scalingSpeed.setScale(scale / speedFactor);
-                scalingPulses.setScale(scale / pulseFactor);
+                if (pulseDataValid) {
+                    scalingPulses.setScale(scale / pulseFactor);
+                }
                 plot.redraw();
             }
         });
@@ -394,9 +403,8 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
 
     private void updateTimeIndex(float timeOnScreen) {
         long time = plot.screenToSeriesX(timeOnScreen).longValue();
-        int index = 0;
         List<Long> td = graphData.getTimeData().getValues();
-        for (index = 0; index < td.size(); index++) {
+        for (int index = 0; index < td.size(); index++) {
             if (td.get(index) > time) {
                 timeIndex = index - 1;
                 return;

@@ -32,6 +32,10 @@ public class DataSeries<T extends Number> {
         return values.isEmpty();
     }
 
+    public boolean containsOnlyZeroValues() {
+        return getMinMax().isZero();
+    }
+
     public int size() {
         return values.size();
     }

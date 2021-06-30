@@ -37,6 +37,10 @@ public class MinMaxValue {
         return min;
     }
 
+    public boolean isZero() {
+        return min == 0L && max == 0L;
+    }
+
     public MinMaxValue update(long value) {
         if (value < min) {
             min = value;
