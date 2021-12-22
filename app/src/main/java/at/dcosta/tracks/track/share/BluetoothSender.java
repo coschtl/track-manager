@@ -16,7 +16,6 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,6 +27,7 @@ import at.dcosta.android.fw.Alarm.AlarmReceiver;
 import at.dcosta.android.fw.IOUtil;
 import at.dcosta.android.fw.props.Property;
 import at.dcosta.tracks.R;
+import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 import at.dcosta.tracks.track.file.ParsingException;
 import at.dcosta.tracks.util.Configuration;
@@ -184,7 +184,7 @@ public class BluetoothSender extends AbstractBluetoothTransfer implements OnClic
             long rowId = getIntent().getLongExtra(TrackDescriptionNG.KEY_ID, -1);
             TrackDescriptionNG trackDescription = trackDbAdapter.fetchEntry(rowId);
             try {
-                TrackToShare track = new TrackToShare(trackDescription, TrackIO.loadTrack(new File(trackDescription.getPath())));
+                TrackToShare track = new TrackToShare(trackDescription, TrackIO.loadTrack(new SAFContent(this, trackDescription.getPathUri())));
                 sendingThread = new SendingThread(this, selected, track);
                 alarm = new Alarm(this);
                 sendButton.setEnabled(false);

@@ -2,6 +2,7 @@ package at.dcosta.android.fw.props.gui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -129,7 +130,8 @@ public class FileChooser extends IconListActivity {
         Bundle extras = getIntent().getExtras();
         type = extras.getString(TYPE);
         setIdHolder((IdHolder) extras.get(IdHolder.class.getName()));
-        currentDir = new File("/");
+        currentDir = Environment.getExternalStorageDirectory();
+        //currentDir = new File("/");
         fill();
         super.onCreate(savedInstanceState);
     }

@@ -26,6 +26,7 @@ import java.util.Set;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.IOUtil;
+import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -45,7 +46,7 @@ public class TrackCopy extends Activity implements OnClickListener {
     private EditText date, time;
     private TrackDescriptionNG origTrack;
 
-    public static void copyTrack(TrackDescriptionNG origTrack, List<Point> trackOrig, String newName, long timeDiffMillis, TrackDbAdapter trackDbAdapter) {
+    public static void copyTrack(Context context, TrackDescriptionNG origTrack, List<Point> trackOrig, String newName, long timeDiffMillis, TrackDbAdapter trackDbAdapter) {
 
         File to = new File(Configuration.getInstance().getCopiedTracksDir(), IOUtil.getFilenameNoPath(origTrack.getPathNoHash()) + TmgrReader.SUFFIX);
         long copyId = trackDbAdapter.copyEntry(origTrack, newName, to.getAbsolutePath(), timeDiffMillis);
@@ -56,7 +57,7 @@ public class TrackCopy extends Activity implements OnClickListener {
         TrackIO.writeTmgrTrack(to, trackCopy);
         TrackDescriptionNG copyEntry = trackDbAdapter.fetchEntry(copyId);
         if (copyEntry.getActivity() != null) {
-            TrackEdit.updateTrack(copyEntry, copyEntry.getActivity().getIcon(), trackDbAdapter.getActivityFactory());
+            TrackEdit.updateTrack(context, copyEntry, copyEntry.getActivity().getIcon(), trackDbAdapter.getActivityFactory());
         }
     }
 
@@ -91,8 +92,7 @@ public class TrackCopy extends Activity implements OnClickListener {
             startDate = DateUtil.DATE_TIME_FORMAT_NUMERIC_LONG.parse(new StringBuilder(date.getText()).append(" ").append(time.getText()).append(":00")
                     .toString());
             long timeDiffMillis = startDate.getTime() - origTrack.getStartTime().getTime();
-            File from = new File(origTrack.getPath());
-            copyTrack(origTrack, TrackIO.loadTrack(from), name.getText().toString(), timeDiffMillis, trackDbAdapter);
+            copyTrack(this, origTrack, TrackIO.loadTrack(new SAFContent(this, origTrack.getPathUri())), name.getText().toString(), timeDiffMillis, trackDbAdapter);
             setResult(TrackList.CONTEXT_EDIT_ID, getIntent());
             finish();
         } catch (ParseException e) {

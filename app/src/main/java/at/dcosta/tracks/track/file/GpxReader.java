@@ -2,7 +2,6 @@ package at.dcosta.tracks.track.file;
 
 import org.w3c.dom.Element;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -12,6 +11,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import at.dcosta.android.fw.dom.ElementFinder;
 import at.dcosta.android.fw.dom.NamedElementIterator;
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.validator.DistanceValidator;
 
@@ -26,8 +26,8 @@ public class GpxReader extends TrackReader {
         DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public GpxReader(File trackfile, DistanceValidator validator) {
-        super(trackfile, validator);
+    public GpxReader(Content trackContent, DistanceValidator validator) {
+        super(trackContent, validator);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class GpxReader extends TrackReader {
         }
         try {
             DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Element root = db.parse(trackfile).getDocumentElement();
+            Element root = db.parse(trackContent.getInputStream()).getDocumentElement();
 
             Element trk = ElementFinder.findFirstChild(root, "trk");
             trackName = ElementFinder.findFirstChild(trk, "name").getTextContent();

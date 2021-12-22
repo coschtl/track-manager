@@ -1,6 +1,7 @@
 package at.dcosta.tracks;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,12 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Track;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -40,12 +41,15 @@ public class TrackEdit extends Activity implements OnClickListener {
     private ActivityFactory activityFactory;
     private Spinner activitySpinner;
 
-    public static void updateTrack(TrackDescriptionNG trackDescription, String icon, ActivityFactory activityFactory) {
+    public static void updateTrack(Context context, TrackDescriptionNG trackDescription, String icon, ActivityFactory activityFactory) {
         String path = trackDescription.getPath();
-        TrackReader reader = TrackReaderFactory.getTrackReader(new File(path), activityFactory.fromIcon(icon).getDistanceValidator());
+        TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(context, trackDescription.getPathUri()), activityFactory.fromIcon(icon).getDistanceValidator());
         updateTrack(trackDescription, reader, icon);
     }
-//	private boolean nameSelectionDisabled;
+
+    public void updateTrack(TrackDescriptionNG trackDescription, String icon, ActivityFactory activityFactory) {
+        updateTrack(this, trackDescription, icon, activityFactory);
+    }
 
     public static void updateTrack(TrackDescriptionNG trackDescription, TrackReader reader, String icon) {
         TrackStatistic statistic = new TrackStatistic();

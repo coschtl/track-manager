@@ -1,6 +1,7 @@
 package at.dcosta.tracks;
 
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.ViewTreeObserver;
@@ -16,10 +17,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.io.File;
 import java.util.List;
 
 import at.dcosta.android.fw.props.Property;
+import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.track.Distance;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -61,7 +62,7 @@ public class TrackOnMap extends FragmentActivity
                 }
             } else {
                 String path = extras.getString(TrackDescriptionNG.KEY_PATH);
-                TrackReader reader = TrackReaderFactory.getTrackReader(new File(path), Validators.DEFAULT);
+                TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(this, Uri.parse(path)), Validators.DEFAULT);
                 reader.setListener(painter);
                 try {
                     reader.readTrack();

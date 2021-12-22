@@ -1,6 +1,7 @@
 package at.dcosta.tracks;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.ViewTreeObserver;
@@ -13,9 +14,9 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-import java.io.File;
 import java.util.List;
 
+import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.track.Distance;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -65,7 +66,7 @@ public class TrackOnOsmMap extends Activity {
                 }
             } else {
                 String path = extras.getString(TrackDescriptionNG.KEY_PATH);
-                TrackReader reader = TrackReaderFactory.getTrackReader(new File(path), Validators.DEFAULT);
+                TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(TrackManager.context(), Uri.parse(path)), Validators.DEFAULT);
                 reader.setListener(painter);
                 try {
                     reader.readTrack();

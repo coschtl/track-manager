@@ -1,12 +1,11 @@
 package at.dcosta.tracks.track.file;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import at.dcosta.android.fw.IOUtil;
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.Waypoint;
 import at.dcosta.tracks.validator.DistanceValidator;
@@ -18,8 +17,8 @@ public class TrkReader extends TrackReader {
     private static final String MARKER_BEGIN_POINTS = "--start--";
     private Status status = Status.START;
 
-    public TrkReader(File trackfile, DistanceValidator validator) {
-        super(trackfile, validator);
+    public TrkReader(Content trackContent, DistanceValidator validator) {
+        super(trackContent, validator);
     }
 
     @Override
@@ -30,7 +29,7 @@ public class TrkReader extends TrackReader {
         InputStream in = null;
         String line = null;
         try {
-            in = new FileInputStream(trackfile);
+            in = trackContent.getInputStream();
             BufferedReader trk = new BufferedReader(new InputStreamReader(in), 64);
             Point point;
             while ((line = trk.readLine()) != null && pointsRead++ < readLimit) {
@@ -58,7 +57,7 @@ public class TrkReader extends TrackReader {
             }
             return this;
         } catch (Exception e) {
-            throw new ParsingException("Parsing error in file '" + trackfile + "':" + (line == null ? "" : line), e);
+            throw new ParsingException("Parsing error in file '" + trackContent.getName() + "':" + (line == null ? "" : line), e);
         } finally {
             IOUtil.close(in);
         }

@@ -1,5 +1,7 @@
 package at.dcosta.tracks.track;
 
+import android.net.Uri;
+
 import java.io.File;
 import java.io.Serializable;
 import java.text.ParseException;
@@ -27,6 +29,7 @@ public class TrackDescriptionNG implements Serializable {
     private static final long serialVersionUID = -4802187569906508418L;
     private static final SimpleDateFormat DATE_FROM_NAME = new SimpleDateFormat("yyyy_MM_dd");
     private static final SimpleDateFormat DATE_TIME_FROM_NAME = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
+    private static final Pattern PATTERN_DATE_TIME_ONLY = Pattern.compile("^.*((\\d{4}_\\d{2}_\\d{2})(_\\d{2}_\\d{2}_\\d{2})?).*$");
     private static final Pattern PATTERN_MINUS = Pattern.compile("-");
     private final long id;
     private final Map<String, String> singleValueExtras;
@@ -143,6 +146,10 @@ public class TrackDescriptionNG implements Serializable {
         return path;
     }
 
+    public Uri getPathUri() {
+        return Uri.parse(getPath());
+    }
+
     public void setPath(String path) {
         this.path = path;
     }
@@ -238,6 +245,7 @@ public class TrackDescriptionNG implements Serializable {
             Date d = null;
             File pathFile = new File(path);
             String dateFromName = PATTERN_MINUS.matcher(pathFile.getName()).replaceAll("_");
+            dateFromName = PATTERN_DATE_TIME_ONLY.matcher(dateFromName).replaceAll("$1");
             try {
                 d = DATE_TIME_FROM_NAME.parse(dateFromName);
             } catch (ParseException e) {

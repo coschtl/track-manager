@@ -1,7 +1,6 @@
 package at.dcosta.tracks.track.share;
 
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -12,6 +11,8 @@ import java.util.Iterator;
 
 import at.dcosta.android.fw.IOUtil;
 import at.dcosta.tracks.TrackCopy;
+import at.dcosta.tracks.TrackManager;
+import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 import at.dcosta.tracks.track.file.ParsingException;
@@ -39,7 +40,7 @@ public class ShareTest {
                 TrackDescriptionNG origTrack = track.getDescription();
                 origTrack.setActivityFactory(trackDbAdapter.getActivityFactory());
                 //try {
-                TrackCopy.copyTrack(origTrack, track.getTrack(), origTrack.getName(), 0, trackDbAdapter);
+                TrackCopy.copyTrack(TrackManager.context(), origTrack, track.getTrack(), origTrack.getName(), 0, trackDbAdapter);
                 //} catch (ParsingException e) {
                 //	System.err.println("receive: Can not save received track: " + e.toString());
                 //	return false;
@@ -112,7 +113,7 @@ public class ShareTest {
             descr = it.next();
         }
         try {
-            data = new TrackToShare[]{new TrackToShare(descr, TrackIO.loadTrack(new File(descr.getPath())))};
+            data = new TrackToShare[]{new TrackToShare(descr, TrackIO.loadTrack(new SAFContent(TrackManager.context(), descr.getPathUri())))};
         } catch (ParsingException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

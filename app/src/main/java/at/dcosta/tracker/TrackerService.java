@@ -161,7 +161,7 @@ public class TrackerService extends Service implements LocationListener {
 				break;
 			case RESUME_TRACK:
 				filename = ((ResumeTrack) command).getFilename();
-				recordedTrack = TrackIO.loadTmgrTrack(TrackIO.getRecordedTrackFile(filename));
+				recordedTrack = TrackIO.loadTmgrTrack(TrackIO.getRecordedTrackAsStream(filename));
 				connectOnline();
 				TrackerStatus.setRecording();
 				break;

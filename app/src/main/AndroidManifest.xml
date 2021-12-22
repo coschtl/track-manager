@@ -11,6 +11,7 @@
     <permission android:name="android.permission.BLUETOOTH" />
     <permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
+    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
     <uses-permission android:name="com.javapapers.currentlocationinmap.permission.MAPS_RECEIVE" />
 
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
@@ -18,7 +19,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.OPEN_DOCUMENT_TREE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -37,14 +39,23 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
+
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="@string/appName"
         android:supportsRtl="true"
         android:theme="@style/MyDarkTheme">
+        <!--        <uses-library-->
+        <!--            android:name="com.google.android.maps"-->
+        <!--            android:required="false" />-->
+
         <uses-library
-            android:name="com.google.android.maps"
+            android:name="org.apache.http.legacy"
             android:required="false" />
 
         <activity

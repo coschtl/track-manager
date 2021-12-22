@@ -4,8 +4,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.validator.DistanceValidator;
 
@@ -87,15 +88,15 @@ public class GpxSaxReader extends TrackReader {
 
     };
 
-    public GpxSaxReader(File trackfile, DistanceValidator validator) {
-        super(trackfile, validator);
+    public GpxSaxReader(Content trackContent, DistanceValidator validator) {
+        super(trackContent, validator);
     }
 
     @Override
     public TrackReader readTrack() throws ParsingException {
-        try {
+        try (InputStream in = trackContent.getInputStream()) {
             SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-            parser.parse(trackfile, handler);
+            parser.parse(in, handler);
         } catch (SAXException e) {
             throw new ParsingException(e);
         } catch (IOException e) {
@@ -104,6 +105,7 @@ public class GpxSaxReader extends TrackReader {
             throw new ParsingException(e);
         }
         return this;
+
     }
 
     private enum STATUS {

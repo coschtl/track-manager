@@ -3,11 +3,18 @@ package at.dcosta.tracks;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.UriPermission;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.storage.StorageManager;
+import android.provider.DocumentsContract;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnDoubleTapListener;
@@ -49,6 +56,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.gui.calendar.Day;
@@ -81,16 +89,33 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     public static final int MENU_DEMO = 99;
     // public static final int MENU_RECEIVE_BT_TEST = MENU_RECEIVE_BT + 1;
     public static final int ID_LOAD_TRACK = 10;
+    public static final int APP_STORAGE_ACCESS_REQUEST_CODE = 100;
+    public static final int REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE = 101;
+    public static final int REQUEST_ACTION_OPEN_PHOTO_DOCUMENT_TREE = 102;
+    private static final Logger LOGGER = Logger.getLogger(TrackManager.class.getName());
     private static final String DATE_SHOWN = "dateShown";
+    private static Context context;
     private final Calendar calendar = Calendar.getInstance();
     private GestureDetector gestureDetector;
     private TrackDbAdapter trackDbAdapter;
     private PropertyDbAdapter propertyDbAdapter;
     private Month<TrackDescriptionNG> month;
     private Configuration config;
+    private boolean mustCheckExternalStorageManagerPermission = true;
+    private boolean mustCheckTrackDirReadPermission = true;
+    private boolean mustCheckPhotoDirReadPermission = true;
+
+
+    public static Context context() {
+        return context;
+    }
 
     private String askForWorkingDir() {
-        String workingDir = Environment.getExternalStorageDirectory().getPath() + "/trackManager";
+        String workingDir = (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ?
+                Environment.getExternalStorageDirectory().getPath() :
+                getExternalFilesDir(null).getPath()
+        )
+                + "/trackManager";
         config.setWorkingDir(workingDir);
         return workingDir;
     }
@@ -106,6 +131,8 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
             if (!success) {
                 System.err.println("WorkingDir '" + wd + "' does not exist and can not get created!");
                 System.err.println("WorkingDir-parent '" + workingDir.getParent() + "' exists: " + workingDir.getParentFile().isDirectory());
+                wd = askForWorkingDir();
+                config.setWorkingDir(wd);
                 assureWorkingDirs();
             } else {
                 config.setWorkingDir(wd);
@@ -121,19 +148,53 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     }
 
     private void closeDbs() {
-        trackDbAdapter.close();
-        propertyDbAdapter.close();
+        if (propertyDbAdapter != null) {
+            trackDbAdapter.close();
+        }
+        if (trackDbAdapter != null) {
+            propertyDbAdapter.close();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == APP_STORAGE_ACCESS_REQUEST_CODE) {
+            LOGGER.info("External storageManager permission RESULT_OK: " + (resultCode == RESULT_OK));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    LOGGER.info("Permission for file access granted");
+                }
+            } else {
+                System.out.println("Permission not needed: API too low");
+            }
+            if (!assurePermissions()) {
+                renderUi();
+            }
+            return;
+        }
+        if (requestCode == REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE) {
+            Uri uri = data.getData();
+            config.addTrackFolder(uri);
+            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (!assurePermissions()) {
+                renderUi();
+            }
+        }
+        if (requestCode == REQUEST_ACTION_OPEN_PHOTO_DOCUMENT_TREE) {
+            Uri uri = data.getData();
+            config.addPhotoFolder(uri);
+            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (!assurePermissions()) {
+                renderUi();
+            }
+        }
         if (BluetoothSender.REQUEST_ENABLE_BT == requestCode) {
             System.out.println("BT active: " + (resultCode == RESULT_OK));
+            return;
         }
         if (ID_LOAD_TRACK == resultCode) {
             renderCalendar();
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -198,13 +259,112 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 renderCalendar();
                 break;
         }
+    }
 
+    private boolean assurePermissions() {
+        if (mustCheckExternalStorageManagerPermission) {
+            mustCheckExternalStorageManagerPermission = false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+                Toast.makeText(this, "Please allow access of external storage", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivityForResult(intent, APP_STORAGE_ACCESS_REQUEST_CODE);
+                return true;
+            }
+        }
+        if (mustCheckPhotoDirReadPermission) {
+            mustCheckPhotoDirReadPermission = false;
+            if (!foldersValid(config.getPhotoFolders())) {
+                config.clearPhotoFolders();
+                Toast.makeText(this, "Please select photo folder", Toast.LENGTH_LONG).show();
+                assureDocumentTreeReadPermission("", REQUEST_ACTION_OPEN_PHOTO_DOCUMENT_TREE);
+                return true;
+            }
+        }
+        if (mustCheckTrackDirReadPermission) {
+            mustCheckTrackDirReadPermission = false;
+            if (!foldersValid(config.getTrackFolders())) {
+                config.clearTrackFolders();
+                Toast.makeText(this, "Please select track folder", Toast.LENGTH_LONG).show();
+                assureDocumentTreeReadPermission("Android/data", REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean foldersValid(List<Uri> folders) {
+        if (folders == null || folders.isEmpty()) {
+            return false;
+        }
+        for (Uri uri : folders) {
+            if (uri == null || uri.toString().trim().length() == 0) {
+                return false;
+            }
+            if (!CombatFactory.getFileLocator(this).fileExists(uri.toString(), true)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void assureDocumentTreeReadPermission(String startDir, int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            StorageManager sm = (StorageManager) getApplicationContext().getSystemService(Context.STORAGE_SERVICE);
+            Intent intent = sm.getPrimaryStorageVolume().createOpenDocumentTreeIntent();
+            Uri uri = intent.getParcelableExtra(DocumentsContract.EXTRA_INITIAL_URI);
+            String scheme = uri.toString();
+            scheme = scheme.replace("/root/", "/document/");
+            startDir = startDir.replace("/", "%2F");
+            scheme += "%3A" + startDir;
+            uri = Uri.parse(scheme);
+            intent.putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri);
+            startActivityForResult(intent, requestCode);
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        synchronized (TrackManager.class) {
+            if (context == null) {
+                context = this;
+            }
+        }
         super.onCreate(savedInstanceState);
         config = Configuration.getInstance(this);
+        System.out.println("****************************************************");
+        for (UriPermission persistedUriPermission : getContentResolver().getOutgoingPersistedUriPermissions()) {
+            System.out.println("OutgoingPersistedUriPermission: " + persistedUriPermission);
+        }
+        System.out.println("****************************************************");
+        for (UriPermission persistedUriPermission : getContentResolver().getPersistedUriPermissions()) {
+            System.out.println("PersistedUriPermission: " + persistedUriPermission);
+        }
+        System.out.println("****************************************************");
+
+        if (!assurePermissions()) {
+            renderUi();
+        }
+
+        // Intent i = new Intent(this, BluetoothTransfer.class);
+        // startActivityForResult(i, 1);
+        // new BluetoothTransfer().init();
+        // NetServer server = new NetServer();
+        // server.start();
+        // NetClient client = new NetClient();
+        // System.out.println(client.searchForServers());
+        // server.stop();
+    }
+
+    private void renderUi() {
+        System.out.println("+++++++++++++++++++++++++++++++++++++++");
+        for (UriPermission persistedUriPermission : getContentResolver().getOutgoingPersistedUriPermissions()) {
+            System.out.println("OutgoingPersistedUriPermission: " + persistedUriPermission);
+        }
+        System.out.println("+++++++++++++++++++++++++++++++++++++++");
+        for (UriPermission persistedUriPermission : getContentResolver().getPersistedUriPermissions()) {
+            System.out.println("PersistedUriPermission: " + persistedUriPermission);
+        }
+        System.out.println("+++++++++++++++++++++++++++++++++++++++");
         if (getResources().getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.calendar);
         } else {
@@ -219,17 +379,6 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         trackDbAdapter = new TrackDbAdapter(config.getDatabaseHelper(), this);
         propertyDbAdapter = config.getPropertyDbAdapter();
         assureWorkingDirs();
-
-        // System.out.println("activating BT: ");
-
-        // Intent i = new Intent(this, BluetoothTransfer.class);
-        // startActivityForResult(i, 1);
-        // new BluetoothTransfer().init();
-        // NetServer server = new NetServer();
-        // server.start();
-        // NetClient client = new NetClient();
-        // System.out.println(client.searchForServers());
-        // server.stop();
     }
 
     @Override
@@ -309,8 +458,8 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         Intent intent;
         SavedSearchesDbAdapter ssa;
         BackupIO backupIO;
-        final RelativeLayout progress = (RelativeLayout) findViewById(R.id.progress);
-        final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        final RelativeLayout progress = findViewById(R.id.progress);
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
         switch (item.getItemId()) {
             case MENU_DEMO:
                 closeDbs();
@@ -426,7 +575,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                         while (it.hasNext()) {
                             TrackDescriptionNG td = it.next();
                             String icon = td.getActivity() == null ? null : td.getActivity().getIcon();
-                            TrackEdit.updateTrack(td, icon, activityFactory);
+                            TrackEdit.updateTrack(TrackManager.this, td, icon, activityFactory);
                             trackDbAdapter.updateEntry(td);
                             totalInc += increment;
                             progressBar.setProgress((int) totalInc);
@@ -528,9 +677,9 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     private void renderCalendar() {
         month = new Month<TrackDescriptionNG>(calendar);
 
-        TextView monthView = (TextView) findViewById(R.id.month);
+        TextView monthView = findViewById(R.id.month);
         monthView.setText(month.getName());
-        GridView daysView = (GridView) findViewById(R.id.days);
+        GridView daysView = findViewById(R.id.days);
         Iterator<TrackDescriptionNG> iter = trackDbAdapter.findEntries(DateUtil.getStartOfMonth(month.getMonth(), month.getYear()),
                 DateUtil.getEndOfMonth(month.getMonth(), month.getYear()));
         Map<Date, List<TrackDescriptionNG>> m = new HashMap<Date, List<TrackDescriptionNG>>();

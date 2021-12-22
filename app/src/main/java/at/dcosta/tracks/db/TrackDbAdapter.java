@@ -6,9 +6,8 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import android.net.Uri;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -17,16 +16,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.NameValuePair;
 import at.dcosta.android.fw.db.AbstractCursorIterator;
 import at.dcosta.android.fw.db.AbstractDbAdapter;
 import at.dcosta.android.fw.db.DbUtil;
-import at.dcosta.android.fw.props.Property;
+import at.dcosta.tracks.CombatFactory;
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 import at.dcosta.tracks.util.ActivityFactory;
-import at.dcosta.tracks.util.Configuration;
 
 /**
  * Simple property database access helper class.
@@ -36,13 +36,17 @@ import at.dcosta.tracks.util.Configuration;
  */
 public class TrackDbAdapter extends AbstractDbAdapter {
 
+    private static final Logger LOGGER = Logger.getLogger(TrackDbAdapter.class.getName());
+
     private final ActivityFactory activityFactory;
+    private final Context context;
 
     /**
      * Constructor - takes the context to allow the database to be opened/created
      */
     public TrackDbAdapter(SQLiteOpenHelper databaseHelper, Context context) {
         super(databaseHelper);
+        this.context = context;
         activityFactory = new ActivityFactory(context);
     }
 
@@ -128,36 +132,6 @@ public class TrackDbAdapter extends AbstractDbAdapter {
         return createEntry(copy);
     }
 
-    private String correctApemapModifiedPath(String path, File pathDir) {
-        boolean corrected = false;
-        while (!pathDir.exists()) {
-            pathDir = pathDir.getParentFile();
-            if (pathDir == null) {
-                Log.w("TrackdbAdapter", "can not get a new name for path '" + path + "' (pathdir is null)");
-                return null;
-            }
-            corrected = true;
-        }
-        String pathNoDirAndHash = path.substring(path.lastIndexOf(File.separatorChar) + 1);
-        if (corrected) {
-            return new File(pathDir, pathNoDirAndHash).getAbsolutePath();
-        }
-        int pos = pathNoDirAndHash.lastIndexOf('.');
-        if (pos == -1) {
-            pathNoDirAndHash += "#";
-        } else {
-            pathNoDirAndHash = pathNoDirAndHash.substring(0, pos) + "#";
-        }
-        for (String file : pathDir.list()) {
-            if (file.indexOf(pathNoDirAndHash) != -1) {
-                path = new File(pathDir, file).getAbsolutePath();
-                return path;
-            }
-        }
-        Log.w("TrackdbAdapter", "can not get a new name for path '" + path + "'");
-        return path;
-    }
-
     public long createEntry(TrackDescriptionNG trackDescription) {
         ContentValues track = toContentValues(trackDescription);
         track.put(DB.COL_STATUS, "1");
@@ -191,9 +165,16 @@ public class TrackDbAdapter extends AbstractDbAdapter {
         if (cursor != null && !cursor.isClosed()) {
             // look if path is still valid
             String dbPath = cursor.getString(DB.COL_MAPPING.get(DB.COL_PATH));
-            String path = validatePath(dbPath);
+            Content track = CombatFactory.getFileLocator(context).findTrack(dbPath);
+            Uri path;
+            if (track != null) {
+                path = Uri.parse(track.getFullPath());
+            } else {
+                LOGGER.warning("Can not find track: " + dbPath);
+                path = Uri.parse(dbPath);
+            }
 
-            TrackDescriptionNG td = new TrackDescriptionNG(cursor.getLong(DB.COL_MAPPING.get(DB.COL_ID)), cursor.getString(DB.COL_MAPPING.get(DB.COL_NAME)), path,
+            TrackDescriptionNG td = new TrackDescriptionNG(cursor.getLong(DB.COL_MAPPING.get(DB.COL_ID)), cursor.getString(DB.COL_MAPPING.get(DB.COL_NAME)), path.toString(),
                     cursor.getLong(DB.COL_MAPPING.get(DB.COL_START_TIME)), cursor.getLong(DB.COL_MAPPING.get(DB.COL_END_TIME)), cursor.getInt(DB.COL_MAPPING
                     .get(DB.COL_MOVING_TIME)), cursor.getLong(DB.COL_MAPPING.get(DB.COL_DIST_H)),
                     cursor.getInt(DB.COL_MAPPING.get(DB.COL_DIST_V_UP)), cursor.getInt(DB.COL_MAPPING.get(DB.COL_AVG_PULSE)), cursor.getInt(DB.COL_MAPPING.get(DB.COL_MAX_PULSE)), activityFactory);
@@ -212,7 +193,7 @@ public class TrackDbAdapter extends AbstractDbAdapter {
                 NameValuePair nvp = it.next();
                 td.addMultiValueExtra(nvp.getName(), nvp.getValue());
             }
-            if (!dbPath.equals(path)) {
+            if (!dbPath.equals(path.toString())) {
                 updateEntry(td);
             }
             return td;
@@ -519,28 +500,6 @@ public class TrackDbAdapter extends AbstractDbAdapter {
             }
         }
         return success;
-    }
-
-    private String validatePath(String path) {
-        // since some versions, apemap adds a # and some extra info to the path when re-reading it
-        File pathFile = new File(path);
-        if (pathFile.exists()) {
-            return path;
-        }
-        File pathDir = pathFile.getParentFile();
-        if (pathDir == null) {
-            List<Property> trackFolders = Configuration.getInstance().getMultiValueDbProperty(Configuration.PROPERTY_TRACK_FOLDER);
-            for (Property folder : trackFolders) {
-                if (folder.getValue() != null) {
-                    File f = new File(correctApemapModifiedPath(path, new File(folder.getValue())));
-                    if (f.exists()) {
-                        return f.getAbsolutePath();
-                    }
-                }
-            }
-            return path;
-        }
-        return correctApemapModifiedPath(path, pathDir);
     }
 
     public static class DB {

@@ -1,24 +1,17 @@
 package at.dcosta.tracks;
 
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Point;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-import com.google.android.maps.Projection;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
 import at.dcosta.android.fw.props.Property;
 import at.dcosta.tracks.util.Configuration;
 
-public class TrackOverlay extends Overlay {
+public class TrackOverlay {
 
-    private final ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+    private final ArrayList<LatLng> geoPoints = new ArrayList<LatLng>();
 
     private final boolean markLastPoint;
 
@@ -27,7 +20,7 @@ public class TrackOverlay extends Overlay {
         this.markLastPoint = markLastPoint;
     }
 
-    public void addPoint(GeoPoint geoPoint) {
+    public void addPoint(LatLng geoPoint) {
         geoPoints.add(geoPoint);
     }
 
@@ -35,43 +28,43 @@ public class TrackOverlay extends Overlay {
         geoPoints.clear();
     }
 
-    @Override
-    public boolean draw(Canvas canvas, MapView mapView, boolean shadow, long when) {
-        super.draw(canvas, mapView, shadow);
-        if (geoPoints.size() > 0) {
-            Paint paint;
-            paint = new Paint();
-            paint.setColor(getTrackColor());
-            paint.setAntiAlias(true);
-            paint.setStyle(Style.STROKE);
-            paint.setStrokeWidth(2);
+//    @Override
+//    public boolean draw(Canvas canvas, MapFragment mapView, boolean shadow, long when) {
+//        super.draw(canvas, mapView, shadow);
+//        if (geoPoints.size() > 0) {
+//            Paint paint;
+//            paint = new Paint();
+//            paint.setColor(getTrackColor());
+//            paint.setAntiAlias(true);
+//            paint.setStyle(Style.STROKE);
+//            paint.setStrokeWidth(2);
+//
+//            Projection projection = mapView.getProjection();
+//            Point p1 = new Point();
+//            Point p2 = new Point();
+//            LatLng last = geoPoints.get(0);
+//            for (int i = 1; i < geoPoints.size(); i++) {
+//                LatLng act = geoPoints.get(i);
+//                projection.toPixels(last, p1);
+//                projection.toPixels(act, p2);
+//                canvas.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
+//                last = act;
+//            }
+//            if (markLastPoint) {
+//                projection.toPixels(last, p2);
+//                float len = 5f;
+//                canvas.drawLine(p2.x - len, p2.y + len, p2.x + len, p2.y - len, paint);
+//                canvas.drawLine(p2.x - len, p2.y - len, p2.x + len, p2.y + len, paint);
+//            }
+//        }
+//        return true;
+//    }
 
-            Projection projection = mapView.getProjection();
-            Point p1 = new Point();
-            Point p2 = new Point();
-            GeoPoint last = geoPoints.get(0);
-            for (int i = 1; i < geoPoints.size(); i++) {
-                GeoPoint act = geoPoints.get(i);
-                projection.toPixels(last, p1);
-                projection.toPixels(act, p2);
-                canvas.drawLine(p1.x, p1.y, p2.x, p2.y, paint);
-                last = act;
-            }
-            if (markLastPoint) {
-                projection.toPixels(last, p2);
-                float len = 5f;
-                canvas.drawLine(p2.x - len, p2.y + len, p2.x + len, p2.y - len, paint);
-                canvas.drawLine(p2.x - len, p2.y - len, p2.x + len, p2.y + len, paint);
-            }
-        }
-        return true;
-    }
-
-    public ArrayList<GeoPoint> getPoints() {
+    public ArrayList<LatLng> getPoints() {
         return geoPoints;
     }
 
-    private int getTrackColor() {
+    public int getTrackColor() {
         Property color = Configuration.getInstance().getSingleValueDbProperty("trackColor");
         if ("Blue".equals(color.getValue())) {
         } else if ("Red".equals(color.getValue())) {

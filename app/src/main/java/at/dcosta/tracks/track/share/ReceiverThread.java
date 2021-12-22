@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import at.dcosta.tracks.TrackCopy;
+import at.dcosta.tracks.TrackManager;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 
@@ -22,7 +23,7 @@ public abstract class ReceiverThread extends Thread {
         TrackDescriptionNG origTrack = track.getDescription();
         origTrack.setActivityFactory(trackDbAdapter.getActivityFactory());
         //try {
-        TrackCopy.copyTrack(origTrack, track.getTrack(), origTrack.getName(), 0, trackDbAdapter);
+        TrackCopy.copyTrack(TrackManager.context(), origTrack, track.getTrack(), origTrack.getName(), 0, trackDbAdapter);
         //} catch (ParsingException e) {
         //	System.err.println("Can not save received track: " + e.toString());
         //	return false;

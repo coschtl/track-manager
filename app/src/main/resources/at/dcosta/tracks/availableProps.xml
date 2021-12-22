@@ -5,13 +5,13 @@
         <displayname>Working dir:</displayname>
         <help>Base folder used for application data.</help>
     </property>
-    <property name="trackFolder" access="full" multivalue="true" position="2"
-        type="at.dcosta.android.fw.props.Folder">
+    <property name="trackFolder" access="read_only" multivalue="false" position="2"
+        type="java.lang.String">
         <displayname>Track folder:</displayname>
         <help>Folder to scan for tracks (multiple folders allowed).</help>
     </property>
-    <property name="photoFolder" access="full" multivalue="true" position="3"
-        type="at.dcosta.android.fw.props.Folder">
+    <property name="photoFolder" access="read_only" multivalue="false" position="3"
+        type="java.lang.String">
         <displayname>Photo folder:</displayname>
         <help>Folder to scan for photos (multiple folders allowed).</help>
     </property>

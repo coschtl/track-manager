@@ -3,7 +3,6 @@ package at.dcosta.tracks.backup;
 import android.app.Activity;
 import android.widget.ProgressBar;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,19 +13,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import at.dcosta.android.fw.IOUtil;
 import at.dcosta.android.fw.props.Property;
 import at.dcosta.android.fw.props.PropertyDbAdapter;
+import at.dcosta.tracks.CombatFactory;
 import at.dcosta.tracks.TrackEdit;
+import at.dcosta.tracks.TrackManager;
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.db.SavedSearchesDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescription;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.FileLocator;
 import at.dcosta.tracks.util.ActivityFactory;
 import at.dcosta.tracks.util.SavedSearch;
 
 public class BackupIO {
+
+    private static final Logger LOGGER = Logger.getLogger(BackupIO.class.getName());
 
     private static final String KEY_DB_TRACKS = "dbTracks";
     private static final String KEY_DB_PROPERTIES = "dbProperties";
@@ -64,29 +70,27 @@ public class BackupIO {
         }
     }
 
-    private void deserializeTrackDb(List<TrackDescription> l, Activity activity, ProgressBar progressBar) {
+    private void deserializeTrackDb(List<TrackDescriptionNG> l, Activity activity, ProgressBar progressBar) {
         trackDbAdapter.clear();
         ActivityFactory activityFactory = new ActivityFactory(activity);
         final float increment = (100f / (float) l.size());
         float totalInc = 0f;
-        for (TrackDescription td : l) {
-            TrackDescriptionNG tdng = new TrackDescriptionNG(td, activityFactory);
-            //// FIXME: remove the following lines!!!
-            String path = tdng.getPath();
-            File f = new File(path.substring(0, path.lastIndexOf('/')));
-            if (!f.exists()) {
-                int pos = path.lastIndexOf("/tracks/");
-                if (pos > 0) {
-                    tdng.setPath("/sdcard" + path.substring(pos));
-                }
+
+        for (Object td : l) {
+            TrackDescriptionNG tdng = td instanceof TrackDescriptionNG ? (TrackDescriptionNG) td : new TrackDescriptionNG((TrackDescription) td, activityFactory);
+            FileLocator fileLocator = CombatFactory.getFileLocator(activity);
+            Content track = fileLocator.findTrack(tdng.getPath());
+            if (track == null) {
+                LOGGER.severe("can not find track for " + tdng.getPath());
+                continue;
             }
-            ////
+            tdng.setPath(track.getFullPath());
             String iconExtra = tdng.getSingleValueExtra("icon");
             if (iconExtra != null && iconExtra.startsWith("res/")) {
                 iconExtra = iconExtra.replace("/drawable-hdpi-v4/", "/mipmap-hdpi/");
                 tdng.setSingleValueExtra("icon", iconExtra);
             }
-            TrackEdit.updateTrack(tdng, iconExtra, activityFactory);
+            TrackEdit.updateTrack(TrackManager.context(), tdng, iconExtra, activityFactory);
             trackDbAdapter.createEntry(tdng);
             totalInc += increment;
             progressBar.setProgress((int) totalInc);
@@ -112,7 +116,7 @@ public class BackupIO {
             System.out.println("restoring properties...");
             deserializePropertyDb((List<Property>) data.get(KEY_DB_PROPERTIES));
             System.out.println("restoring tracks...");
-            deserializeTrackDb((List<TrackDescription>) data.get(KEY_DB_TRACKS), activity, progressBar);
+            deserializeTrackDb((List<TrackDescriptionNG>) data.get(KEY_DB_TRACKS), activity, progressBar);
             System.out.println("restoring searches...");
             deserializeSearchDb((List<SavedSearch>) data.get(KEY_DB_SEARCHES));
         } catch (ClassNotFoundException e) {

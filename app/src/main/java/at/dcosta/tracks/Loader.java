@@ -3,21 +3,23 @@ package at.dcosta.tracks;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import at.dcosta.android.fw.props.Property;
 import at.dcosta.android.fw.props.PropertyDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 import at.dcosta.tracks.track.file.DirectoryAnalyzer;
+import at.dcosta.tracks.track.file.LegacyFileLocator;
 import at.dcosta.tracks.track.file.PathValidator;
 import at.dcosta.tracks.track.file.PhotoIdexer;
 import at.dcosta.tracks.util.ActivityFactory;
@@ -117,14 +119,12 @@ public class Loader extends Activity {
 
         @Override
         protected void doLoad() {
-            Iterator<Property> photoDirs = propertyDbAdapter.fetchAllProperties(Configuration.PROPERTY_PHOTO_FOLDER);
-            while (photoDirs.hasNext()) {
-                String path = photoDirs.next().getValue();
-                PhotoIdexer photoIdexer = new PhotoIdexer(trackDbAdapter, path);
+            for (Uri photoFolder : Configuration.getInstance().getPhotoFolders()) {
+                PhotoIdexer photoIdexer = new PhotoIdexer(parent, trackDbAdapter, photoFolder);
                 Message msg = handler.obtainMessage();
                 msg.arg1 = MSG_INIT;
                 msg.arg2 = photoIdexer.getPossibleCount();
-                msg.obj = "Reading photos form '" + path + "'...";
+                msg.obj = "Reading photos form '" + photoFolder + "'...";
                 handler.sendMessage(msg);
 
                 while (photoIdexer.hasNext()) {
@@ -205,13 +205,20 @@ public class Loader extends Activity {
             }
         }
 
-        private void analyzeDirectory(ActivityFactory activityFactory, String path) {
-            DirectoryAnalyzer analyzer = new DirectoryAnalyzer(activityFactory, path, this);
+        private void analyzeDirectory(ActivityFactory activityFactory, Uri trackFolder) {
+            DirectoryAnalyzer directoryAnalyzer = new DirectoryAnalyzer(parent, activityFactory, trackFolder, this);
+            analyzeDirectory(activityFactory, directoryAnalyzer, trackFolder.toString());
+        }
 
+        private void analyzeInternalDirectory(ActivityFactory activityFactory, File dir) {
+            analyzeDirectory(activityFactory, new DirectoryAnalyzer(parent, activityFactory, new LegacyFileLocator(), Uri.parse(dir.getAbsolutePath()), this), dir.getAbsolutePath());
+        }
+
+        private void analyzeDirectory(ActivityFactory activityFactory, DirectoryAnalyzer analyzer, String trackLocation) {
             Message msg = handler.obtainMessage();
             msg.arg1 = MSG_INIT;
             msg.arg2 = analyzer.getPossibleTrackCount();
-            msg.obj = "Reading tracks form '" + path + "'...";
+            msg.obj = "Reading tracks form '" + trackLocation + "'...";
             handler.sendMessage(msg);
 
             while (analyzer.moveToNext()) {
@@ -227,7 +234,7 @@ public class Loader extends Activity {
                         if (nameAndIcon != null) {
                             dbEntry.setName(nameAndIcon.name);
                             if (nameAndIcon.icon != null) {
-                                TrackEdit.updateTrack(dbEntry, nameAndIcon.icon, trackDbAdapter.getActivityFactory());
+                                TrackEdit.updateTrack(TrackManager.context(), dbEntry, nameAndIcon.icon, trackDbAdapter.getActivityFactory());
                             }
                             trackDbAdapter.updateEntry(dbEntry);
                         }
@@ -258,14 +265,12 @@ public class Loader extends Activity {
         protected void doLoad() {
             completeList = trackDbAdapter.getAllTrackPaths(true);
             ActivityFactory activityFactory = new ActivityFactory(parent);
-            Iterator<Property> propIter = propertyDbAdapter.fetchAllProperties(Configuration.PROPERTY_TRACK_FOLDER);
-            while (propIter.hasNext()) {
-                Property property = propIter.next();
-                String path = property.getValue();
-                analyzeDirectory(activityFactory, path);
+            Configuration config = Configuration.getInstance();
+            for (Uri trackFolder : config.getTrackFolders()) {
+                analyzeDirectory(activityFactory, trackFolder);
             }
-            analyzeDirectory(activityFactory, Configuration.getInstance().getRecordedTracksDir().getAbsolutePath());
-            analyzeDirectory(activityFactory, Configuration.getInstance().getCopiedTracksDir().getAbsolutePath());
+            analyzeInternalDirectory(activityFactory, config.getRecordedTracksDir());
+            analyzeInternalDirectory(activityFactory, config.getCopiedTracksDir());
         }
 
         private static final class NameAndIcon {

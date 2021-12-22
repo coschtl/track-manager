@@ -1,5 +1,6 @@
 package at.dcosta.tracks;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -21,10 +22,16 @@ import android.view.View.OnLongClickListener;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.JointType;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -37,8 +44,9 @@ import at.dcosta.tracks.util.PermissionUtil;
 import at.dcosta.tracks.util.PointUtil;
 import at.dcosta.tracks.util.TrackIO;
 
-public class RecordTrack extends MapActivity implements OnClickListener, OnLongClickListener, LocationListener {
+public class RecordTrack extends Activity implements OnMapReadyCallback, OnClickListener, OnLongClickListener, LocationListener {
 
+    private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     private final Messenger messenger = new Messenger(new IncomingHandler(this));
     private TrackOverlay trackOverlay;
     private MapView mapView;
@@ -48,6 +56,7 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
     private ServerProperties serverProperties;
     private Messenger messengerService = null;
     private final ServiceConnection mConnection = new ServiceConnection() {
+
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             // This is called when the connection with the service has been
@@ -84,6 +93,7 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
             System.out.println("remote_service_disconnected");
         }
     };
+    private GoogleMap map;
     private String trackName;
     private AskTrackName selectTrackName;
     private boolean doCenter = false;
@@ -105,28 +115,18 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
     }
 
     private void initButtons() {
-        playStopButton = (ImageButton) findViewById(R.id.but_play_stop);
+        playStopButton = findViewById(R.id.but_play_stop);
         playStopButton.setOnClickListener(this);
         setPlayStopIcon();
 
-        sendButton = (ImageButton) findViewById(R.id.but_send);
+        sendButton = findViewById(R.id.but_send);
         sendButton.setOnClickListener(this);
         setSendIcon();
 
-        gpsButton = (ImageButton) findViewById(R.id.but_gps);
+        gpsButton = findViewById(R.id.but_gps);
         gpsButton.setOnClickListener(this);
         gpsButton.setOnLongClickListener(this);
         setGpsIcon();
-    }
-
-    @Override
-    protected boolean isLocationDisplayed() {
-        return true;
-    }
-
-    @Override
-    protected boolean isRouteDisplayed() {
-        return false;
     }
 
     @Override
@@ -215,18 +215,81 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
             warnNoGps();
         }
 
-        mapView = (MapView) findViewById(R.id.mapview);
-        mapView.setSatellite(true);
-        mapView.setBuiltInZoomControls(true);
-        MapController controller = mapView.getController();
-        controller.setZoom(15);
+        Bundle mapViewBundle = null;
+        if (bundle != null) {
+            mapViewBundle = bundle.getBundle(MAPVIEW_BUNDLE_KEY);
+        }
+        mapView = findViewById(R.id.map);
+        mapView.onCreate(mapViewBundle);
+
+        mapView.getMapAsync(this);
+
+//        mapView = (MapFragment) findViewById(R.id.mapview);
+//        mapView.setSatellite(true);
+//        mapView.setBuiltInZoomControls(true);
+//        MapController controller = mapView.getController();
+//        controller.setZoom(15);
 
         if (trackOverlay == null) {
             trackOverlay = new TrackOverlay(true);
         }
-        mapView.getOverlays().add(trackOverlay);
-        mapView.invalidate();
+//        mapView.getOverlays().add(trackOverlay);
+//        mapView.invalidate();
         evaluateServerProperties();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
+        if (mapViewBundle == null) {
+            mapViewBundle = new Bundle();
+            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
+        }
+
+        mapView.onSaveInstanceState(mapViewBundle);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mapView.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mapView.onStop();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        GoogleMapOptions options = new GoogleMapOptions();
+        options.mapType(GoogleMap.MAP_TYPE_SATELLITE)
+                .compassEnabled(false)
+                .rotateGesturesEnabled(false)
+                .tiltGesturesEnabled(false);
+        map.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+        PolylineOptions polylineOptions = new PolylineOptions().clickable(true);
+        trackOverlay.getPoints().forEach(p -> polylineOptions.add(p));
+        Polyline polyline = map.addPolyline(polylineOptions);
+        polyline.setWidth(5);
+        polyline.setColor(trackOverlay.getTrackColor());
+        polyline.setJointType(JointType.ROUND);
+        this.map = map;
+    }
+
+    @Override
+    protected void onDestroy() {
+        mapView.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
     }
 
     @Override
@@ -234,10 +297,10 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
 
         if (lastLocation == null || location.distanceTo(lastLocation) > 20) {
             // System.out.println("accept: " + location);
-            GeoPoint geoPoint = PointUtil.createGeoPoint(location);
+            LatLng geoPoint = PointUtil.createGeoPoint(location);
             trackOverlay.addPoint(geoPoint);
             if (doCenter || neverCentered) {
-                mapView.getController().setCenter(geoPoint);
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(geoPoint, 5f));
                 mapView.invalidate();
                 neverCentered = false;
             }
@@ -256,6 +319,7 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
         unbindService(mConnection);
         lm.removeUpdates(this);
         super.onPause();
+        mapView.onPause();
     }
 
     @Override
@@ -285,6 +349,7 @@ public class RecordTrack extends MapActivity implements OnClickListener, OnLongC
         }
         setGpsIcon();
         super.onResume();
+        mapView.onResume();
     }
 
     @Override

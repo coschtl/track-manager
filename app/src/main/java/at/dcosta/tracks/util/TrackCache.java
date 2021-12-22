@@ -1,6 +1,9 @@
 package at.dcosta.tracks.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -61,7 +64,14 @@ public class TrackCache {
         if (!file.exists()) {
             return Collections.emptyList();
         }
-        return TrackIO.loadTmgrTrack(file);
+        try (FileInputStream in = new FileInputStream(file)) {
+            return TrackIO.loadTmgrTrack(in);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
     }
 
     public File save(long rowId, List<Point> points) {

@@ -2,6 +2,7 @@ package at.dcosta.tracks.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 
 import java.io.File;
 import java.io.InputStream;
@@ -9,14 +10,18 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import at.dcosta.android.fw.IOUtil;
 import at.dcosta.android.fw.props.ConfigurationException;
+import at.dcosta.android.fw.props.Folder;
 import at.dcosta.android.fw.props.Property;
 import at.dcosta.android.fw.props.PropertyConfiguration;
 import at.dcosta.android.fw.props.PropertyDbAdapter;
@@ -31,8 +36,8 @@ import at.dcosta.tracks.db.DatabaseHelper;
 public class Configuration {
 
     public static final String AVAILABLE_PROPS_XML = "at/dcosta/tracks/availableProps.xml";
-    public static final String PROPERTY_TRACK_FOLDER = "trackFolder";
-    public static final String PROPERTY_PHOTO_FOLDER = "photoFolder";
+    private static final String PROPERTY_TRACK_FOLDER = "trackFolder";
+    private static final String PROPERTY_PHOTO_FOLDER = "photoFolder";
     public static final String PROPERTY_TRACKING_SERVER = "trackingServer";
     public static final String PROPERTY_SERVER_SAVE_PATH = "serverSavePath";
     public static final String PROPERTY_SERVER_CLOSE_PATH = "serverClosePath";
@@ -75,6 +80,11 @@ public class Configuration {
         while (it.hasNext()) {
             Property prop = it.next();
             String name = prop.getName();
+            if (prop.getType() == Folder.class) {
+                if (prop.getValue() == null || !new File(prop.getValue()).exists()) {
+                    prop.setValue(prop.getDefaultValue());
+                }
+            }
             if (prop.isMultivalue()) {
                 List<Property> l;
                 if (multiValues.containsKey(name)) {
@@ -89,6 +99,46 @@ public class Configuration {
             }
         }
         propertyDbAdapter.close();
+    }
+
+    public void addTrackFolder(Uri trackFolder) {
+        Property prop = getSingleValueDbProperty(PROPERTY_TRACK_FOLDER);
+        prop.setValue(trackFolder.toString());
+        propertyDbAdapter.updateProperty(prop);
+    }
+
+    public void addPhotoFolder(Uri photoFolder) {
+        Property prop = getSingleValueDbProperty(PROPERTY_PHOTO_FOLDER);
+        prop.setValue(photoFolder.toString());
+        propertyDbAdapter.updateProperty(prop);
+    }
+
+    public List<Uri> getTrackFolders() {
+        Property trackFolder = getSingleValueDbProperty(PROPERTY_TRACK_FOLDER);
+        if (trackFolder.getValue() == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(trackFolder.getValue()).stream().map(s -> Uri.parse(s)).collect(Collectors.toList());
+    }
+
+    public List<Uri> getPhotoFolders() {
+        Property photoFolder = getSingleValueDbProperty(PROPERTY_PHOTO_FOLDER);
+        if (photoFolder.getValue() == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.asList(photoFolder.getValue()).stream().map(s -> Uri.parse(s)).collect(Collectors.toList());
+    }
+
+    public void clearPhotoFolders() {
+        Property prop = getSingleValueDbProperty(PROPERTY_PHOTO_FOLDER);
+        prop.setValue(null);
+        propertyDbAdapter.updateProperty(prop);
+    }
+
+    public void clearTrackFolders() {
+        Property prop = getSingleValueDbProperty(PROPERTY_TRACK_FOLDER);
+        prop.setValue(null);
+        propertyDbAdapter.updateProperty(prop);
     }
 
     public static synchronized Configuration getInstance() {
