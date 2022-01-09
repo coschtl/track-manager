@@ -113,7 +113,7 @@ public class ShareTest {
             descr = it.next();
         }
         try {
-            data = new TrackToShare[]{new TrackToShare(descr, TrackIO.loadTrack(new SAFContent(TrackManager.context(), descr.getPathUri())))};
+            data = new TrackToShare[]{new TrackToShare(descr, TrackIO.loadTrack(new SAFContent(TrackManager.context(), descr.getPathUri(), descr.getStartTime())))};
         } catch (ParsingException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

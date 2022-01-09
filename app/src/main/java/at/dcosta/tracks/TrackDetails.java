@@ -17,6 +17,7 @@ import android.widget.TextView;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.IdValuePair;
@@ -25,6 +26,7 @@ import at.dcosta.tracks.graph.TrackEkg;
 import at.dcosta.tracks.graph.TrackProfile;
 import at.dcosta.tracks.track.Distance;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.PhotoFinder;
 import at.dcosta.tracks.util.Configuration;
 import at.dcosta.tracks.util.TrackActivity;
 
@@ -78,7 +80,7 @@ public class TrackDetails extends ListActivity implements OnClickListener {
 				break;
 			case R.id.but_photos:
 				intent = createIntentForTrack(ViewPhotos.class);
-				intent.putExtra(ViewPhotos.KEY_IMAGES, (Serializable) trackDescription.getMultiValueExtra(TrackDescriptionNG.EXTRA_PHOTO));
+				intent.putExtra(ViewPhotos.KEY_IMAGES, (Serializable) trackDescription.getPhotos());
 				startActivity(intent);
 				break;
 		}
@@ -125,10 +127,10 @@ public class TrackDetails extends ListActivity implements OnClickListener {
 			activityIcon.setImageResource(activity.getIconId());
 		}
 
-		if (trackDescription.getMultiValueExtra(TrackDescriptionNG.EXTRA_PHOTO) != null) {
-			photos.setOnClickListener(this);
-		} else {
+		if (trackDescription.getPhotos().isEmpty()) {
 			photos.setVisibility(View.INVISIBLE);
+		} else {
+			photos.setOnClickListener(this);
 		}
 
 		List<IdValuePair> properties = new ArrayList<IdValuePair>();

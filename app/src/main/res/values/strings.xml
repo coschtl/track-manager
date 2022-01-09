@@ -28,6 +28,9 @@
     <string name="menu_merge_select">Toggle merge selection</string>
     <string name="menu_merge_tracks">Merge tracks</string>
     <string name="menu_preferencies">Preferencies</string>
+    <string name="menu_add_track_folder">Add Track folder</string>
+    <string name="menu_clear_track_folders">Clear Track folder configuration</string>
+    <string name="menu_photo_folder">Photo folder</string>
     <string name="menu_export_db">Export DB</string>
     <string name="menu_import_db">Import DB</string>
     <string name="menu_goto_date">Go to Date</string>

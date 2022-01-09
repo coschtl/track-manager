@@ -6,7 +6,6 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -69,7 +68,8 @@ import at.dcosta.tracks.backup.BackupIO;
 import at.dcosta.tracks.db.SavedSearchesDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
-import at.dcosta.tracks.track.file.PhotoIdexer;
+import at.dcosta.tracks.track.file.SAFFileLocator;
+import at.dcosta.tracks.track.file.legacy.PhotoIdexer;
 import at.dcosta.tracks.track.share.BluetoothReceiver;
 import at.dcosta.tracks.track.share.BluetoothSender;
 import at.dcosta.tracks.util.ActivityFactory;
@@ -80,7 +80,10 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     public static final double DATE_AREA_BORDER = 130.0;
     public static final int ID_GOTO_DATE = Menu.FIRST;
     public static final int MENU_PREFS = ID_GOTO_DATE + 1;
-    public static final int MENU_RECEIVE_BT = MENU_PREFS + 1;
+    public static final int MENU_ADD_TRACK_FOLDER = MENU_PREFS + 1;
+    public static final int MENU_CLEAR_TRACK_FOLDERS = MENU_ADD_TRACK_FOLDER + 1;
+    public static final int MENU_PHOTO_FOLDER = MENU_CLEAR_TRACK_FOLDERS + 1;
+    public static final int MENU_RECEIVE_BT = MENU_PHOTO_FOLDER + 1;
     public static final int MENU_EXPORT_DB = MENU_RECEIVE_BT + 1;
     public static final int MENU_IMPORT_DB = MENU_EXPORT_DB + 1;
     public static final int MENU_SHOW_MULTI_DAYS = MENU_IMPORT_DB + 1;
@@ -91,7 +94,6 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     public static final int ID_LOAD_TRACK = 10;
     public static final int APP_STORAGE_ACCESS_REQUEST_CODE = 100;
     public static final int REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE = 101;
-    public static final int REQUEST_ACTION_OPEN_PHOTO_DOCUMENT_TREE = 102;
     private static final Logger LOGGER = Logger.getLogger(TrackManager.class.getName());
     private static final String DATE_SHOWN = "dateShown";
     private static Context context;
@@ -103,7 +105,6 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     private Configuration config;
     private boolean mustCheckExternalStorageManagerPermission = true;
     private boolean mustCheckTrackDirReadPermission = true;
-    private boolean mustCheckPhotoDirReadPermission = true;
 
 
     public static Context context() {
@@ -174,17 +175,11 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
             return;
         }
         if (requestCode == REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE) {
-            Uri uri = data.getData();
-            config.addTrackFolder(uri);
-            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            if (!assurePermissions()) {
-                renderUi();
+            if (data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                config.addTrackFolder(uri);
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             }
-        }
-        if (requestCode == REQUEST_ACTION_OPEN_PHOTO_DOCUMENT_TREE) {
-            Uri uri = data.getData();
-            config.addPhotoFolder(uri);
-            getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
             if (!assurePermissions()) {
                 renderUi();
             }
@@ -252,6 +247,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 startActivityIfNeeded(intent, R.id.but_track_recording);
                 break;
             case R.id.but_reload:
+                System.out.println("-------------------> latest time: " + trackDbAdapter.findLatestEndTimeEpochMillis());
                 closeDbs();
                 intent = new Intent(this, Loader.class);
                 intent.putExtra(Loader.KEY_ACTION, Loader.ACTION_LOAD_NEW_TRACKS_AND_PHOTOS);
@@ -262,6 +258,9 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     }
 
     private boolean assurePermissions() {
+        if (CombatFactory.isLegacy()) {
+            return false;
+        }
         if (mustCheckExternalStorageManagerPermission) {
             mustCheckExternalStorageManagerPermission = false;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
@@ -271,25 +270,20 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 return true;
             }
         }
-        if (mustCheckPhotoDirReadPermission) {
-            mustCheckPhotoDirReadPermission = false;
-            if (!foldersValid(config.getPhotoFolders())) {
-                config.clearPhotoFolders();
-                Toast.makeText(this, "Please select photo folder", Toast.LENGTH_LONG).show();
-                assureDocumentTreeReadPermission("", REQUEST_ACTION_OPEN_PHOTO_DOCUMENT_TREE);
-                return true;
-            }
-        }
         if (mustCheckTrackDirReadPermission) {
             mustCheckTrackDirReadPermission = false;
             if (!foldersValid(config.getTrackFolders())) {
                 config.clearTrackFolders();
-                Toast.makeText(this, "Please select track folder", Toast.LENGTH_LONG).show();
-                assureDocumentTreeReadPermission("Android/data", REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE);
+                askForTrackFolder();
                 return true;
             }
         }
         return false;
+    }
+
+    private void askForTrackFolder() {
+        Toast.makeText(this, "Please select track folder", Toast.LENGTH_LONG).show();
+        assureDocumentTreeReadPermission("Android/data", REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE);
     }
 
     private boolean foldersValid(List<Uri> folders) {
@@ -331,16 +325,6 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         }
         super.onCreate(savedInstanceState);
         config = Configuration.getInstance(this);
-        System.out.println("****************************************************");
-        for (UriPermission persistedUriPermission : getContentResolver().getOutgoingPersistedUriPermissions()) {
-            System.out.println("OutgoingPersistedUriPermission: " + persistedUriPermission);
-        }
-        System.out.println("****************************************************");
-        for (UriPermission persistedUriPermission : getContentResolver().getPersistedUriPermissions()) {
-            System.out.println("PersistedUriPermission: " + persistedUriPermission);
-        }
-        System.out.println("****************************************************");
-
         if (!assurePermissions()) {
             renderUi();
         }
@@ -356,15 +340,6 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     }
 
     private void renderUi() {
-        System.out.println("+++++++++++++++++++++++++++++++++++++++");
-        for (UriPermission persistedUriPermission : getContentResolver().getOutgoingPersistedUriPermissions()) {
-            System.out.println("OutgoingPersistedUriPermission: " + persistedUriPermission);
-        }
-        System.out.println("+++++++++++++++++++++++++++++++++++++++");
-        for (UriPermission persistedUriPermission : getContentResolver().getPersistedUriPermissions()) {
-            System.out.println("PersistedUriPermission: " + persistedUriPermission);
-        }
-        System.out.println("+++++++++++++++++++++++++++++++++++++++");
         if (getResources().getConfiguration().orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT) {
             setContentView(R.layout.calendar);
         } else {
@@ -372,7 +347,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         }
         findViewById(R.id.but_list).setOnClickListener(this);
         findViewById(R.id.but_search).setOnClickListener(this);
-        findViewById(R.id.but_track_recording).setOnClickListener(this);
+        //findViewById(R.id.but_track_recording).setOnClickListener(this);
         findViewById(R.id.but_reload).setOnClickListener(this);
         gestureDetector = new GestureDetector(this, this);
         gestureDetector.setOnDoubleTapListener(this);
@@ -387,13 +362,20 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         int order = 0;
         // testing
         // menu.add(0, MENU_DEMO, order++, "Androidplot DEMO");
+//        menu.add(0, 47110815, order++, "list tracks");
         menu.add(0, ID_GOTO_DATE, order++, R.string.menu_goto_date);
         menu.add(0, MENU_PREFS, order++, R.string.menu_preferencies);
+        if (!CombatFactory.isLegacy()) {
+            menu.add(0, MENU_ADD_TRACK_FOLDER, order++, R.string.menu_add_track_folder);
+            menu.add(0, MENU_CLEAR_TRACK_FOLDERS, order++, R.string.menu_clear_track_folders);
+        }
         menu.add(0, MENU_RECEIVE_BT, order++, R.string.menu_receive_tracks);
         menu.add(0, MENU_EXPORT_DB, order++, R.string.menu_export_db);
         menu.add(0, MENU_IMPORT_DB, order++, R.string.menu_import_db);
         menu.add(0, MENU_SHOW_MULTI_DAYS, order++, R.string.menu_show_multi_activity_days);
-        menu.add(0, MENU_RESCAN_PHOTOS, order++, R.string.menu_rescan_phtots);
+        if (CombatFactory.isLegacy()) {
+            menu.add(0, MENU_RESCAN_PHOTOS, order++, R.string.menu_rescan_phtots);
+        }
         menu.add(0, MENU_RECREATE_STATISTICS, order++, R.string.menu_recreate_statistics);
         return true;
     }
@@ -461,6 +443,10 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         final RelativeLayout progress = findViewById(R.id.progress);
         final ProgressBar progressBar = findViewById(R.id.progressBar);
         switch (item.getItemId()) {
+//            case 47110815:
+//                SAFFileLocator locator = new SAFFileLocator(this);
+//                locator.listFiles(config.getTrackFolders().get(0),-1);
+//                return true;
             case MENU_DEMO:
                 closeDbs();
                 intent = new Intent(this, at.dcosta.tracks.graph.XYPlotDemo.class);
@@ -473,6 +459,12 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 intent = new Intent(this, at.dcosta.android.fw.props.gui.PropertyList.class);
                 intent.putExtra(IdHolder.class.getName(), idHolder);
                 startActivityForResult(intent, 1);
+                return true;
+            case MENU_ADD_TRACK_FOLDER:
+                askForTrackFolder();
+                return true;
+            case MENU_CLEAR_TRACK_FOLDERS:
+                config.clearTrackFolders();
                 return true;
             case ID_GOTO_DATE:
                 showDateChooser();

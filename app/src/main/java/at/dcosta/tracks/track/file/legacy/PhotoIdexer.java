@@ -1,10 +1,9 @@
-package at.dcosta.tracks.track.file;
+package at.dcosta.tracks.track.file.legacy;
 
 import android.content.Context;
 import android.media.ExifInterface;
 import android.net.Uri;
 
-import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,12 +13,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import at.dcosta.tracks.CombatFactory;
 import at.dcosta.tracks.combat.Content;
+import at.dcosta.tracks.combat.FileContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.PathValidator;
 import at.dcosta.tracks.util.Configuration;
+import at.dcosta.tracks.util.Photo;
 import at.dcosta.tracks.util.PhotoRegistry;
 
 public class PhotoIdexer {
@@ -35,35 +38,46 @@ public class PhotoIdexer {
     private final long tolerance;
     private final Set<String> pathRegistry;
     private int position;
+    private final boolean fullScan;
 
-    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, Uri photoPath) {
+    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, Uri photoPath, boolean fullScan) {
         this(context, trackDbAdapter, photoPath, new PathValidator() {
 
             @Override
             public boolean isValid(String path) {
                 return !PHOTO_REGISTRY.contains(path);
             }
-        });
+        }, fullScan);
+    }
+
+    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, Uri photoPath, PathValidator pathValidator, boolean fullScan) {
+        this.trackDbAdapter = trackDbAdapter;
+        this.pathValidator = pathValidator;
+        this.fullScan = fullScan;
+        fileList = new ArrayList<>();
+        if (photoPath != null) {
+            addFilePaths(context, photoPath, fileList);
+        }
+        maxId = fileList.size() - 1;
+        tolerance = 60000L * Configuration.getInstance().getTrackFotoTolerance();
+        pathRegistry = new TreeSet<String>();
     }
 
     public static void clear() {
         PHOTO_REGISTRY.clear();
     }
 
-    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, Uri photoPath, PathValidator pathValidator) {
-        this.trackDbAdapter = trackDbAdapter;
-        this.pathValidator = pathValidator;
-        fileList = new ArrayList<>();
-        if (photoPath != null) {
-            addFilePaths(context, photoPath, fileList);
-        }
-        maxId = fileList.size() - 1;
-        tolerance = 60000L * Configuration.getInstance().getTrack_foto_tolerance();
-        pathRegistry = new TreeSet<String>();
+    private void addFilePaths(Context context, Uri photoPath, List<Content> filelist) {
+        filelist.addAll(list(context, photoPath).filter(path -> {
+            return path.getName().toLowerCase().endsWith(".jpg") || path.getName().toLowerCase().endsWith(".jpeg");
+        }).collect(Collectors.toList()));
     }
 
-    private void addFilePaths(Context context, Uri photoPath, List<Content> filelist) {
-        filelist.addAll(CombatFactory.getFileLocator(context).list(photoPath).collect(Collectors.toList()));
+    private Stream<Content> list(Context context, Uri photoPath) {
+        if (fullScan) {
+            return CombatFactory.getFileLocator(context).list(photoPath, -1);
+        }
+        return CombatFactory.getFileLocator(context).list(photoPath, PHOTO_REGISTRY.getLatestCreateDate());
     }
 
     private TrackDescriptionNG getExactMatch(Date date) {
@@ -98,10 +112,9 @@ public class PhotoIdexer {
         return false;
     }
 
-    private void processFile(Content image) {
-        try (InputStream in = image.getInputStream()) {
-            LOGGER.info("processing image " + image.getName());
-            ExifInterface exif = new ExifInterface(in);
+    private void processFile(FileContent image) {
+        try {
+            ExifInterface exif = new ExifInterface(image.getFullPath());
             String dateTime = exif.getAttribute(ExifInterface.TAG_DATETIME);
             if (dateTime != null) {
                 try {
@@ -118,21 +131,20 @@ public class PhotoIdexer {
                         if (!pathRegistry.contains(entry.getPath())) {
                             // we get this entry for the first time
                             // thererfore we have to remove all photos from the last time
-                            if (entry.getMultiValueExtra(TrackDescriptionNG.EXTRA_PHOTO) != null) {
-                                entry.getMultiValueExtra(TrackDescriptionNG.EXTRA_PHOTO).clear();
+                            if (entry.getMultiValueExtra("photo") != null) {
+                                entry.getMultiValueExtra("photo").clear();
                             }
                             pathRegistry.add(entry.getPath());
                         }
-                        entry.addMultiValueExtra(TrackDescriptionNG.EXTRA_PHOTO, image.getFullPath());
+                        entry.addMultiValueExtra("photo", image.getFullPath());
                         trackDbAdapter.updateEntry(entry);
                     }
                 } catch (ParseException e) {
                     LOGGER.severe("ERROR processing image " + image.getName() + ": " + e.getMessage());
-                    e.printStackTrace();
-                    throw new RuntimeException("error while processing path " + image.getName(), e);
                 }
             }
-            PHOTO_REGISTRY.add(image.getFullPath());
+            PHOTO_REGISTRY.add(new Photo());
+//            PHOTO_REGISTRY.add(new Photo(image));
         } catch (Exception e) {
             LOGGER.severe("ERROR processing image " + image.getName() + ": " + e.getMessage());
             e.printStackTrace();
@@ -141,6 +153,6 @@ public class PhotoIdexer {
     }
 
     public void processNext() {
-        processFile(fileList.get(position++));
+        processFile((FileContent) fileList.get(position++));
     }
 }

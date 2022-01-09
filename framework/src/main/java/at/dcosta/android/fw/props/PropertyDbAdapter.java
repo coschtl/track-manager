@@ -7,12 +7,15 @@ import android.database.SQLException;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import at.dcosta.android.fw.db.AbstractCursorIterator;
 import at.dcosta.android.fw.db.AbstractDbAdapter;
 import at.dcosta.android.fw.db.DbUtil;
 
 public class PropertyDbAdapter extends AbstractDbAdapter {
+
+    private static final Logger LOGGER = Logger.getLogger(PropertyDbAdapter.class.getName());
 
     private final PropertyConfiguration propertyConfiguration;
 
@@ -35,14 +38,20 @@ public class PropertyDbAdapter extends AbstractDbAdapter {
 
     private Property createProperty(Cursor cursor) {
         if (cursor == null) {
+            LOGGER.warning("Can not create Property, cursor is null");
             return null;
         }
         String name = cursor.getString(DB.COL_MAPPING.get(DB.COL_NAME));
-        Property property = new Property(cursor.getLong(DB.COL_MAPPING.get(DB.COL_ID)), propertyConfiguration.getByName(name));
-        property.setCategory(cursor.getString(DB.COL_MAPPING.get(DB.COL_CATEGORY)));
-        property.setValue(cursor.getString(DB.COL_MAPPING.get(DB.COL_VALUE)));
-        property.setPosition(cursor.getInt(DB.COL_MAPPING.get(DB.COL_POSITION)));
-        return property;
+        try {
+            Property property = new Property(cursor.getLong(DB.COL_MAPPING.get(DB.COL_ID)), propertyConfiguration.getByName(name));
+            property.setCategory(cursor.getString(DB.COL_MAPPING.get(DB.COL_CATEGORY)));
+            property.setValue(cursor.getString(DB.COL_MAPPING.get(DB.COL_VALUE)));
+            property.setPosition(cursor.getInt(DB.COL_MAPPING.get(DB.COL_POSITION)));
+            return property;
+        } catch (ConfigurationException e) {
+            LOGGER.warning("Can not create Property: " + e.getMessage());
+            return null;
+        }
     }
 
     /**

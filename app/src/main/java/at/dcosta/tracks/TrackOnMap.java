@@ -21,6 +21,7 @@ import java.util.List;
 
 import at.dcosta.android.fw.props.Property;
 import at.dcosta.tracks.combat.SAFContent;
+import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Distance;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -62,9 +63,10 @@ public class TrackOnMap extends FragmentActivity
                 }
             } else {
                 String path = extras.getString(TrackDescriptionNG.KEY_PATH);
-                TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(this, Uri.parse(path)), Validators.DEFAULT);
-                reader.setListener(painter);
-                try {
+                try (TrackDbAdapter trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), this)) {
+                    final TrackDescriptionNG track = trackDbAdapter.fetchEntry(trackId);
+                    TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(TrackManager.context(), Uri.parse(path), track.getStartTime()), Validators.DEFAULT);
+                    reader.setListener(painter);
                     reader.readTrack();
                 } catch (ParsingException e) {
                     e.printStackTrace();

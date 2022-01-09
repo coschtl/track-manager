@@ -15,8 +15,12 @@ import java.util.regex.Pattern;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.gui.IconListBean;
+import at.dcosta.tracks.CombatFactory;
 import at.dcosta.tracks.R;
+import at.dcosta.tracks.TrackManager;
+import at.dcosta.tracks.track.file.PhotoFinder;
 import at.dcosta.tracks.util.ActivityFactory;
+import at.dcosta.tracks.util.Photo;
 import at.dcosta.tracks.util.TrackActivity;
 
 public class TrackDescriptionNG implements Serializable {
@@ -44,6 +48,7 @@ public class TrackDescriptionNG implements Serializable {
     private int maxPulse;
     private transient ActivityFactory activityFactory;
     private String name;
+    private List<Photo> photos;
 
     public TrackDescriptionNG(TrackDescription td, ActivityFactory activityFactory) {
         path = td.getPath();
@@ -97,6 +102,13 @@ public class TrackDescriptionNG implements Serializable {
         list.add(value);
         setMultiValueExtra(name, list);
         return this;
+    }
+
+    public List<Photo> getPhotos() {
+        if (photos == null) {
+            photos = PhotoFinder.findPhotos(TrackManager.context(), getStartTime(), getEndTime());
+        }
+        return photos;
     }
 
     public TrackActivity getActivity() {
@@ -220,8 +232,8 @@ public class TrackDescriptionNG implements Serializable {
         IconListBean bean = new IconListBean(id, getName(), body, activity.getIconId());
         bean.setExtra(KEY_ID, getId());
         bean.setExtra(KEY_PATH, getPath());
-        List<String> extraPhotos = getMultiValueExtra(EXTRA_PHOTO);
-        if (extraPhotos != null && extraPhotos.size() > 0) {
+        boolean hasPhotos;
+        if (CombatFactory.hasPhotos(this)) {
             bean.setExtra(IconListBean.KEY_ADDITIONAL_ICON1, at.dcosta.tracks.R.mipmap.camera);
         }
         if (getAvgPulse() > 0) {

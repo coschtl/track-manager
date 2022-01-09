@@ -34,7 +34,7 @@ public class PropertyConfiguration implements Serializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ConfigurationException("Eror reading Configuration XML file!", e);
+            throw new ConfigurationException("Error reading Configuration XML file!", e);
         }
     }
 

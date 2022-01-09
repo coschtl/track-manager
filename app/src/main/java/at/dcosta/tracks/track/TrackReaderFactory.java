@@ -9,22 +9,37 @@ import at.dcosta.tracks.validator.DistanceValidator;
 
 public class TrackReaderFactory {
 
-    public static TrackReader getTrackReader(Content trackContent, DistanceValidator validator) {
+    public static boolean canRead(Content trackContent) {
+        String suffix = getLowercaseSuffix(trackContent);
+        if (suffix == null) {
+            return false;
+        }
+        return TrkReader.EXTENSION.equals(suffix) || GpxSaxReader.EXTENSION.equals(suffix) || TmgrReader.EXTENSION.equals(suffix);
+    }
+
+    private static String getLowercaseSuffix(Content trackContent) {
         String name = trackContent.getName();
         int pos = name.lastIndexOf('.');
         if (pos < 0) {
-            throw new IllegalArgumentException("Can not determine Reader from filename '" + name + "'. Make sure that the filename has an extension!");
+            return null;
         }
-        name = name.substring(pos + 1).toLowerCase();
-        if (TrkReader.EXTENSION.equals(name)) {
+        return name.substring(pos + 1).toLowerCase();
+    }
+
+    public static TrackReader getTrackReader(Content trackContent, DistanceValidator validator) {
+        String suffix = getLowercaseSuffix(trackContent);
+        if (suffix == null) {
+            throw new IllegalArgumentException("Can not determine Reader from filename '" + trackContent.getName() + "'. Make sure that the filename has an extension!");
+        }
+        if (TrkReader.EXTENSION.equals(suffix)) {
             return new TrkReader(trackContent, validator);
-        } else if (GpxSaxReader.EXTENSION.equals(name)) {
+        } else if (GpxSaxReader.EXTENSION.equals(suffix)) {
             return new GpxSaxReader(trackContent, validator);
             // return new GpxReader(trackfile, validator);
-        } else if (TmgrReader.EXTENSION.equals(name)) {
+        } else if (TmgrReader.EXTENSION.equals(suffix)) {
             return new TmgrReader(trackContent, validator);
         }
-        throw new IllegalArgumentException("Unknown file type: " + name);
+        throw new IllegalArgumentException("Unknown file type: " + suffix);
     }
 
 }

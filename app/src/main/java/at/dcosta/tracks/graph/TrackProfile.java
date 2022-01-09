@@ -370,7 +370,7 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
         if (extras != null) {
             path = extras.getString(TrackDescriptionNG.KEY_PATH);
         }
-        plot = (XYPlot) findViewById(R.id.plot);
+        plot = findViewById(R.id.plot);
 
         drawGraph();
 

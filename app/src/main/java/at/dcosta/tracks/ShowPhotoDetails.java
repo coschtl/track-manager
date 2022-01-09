@@ -83,7 +83,6 @@ public class ShowPhotoDetails extends AlertDialog {
                             int count = 0;
                             do {
                                 count++;
-                                System.out.println("geocoding");
                                 Geocoder geocoder = new Geocoder(context);
                                 try {
                                     final List<Address> location = geocoder.getFromLocation(latLon[0], latLon[1], 1);

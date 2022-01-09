@@ -92,7 +92,7 @@ public class TrackCopy extends Activity implements OnClickListener {
             startDate = DateUtil.DATE_TIME_FORMAT_NUMERIC_LONG.parse(new StringBuilder(date.getText()).append(" ").append(time.getText()).append(":00")
                     .toString());
             long timeDiffMillis = startDate.getTime() - origTrack.getStartTime().getTime();
-            copyTrack(this, origTrack, TrackIO.loadTrack(new SAFContent(this, origTrack.getPathUri())), name.getText().toString(), timeDiffMillis, trackDbAdapter);
+            copyTrack(this, origTrack, TrackIO.loadTrack(new SAFContent(this, origTrack.getPathUri(), origTrack.getStartTime())), name.getText().toString(), timeDiffMillis, trackDbAdapter);
             setResult(TrackList.CONTEXT_EDIT_ID, getIntent());
             finish();
         } catch (ParseException e) {

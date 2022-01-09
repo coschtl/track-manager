@@ -22,13 +22,14 @@ import java.util.List;
 
 import at.dcosta.tracks.util.BitmapUtil;
 import at.dcosta.tracks.util.Configuration;
+import at.dcosta.tracks.util.Photo;
 
 public class ViewPhotos extends Activity implements OnGestureListener, OnDoubleTapListener, OnTouchListener, OnScaleGestureListener {
 
     public static final String KEY_IMAGES = "images";
     private final Matrix matrix = new Matrix();
     private final Matrix savedMatrix = new Matrix();
-    private List<String> images;
+    private List<Photo> images;
     private ImageView photoView;
     private int pos;
     private Configuration config;
@@ -42,7 +43,7 @@ public class ViewPhotos extends Activity implements OnGestureListener, OnDoubleT
 
     private boolean landscape;
 
-    private String getAktImage() {
+    private Photo getAktImage() {
         return images.get(pos);
     }
 
@@ -69,7 +70,7 @@ public class ViewPhotos extends Activity implements OnGestureListener, OnDoubleT
 
         photoView = (ImageView) findViewById(R.id.photo);
         Bundle extras = getIntent().getExtras();
-        images = extras.getStringArrayList(KEY_IMAGES);
+        images = (List<Photo>) extras.get(KEY_IMAGES);
         if (savedInstanceState != null) {
             pos = savedInstanceState.getInt("POS", 0);
         }
@@ -123,7 +124,7 @@ public class ViewPhotos extends Activity implements OnGestureListener, OnDoubleT
 
     @Override
     public void onLongPress(MotionEvent e) {
-        new ShowPhotoDetails(this).setPhotoPath(getAktImage()).show();
+        new ShowPhotoDetails(this).setPhotoPath(getAktImage().getPath()).show();
         // ignore
     }
 
@@ -216,17 +217,31 @@ public class ViewPhotos extends Activity implements OnGestureListener, OnDoubleT
 
     private void showPhoto() {
         recycleBitmap();
-        String image = getAktImage();
-        bitmapImage = BitmapFactory.decodeFile(image, bitmapOptions);
+        Photo image = getAktImage();
+        bitmapImage = BitmapFactory.decodeFile(image.getPath(), bitmapOptions);
 
-        if (bitmapImage.getWidth() > bitmapImage.getHeight()) {
-            Matrix rotate = new Matrix();
-            rotate.postRotate(90);
+//        if (bitmapImage.getWidth() > bitmapImage.getHeight()) {
+//            Matrix rotate = new Matrix();
+//            rotate.postRotate(90);
+//            landscape = true;
+//            bitmapImage = Bitmap.createBitmap(bitmapImage, 0, 0, bitmapImage.getWidth(), bitmapImage.getHeight(), rotate, true);
+//        } else {
+//            landscape = false;
+//        }
+        int rotation = image.getOrientation();
+        if (image.getOrientation() == 0 || image.getOrientation() == 180) {
+            rotation+=90;
             landscape = true;
-            bitmapImage = Bitmap.createBitmap(bitmapImage, 0, 0, bitmapImage.getWidth(), bitmapImage.getHeight(), rotate, true);
         } else {
             landscape = false;
         }
+        Matrix rotate = new Matrix();
+        rotate.postRotate(rotation);
+        bitmapImage = Bitmap.createBitmap(bitmapImage, 0, 0, bitmapImage.getWidth(), bitmapImage.getHeight(), rotate, true);
+//        Matrix rotate = new Matrix();
+//        rotate.postRotate(image.getOrientation() + 90);
+//        bitmapImage = Bitmap.createBitmap(bitmapImage, 0, 0, bitmapImage.getWidth(), bitmapImage.getHeight(), rotate, true);
+//        landscape = image.getOrientation() == 90 || image.getOrientation() == 270;
         defaultScale = bitmapUtil.getScaleFactor(bitmapImage);
         photoView.setImageBitmap(bitmapImage);
         photoView.setScaleType(ScaleType.MATRIX);

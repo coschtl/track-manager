@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.gui.IconListActivity;
@@ -466,7 +467,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 	private void showPhotos(final IconListBean bean) {
 		Intent intent = new Intent(this, ViewPhotos.class);
 		TrackDescriptionNG track = trackDbAdapter.findEntryByPath((String) bean.getExtra(TrackDescriptionNG.KEY_PATH));
-		intent.putExtra(ViewPhotos.KEY_IMAGES, (Serializable) track.getMultiValueExtra(TrackDescriptionNG.EXTRA_PHOTO));
+		intent.putExtra(ViewPhotos.KEY_IMAGES, (Serializable) track.getPhotos());
 		startActivity(intent);
 	}
 

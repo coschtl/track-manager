@@ -2,6 +2,7 @@ package at.dcosta.android.fw;
 
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
+import android.database.Cursor;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,6 +43,18 @@ public class IOUtil {
                 in.close();
             } catch (IOException e) {
                 throw new FrameworkException("Cannot close InputStream", e);
+            }
+        }
+    }
+
+    public static void close(Cursor c, boolean suppressException) {
+        if (c != null) {
+            try {
+                c.close();
+            } catch (Exception e) {
+                if (!suppressException) {
+                    throw new FrameworkException("Cannot close Cursor", e);
+                }
             }
         }
     }

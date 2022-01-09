@@ -16,19 +16,25 @@ public class LegacyFileLocator extends FileLocator {
     public static final String[] PATH_SEPARATORS = new String[]{"/"};
 
     @Override
-    public int getContentCount(Uri path) {
+    public int getContentCount(Uri path, long newerThanEpochMillis) {
         if (path == null) {
             return 0;
         }
-        return new File(path.toString()).listFiles().length;
+        if (newerThanEpochMillis == -1) {
+            return new File(path.toString()).listFiles().length;
+        }
+        return new File(path.toString()).listFiles(file -> file.lastModified() > newerThanEpochMillis).length;
     }
 
     @Override
-    public Stream<Content> list(Uri path, boolean clearCache) {
+    public Stream<Content> list(Uri path, long newerThanEpochMillis, boolean clearCache) {
         if (path == null) {
             return Stream.empty();
         }
-        return Arrays.stream(new File(path.toString()).listFiles()).map(file -> new FileContent(file));
+        if (newerThanEpochMillis >= 0) {
+            return Arrays.stream(new File(path.toString()).listFiles()).map(file -> new FileContent(file));
+        }
+        return Arrays.stream(new File(path.toString()).listFiles(file -> file.lastModified() > newerThanEpochMillis)).map(file -> new FileContent(file));
     }
 
     @Override

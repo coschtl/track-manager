@@ -49,7 +49,7 @@ public class XYPlotDemo extends Activity {
         setContentView(R.layout.track_profile);
 
         // initialize our XYPlot reference:
-        plot = (XYPlot) findViewById(R.id.plot);
+        plot = findViewById(R.id.plot);
 
         // create a couple arrays of y-values to plot:
         final Number[] seriesTimes = {1554497596000L, 1554497716000L, 1554497795000L, 1554497820000L, 1554497832000L, 1554497892000L, 1554498132000L, 1554498306000L, 1554498360000L, 1554498373000L};

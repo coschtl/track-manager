@@ -15,7 +15,6 @@ public abstract class FileLocator {
         int i = 0;
         int pos = -1;
         String pathSeparator;
-        String plainTrackName;
         do {
             pathSeparator = pathSeparators[i];
             pos = fileName.lastIndexOf(pathSeparator);
@@ -27,13 +26,13 @@ public abstract class FileLocator {
         return fileName;
     }
 
-    public Stream<Content> list(Uri path) {
-        return list(path, false);
+    public Stream<Content> list(Uri path, long newerThanEpochMillis) {
+        return list(path, newerThanEpochMillis, false);
     }
 
-    public abstract int getContentCount(Uri path);
+    public abstract int getContentCount(Uri path, long newerThanEpochMillis);
 
-    public abstract Stream<Content> list(Uri path, boolean clearCache);
+    public abstract Stream<Content> list(Uri path, long newerThanEpochMillis, boolean clearCache);
 
     public Content findPhoto(String fileName) {
         return findFile(fileName, Configuration.getInstance().getTrackFolders(), name -> getFileNameFromPath(name, getPathSeparators()));

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Date;
 
 public class FileContent implements Content {
 
@@ -21,6 +22,11 @@ public class FileContent implements Content {
     @Override
     public String getName() {
         return file.getName();
+    }
+
+    @Override
+    public Date getModificationDate() {
+        return new Date(file.lastModified());
     }
 
     @Override

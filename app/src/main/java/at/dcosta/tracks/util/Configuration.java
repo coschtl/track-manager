@@ -10,8 +10,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,6 +23,7 @@ import at.dcosta.android.fw.props.Folder;
 import at.dcosta.android.fw.props.Property;
 import at.dcosta.android.fw.props.PropertyConfiguration;
 import at.dcosta.android.fw.props.PropertyDbAdapter;
+import at.dcosta.tracks.CombatFactory;
 import at.dcosta.tracks.R;
 import at.dcosta.tracks.RecordTrack;
 import at.dcosta.tracks.RecordTrackOsm;
@@ -35,7 +34,7 @@ import at.dcosta.tracks.db.DatabaseHelper;
 
 public class Configuration {
 
-    public static final String AVAILABLE_PROPS_XML = "at/dcosta/tracks/availableProps.xml";
+    public static final String AVAILABLE_PROPS_XML = "at/dcosta/tracks/availableProps" + (CombatFactory.isLegacy() ? "_legacy.xml" : ".xml");
     private static final String PROPERTY_TRACK_FOLDER = "trackFolder";
     private static final String PROPERTY_PHOTO_FOLDER = "photoFolder";
     public static final String PROPERTY_TRACKING_SERVER = "trackingServer";
@@ -55,10 +54,11 @@ public class Configuration {
     private static final String COPIED_TRACKS_SUBDIR = "copiedTracks";
     private static Configuration _instance;
     private final SimpleDateFormat dateFormat;
-    private final int wipeSensitivity, track_foto_tolerance;
+    private final int wipeSensitivity, trackFotoTolerance;
     private final Map<String, Property> singleValues = new HashMap<String, Property>();
     private final Map<String, List<Property>> multiValues = new HashMap<String, List<Property>>();
     private final SQLiteOpenHelper databaseHelper;
+    private final PropertyConfiguration propertyConfiguration;
     private final PropertyDbAdapter propertyDbAdapter;
     private TrackCache trackCache;
 
@@ -66,19 +66,20 @@ public class Configuration {
         databaseHelper = new DatabaseHelper(ctx);
         dateFormat = new SimpleDateFormat(ctx.getString(R.string.CFG_DATE_FORMAT));
         wipeSensitivity = Integer.parseInt(ctx.getString(R.string.CFG_WIPE_SENSITIVITY));
-        track_foto_tolerance = Integer.parseInt(ctx.getString(R.string.CFG_TRACK_FOTO_TOLERANCE_MINUTES));
+        trackFotoTolerance = Integer.parseInt(ctx.getString(R.string.CFG_TRACK_FOTO_TOLERANCE_MINUTES));
 
         InputStream is = getClass().getClassLoader().getResourceAsStream(AVAILABLE_PROPS_XML);
-        PropertyConfiguration cfg = new PropertyConfiguration(is);
+        propertyConfiguration = new PropertyConfiguration(is);
         IOUtil.close(is);
 
-        propertyDbAdapter = new PropertyDbAdapter(ctx, cfg);
-        // propertyDbAdapter.forceUpgrade(7);
-        // propertyDbAdapter.clear();
+        propertyDbAdapter = new PropertyDbAdapter(ctx, propertyConfiguration);
         propertyDbAdapter.assurePropertiesInDb();
         Iterator<Property> it = propertyDbAdapter.fetchAllProperties();
         while (it.hasNext()) {
             Property prop = it.next();
+            if (prop == null) {
+                continue;
+            }
             String name = prop.getName();
             if (prop.getType() == Folder.class) {
                 if (prop.getValue() == null || !new File(prop.getValue()).exists()) {
@@ -102,43 +103,27 @@ public class Configuration {
     }
 
     public void addTrackFolder(Uri trackFolder) {
-        Property prop = getSingleValueDbProperty(PROPERTY_TRACK_FOLDER);
+        Property prop = new Property(propertyConfiguration.getByName(PROPERTY_TRACK_FOLDER));
         prop.setValue(trackFolder.toString());
         propertyDbAdapter.updateProperty(prop);
-    }
-
-    public void addPhotoFolder(Uri photoFolder) {
-        Property prop = getSingleValueDbProperty(PROPERTY_PHOTO_FOLDER);
-        prop.setValue(photoFolder.toString());
-        propertyDbAdapter.updateProperty(prop);
+        multiValues.get(PROPERTY_TRACK_FOLDER).add(prop);
     }
 
     public List<Uri> getTrackFolders() {
-        Property trackFolder = getSingleValueDbProperty(PROPERTY_TRACK_FOLDER);
-        if (trackFolder.getValue() == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(trackFolder.getValue()).stream().map(s -> Uri.parse(s)).collect(Collectors.toList());
+        return getMultiValueDbProperty(PROPERTY_TRACK_FOLDER).stream().filter(prop -> prop.getValue() != null).map(prop -> Uri.parse(prop.getValue())).collect(Collectors.toList());
     }
 
     public List<Uri> getPhotoFolders() {
-        Property photoFolder = getSingleValueDbProperty(PROPERTY_PHOTO_FOLDER);
-        if (photoFolder.getValue() == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(photoFolder.getValue()).stream().map(s -> Uri.parse(s)).collect(Collectors.toList());
-    }
-
-    public void clearPhotoFolders() {
-        Property prop = getSingleValueDbProperty(PROPERTY_PHOTO_FOLDER);
-        prop.setValue(null);
-        propertyDbAdapter.updateProperty(prop);
+        return getMultiValueDbProperty(PROPERTY_PHOTO_FOLDER).stream().filter(prop -> prop.getValue() != null).map(prop -> Uri.parse(prop.getValue())).collect(Collectors.toList());
     }
 
     public void clearTrackFolders() {
-        Property prop = getSingleValueDbProperty(PROPERTY_TRACK_FOLDER);
-        prop.setValue(null);
-        propertyDbAdapter.updateProperty(prop);
+        for (Property prop : getMultiValueDbProperty(PROPERTY_TRACK_FOLDER)) {
+            if (prop.getId() >= 0) {
+                propertyDbAdapter.deleteProperty(prop.getId());
+            }
+        }
+        multiValues.get(PROPERTY_TRACK_FOLDER).clear();
     }
 
     public static synchronized Configuration getInstance() {
@@ -218,8 +203,8 @@ public class Configuration {
         return singleValues.get(type);
     }
 
-    public int getTrack_foto_tolerance() {
-        return track_foto_tolerance;
+    public int getTrackFotoTolerance() {
+        return trackFotoTolerance;
     }
 
     public TrackCache getTrackCache() {

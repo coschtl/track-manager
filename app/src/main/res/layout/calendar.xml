@@ -106,14 +106,14 @@
             android:scaleType="centerInside"
             android:src="@mipmap/search" />
 
-        <ImageButton
-            android:id="@+id/but_track_recording"
-            android:layout_width="fill_parent"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:background="#000000"
-            android:scaleType="centerInside"
-            android:src="@mipmap/chart_area" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/but_track_recording"-->
+<!--            android:layout_width="fill_parent"-->
+<!--            android:layout_height="40dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:background="#000000"-->
+<!--            android:scaleType="centerInside"-->
+<!--            android:src="@mipmap/chart_area" />-->
 
         <ImageButton
             android:id="@+id/but_reload"

@@ -69,7 +69,9 @@ public class PropertyList extends IconListActivity {
         Iterator<Property> it = propertyDbAdapter.fetchAllProperties();
         while (it.hasNext()) {
             Property property = it.next();
-            listEntries.add(new IconListAdapter(property, idHolder()));
+            if (property != null) {
+                listEntries.add(new IconListAdapter(property, idHolder()));
+            }
         }
     }
 

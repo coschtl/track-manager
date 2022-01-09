@@ -70,7 +70,7 @@ public class TrackEkg extends Activity {
             ekg.processPoint(pointIterator.next());
         }
 
-        myPieChart = (PieChart) findViewById(R.id.myPieChart);
+        myPieChart = findViewById(R.id.myPieChart);
         myPieChart.getLegend().setVisible(false);
 
         final float padding = PixelUtils.dpToPix(30);
@@ -136,7 +136,7 @@ public class TrackEkg extends Activity {
     }
 
     private void addPercentToLegend(int id, TrackEkgData ekg, PulseZoneFactory pulseZoneFactory, int... zoneIds) {
-        TextView tf = (TextView) findViewById(id);
+        TextView tf = findViewById(id);
         float sumPercent = 0;
         long sumTime = 0;
 

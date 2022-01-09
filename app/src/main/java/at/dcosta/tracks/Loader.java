@@ -18,10 +18,10 @@ import java.util.Set;
 import at.dcosta.android.fw.props.PropertyDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
-import at.dcosta.tracks.track.file.DirectoryAnalyzer;
 import at.dcosta.tracks.track.file.LegacyFileLocator;
 import at.dcosta.tracks.track.file.PathValidator;
-import at.dcosta.tracks.track.file.PhotoIdexer;
+import at.dcosta.tracks.track.file.TrackDirectoryAnalyzer;
+import at.dcosta.tracks.track.file.legacy.PhotoIdexer;
 import at.dcosta.tracks.util.ActivityFactory;
 import at.dcosta.tracks.util.Configuration;
 import at.dcosta.tracks.util.PhotoRegistry;
@@ -34,7 +34,7 @@ public class Loader extends Activity {
     public static final String ACTION_LOAD_NEW_TRACKS_AND_PHOTOS = "loadNewTracksAndPhotos";
     public static final String ACTION_RESCAN_PHOTOS = "rescanPhotos";
     private static final int MSG_INIT = 0;
-    private static final int MSG_INCREMENT = 1;
+    public static final int MSG_INCREMENT = 1;
     private static final int MSG_FINISHED = 3;
     private static final int PROGRESS_DIALOG_ID = 1;
     // Define the Handler that receives messages from the thread and update the progress
@@ -86,7 +86,7 @@ public class Loader extends Activity {
             } else if (ACTION_LOAD_NEW_TRACKS_AND_PHOTOS.equals(action)) {
                 loadThread = new LoadPhotosAndTracksThread(handler, this, progressDialog, false);
             } else if (ACTION_RESCAN_PHOTOS.equals(action)) {
-                loadThread = new LoadPhotosThread(handler, this, progressDialog, true);
+                loadThread = new LegacyLoadPhotosThread(handler, this, progressDialog, true);
             }
             loadThread.start();
         }
@@ -101,17 +101,19 @@ public class Loader extends Activity {
         @Override
         protected void doLoad() {
             new LoadTracksThread(handler, parent, progressDialog, fullReload).doLoad();
-            new LoadPhotosThread(handler, parent, progressDialog, fullReload).doLoad();
+            if (CombatFactory.isLegacy()) {
+                new LegacyLoadPhotosThread(handler, parent, progressDialog, fullReload).doLoad();
+            }
         }
 
     }
 
-    private static class LoadPhotosThread extends LoadThread {
+    private static class LegacyLoadPhotosThread extends LoadThread {
 
-        LoadPhotosThread(Handler handler, Activity parent, ProgressDialog progressDialog, boolean fullReload) {
+        LegacyLoadPhotosThread(Handler handler, Activity parent, ProgressDialog progressDialog, boolean fullReload) {
             super(handler, parent, progressDialog, fullReload);
             if (fullReload) {
-                new PhotoRegistry().clear().persist();
+                PhotoRegistry.clearRegistry();
                 trackDbAdapter.deleteAllExtras(TrackDescriptionNG.EXTRA_PHOTO);
             }
             setProgressBarTitle(R.string.loader_loading_photos);
@@ -120,7 +122,7 @@ public class Loader extends Activity {
         @Override
         protected void doLoad() {
             for (Uri photoFolder : Configuration.getInstance().getPhotoFolders()) {
-                PhotoIdexer photoIdexer = new PhotoIdexer(parent, trackDbAdapter, photoFolder);
+                PhotoIdexer photoIdexer = new PhotoIdexer(parent, trackDbAdapter, photoFolder, isFullReload());
                 Message msg = handler.obtainMessage();
                 msg.arg1 = MSG_INIT;
                 msg.arg2 = photoIdexer.getPossibleCount();
@@ -170,6 +172,10 @@ public class Loader extends Activity {
             return completeList != null && !completeList.contains(path);
         }
 
+        public boolean isFullReload() {
+            return fullReload;
+        }
+
         @Override
         public void run() {
             completeList = null;
@@ -201,25 +207,26 @@ public class Loader extends Activity {
                 cacheEntries();
                 trackDbAdapter.clear();
                 Configuration.getInstance().getTrackCache().clear();
-                new PhotoRegistry().clear().persist();
+                PhotoRegistry.clearRegistry();
             }
         }
 
         private void analyzeDirectory(ActivityFactory activityFactory, Uri trackFolder) {
-            DirectoryAnalyzer directoryAnalyzer = new DirectoryAnalyzer(parent, activityFactory, trackFolder, this);
-            analyzeDirectory(activityFactory, directoryAnalyzer, trackFolder.toString());
+            TrackDirectoryAnalyzer trackDirectoryAnalyzer = new TrackDirectoryAnalyzer(parent, trackDbAdapter, activityFactory, trackFolder, this);
+            analyzeDirectory( trackDirectoryAnalyzer, trackFolder.toString());
         }
 
         private void analyzeInternalDirectory(ActivityFactory activityFactory, File dir) {
-            analyzeDirectory(activityFactory, new DirectoryAnalyzer(parent, activityFactory, new LegacyFileLocator(), Uri.parse(dir.getAbsolutePath()), this), dir.getAbsolutePath());
+            analyzeDirectory( new TrackDirectoryAnalyzer(parent, trackDbAdapter, activityFactory, new LegacyFileLocator(), Uri.parse(dir.getAbsolutePath()), this), dir.getAbsolutePath());
         }
 
-        private void analyzeDirectory(ActivityFactory activityFactory, DirectoryAnalyzer analyzer, String trackLocation) {
+        private void analyzeDirectory(TrackDirectoryAnalyzer analyzer, String trackLocation) {
             Message msg = handler.obtainMessage();
             msg.arg1 = MSG_INIT;
             msg.arg2 = analyzer.getPossibleTrackCount();
             msg.obj = "Reading tracks form '" + trackLocation + "'...";
             handler.sendMessage(msg);
+            analyzer.setHandler(handler);
 
             while (analyzer.moveToNext()) {
                 TrackDescriptionNG track = analyzer.getDescription();

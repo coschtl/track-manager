@@ -17,6 +17,7 @@ import org.osmdroid.views.MapView;
 import java.util.List;
 
 import at.dcosta.tracks.combat.SAFContent;
+import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Distance;
 import at.dcosta.tracks.track.Point;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -40,7 +41,7 @@ public class TrackOnOsmMap extends Activity {
         org.osmdroid.config.Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this));
         setContentView(R.layout.show_osm_track);
 
-        MapView mapView = (MapView) findViewById(R.id.mapview);
+        MapView mapView = findViewById(R.id.mapview);
         mapView.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -66,9 +67,10 @@ public class TrackOnOsmMap extends Activity {
                 }
             } else {
                 String path = extras.getString(TrackDescriptionNG.KEY_PATH);
-                TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(TrackManager.context(), Uri.parse(path)), Validators.DEFAULT);
-                reader.setListener(painter);
-                try {
+                try (TrackDbAdapter trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), this)) {
+                    final TrackDescriptionNG track = trackDbAdapter.fetchEntry(trackId);
+                    TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(TrackManager.context(), Uri.parse(path), track.getStartTime()), Validators.DEFAULT);
+                    reader.setListener(painter);
                     reader.readTrack();
                 } catch (ParsingException e) {
                     e.printStackTrace();

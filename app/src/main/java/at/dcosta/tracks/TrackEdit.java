@@ -32,7 +32,6 @@ import at.dcosta.tracks.util.TrackActivity;
 
 public class TrackEdit extends Activity implements OnClickListener {
     public static final String TRACK_ID = "trackId";
-    private static final Pattern PATTERN_GENERATED_NAME = Pattern.compile("^[0-9_-]+$");
     private AutoCompleteTextView name;
     private EditText comment;
     private long dateStart;
@@ -43,7 +42,7 @@ public class TrackEdit extends Activity implements OnClickListener {
 
     public static void updateTrack(Context context, TrackDescriptionNG trackDescription, String icon, ActivityFactory activityFactory) {
         String path = trackDescription.getPath();
-        TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(context, trackDescription.getPathUri()), activityFactory.fromIcon(icon).getDistanceValidator());
+        TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(context, trackDescription.getPathUri(), trackDescription.getStartTime()), activityFactory.fromIcon(icon).getDistanceValidator());
         updateTrack(trackDescription, reader, icon);
     }
 
@@ -114,8 +113,8 @@ public class TrackEdit extends Activity implements OnClickListener {
 
         final Bundle extras = getIntent().getExtras();
         dateStart = extras.getLong(TrackList.KEY_DATE);
-        name = (AutoCompleteTextView) findViewById(R.id.track_name);
-        comment = (EditText) findViewById(R.id.track_comment);
+        name = findViewById(R.id.track_name);
+        comment = findViewById(R.id.track_comment);
         if (extras != null) {
             trackDescription = trackDbAdapter.fetchEntry(extras.getLong(TrackDescriptionNG.KEY_ID));
             name.setText(trackDescription.getName());
@@ -123,29 +122,7 @@ public class TrackEdit extends Activity implements OnClickListener {
             Set<String> allTrackNames = trackDbAdapter.getAllTrackNames();
             String[] trackNames = new String[allTrackNames.size()];
             allTrackNames.toArray(trackNames);
-            name.setAdapter(new ArrayAdapter<String>(this, R.layout.simple_list_item, trackNames));
-
-//			if (PATTERN_GENERATED_NAME.matcher(trackDescription.getName()).matches()) {
-//				name.setOnClickListener(new OnClickListener() {
-//
-//					@Override
-//					public void onClick(View v) {
-//						if (!nameSelectionDisabled) {
-//							name.selectAll();
-//						}
-//					}
-//				});
-//				name.setOnLongClickListener(new OnLongClickListener() {
-//
-//					@Override
-//					public boolean onLongClick(View v) {
-//						Selection.setSelection(name.getText(), 0, 0);
-//						nameSelectionDisabled = true;
-//						return true;
-//					}
-//				});
-//			}
-
+            name.setAdapter(new ArrayAdapter<>(this, R.layout.simple_list_item, trackNames));
             name.setOnLongClickListener(new OnLongClickListener() {
 
                 @Override

@@ -94,9 +94,9 @@ public class BluetoothSender extends AbstractBluetoothTransfer implements OnClic
 
     @Override
     protected void btReady() {
-        sendButton = (Button) findViewById(R.id.send_buton);
-        sendingText = (TextView) findViewById(R.id.sending_text);
-        done = (TextView) findViewById(R.id.done);
+        sendButton = findViewById(R.id.send_buton);
+        sendingText = findViewById(R.id.sending_text);
+        done = findViewById(R.id.done);
         done.setVisibility(View.GONE);
         sendButton.setOnClickListener(this);
 
@@ -184,7 +184,7 @@ public class BluetoothSender extends AbstractBluetoothTransfer implements OnClic
             long rowId = getIntent().getLongExtra(TrackDescriptionNG.KEY_ID, -1);
             TrackDescriptionNG trackDescription = trackDbAdapter.fetchEntry(rowId);
             try {
-                TrackToShare track = new TrackToShare(trackDescription, TrackIO.loadTrack(new SAFContent(this, trackDescription.getPathUri())));
+                TrackToShare track = new TrackToShare(trackDescription, TrackIO.loadTrack(new SAFContent(this, trackDescription.getPathUri(), trackDescription.getStartTime())));
                 sendingThread = new SendingThread(this, selected, track);
                 alarm = new Alarm(this);
                 sendButton.setEnabled(false);
@@ -205,16 +205,16 @@ public class BluetoothSender extends AbstractBluetoothTransfer implements OnClic
         System.out.println("lastBluetoothPartner: " + lastBluetoothPartner);
         setContentView(R.layout.bluetooth_sender);
 
-        done = (TextView) findViewById(R.id.done);
+        done = findViewById(R.id.done);
         done.setVisibility(View.GONE);
 
-        sending = (RelativeLayout) findViewById(R.id.sending);
+        sending = findViewById(R.id.sending);
         sending.setVisibility(View.GONE);
-        progressBar = (ProgressBar) findViewById(R.id.send_progressBar);
+        progressBar = findViewById(R.id.send_progressBar);
         progressBar.setVisibility(View.GONE);
 
         devices = new ArrayList<BluetoothDevice>();
-        radioButtonGroup = (RadioGroup) findViewById(R.id.devices);
+        radioButtonGroup = findViewById(R.id.devices);
         initBluetooth();
     }
 

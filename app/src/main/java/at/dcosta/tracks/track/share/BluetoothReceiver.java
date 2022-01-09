@@ -48,7 +48,7 @@ public class BluetoothReceiver extends AbstractBluetoothTransfer implements Trac
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.tracksharing_receiver);
-        trackCountView = (TextView) findViewById(R.id.track_count);
+        trackCountView = findViewById(R.id.track_count);
         initBluetooth();
     }
 

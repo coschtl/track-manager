@@ -34,7 +34,7 @@ import at.dcosta.tracks.util.ActivityFactory;
  * This has been improved from the first version of this tutorial through the addition of better error handling and also using returning a Cursor instead of
  * using a collection of inner classes (which is less scalable and not recommended).
  */
-public class TrackDbAdapter extends AbstractDbAdapter {
+public class TrackDbAdapter extends AbstractDbAdapter implements AutoCloseable {
 
     private static final Logger LOGGER = Logger.getLogger(TrackDbAdapter.class.getName());
 
@@ -403,6 +403,25 @@ public class TrackDbAdapter extends AbstractDbAdapter {
             }
         }
         return null;
+    }
+
+    public long findLatestEndTimeEpochMillis() throws SQLException {
+        Cursor cursor = db().query(false, DB.DATABASE_TABLE, new String[]{DB.COL_END_TIME}, DB.COL_STATUS + ">=0",
+                null, null, null, DB.COL_END_TIME + " DESC", null);
+        if (cursor != null && cursor.moveToFirst()) {
+            long now = System.currentTimeMillis();
+            try {
+                do {
+                    long ts = 1000L * cursor.getLong(0);
+                    if (now > ts) {
+                        return ts;
+                    }
+                } while (cursor.moveToNext());
+            } finally {
+                DbUtil.close(cursor);
+            }
+        }
+        return -1;
     }
 
     public TrackDescriptionNG findEntryByPath(String path) throws SQLException {
