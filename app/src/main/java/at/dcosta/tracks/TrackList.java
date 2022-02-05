@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -131,6 +132,8 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 		Iterator<TrackDescriptionNG> it = trackDbAdapter.findEntries(dateStart, dateEnd, activity, nameLike, commentLike);
 		int i = 0;
 		Map<Date, TrackDescriptionNG> trackDates = new HashMap<>();
+		TrackDescriptionNG lastTrack = null;
+		Set<Long> toDelete = new HashSet<>();
 		while (it.hasNext()) {
 			TrackDescriptionNG track = it.next();
 			if (first) {
@@ -138,6 +141,11 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 				first = false;
 			}
 			if (showOnlyMultiActivityDays) {
+				if (isSameTrack(lastTrack, track)) {
+					toDelete.add(track.getId());
+					continue;
+				}
+				lastTrack = track;
 				Date start = DateUtil.getDayStart(track.getStartTime());
 				if (trackDates.containsKey(start)) {
 					TrackDescriptionNG cached = trackDates.get(start);
@@ -162,6 +170,10 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 				distV += track.getVerticalUp();
 			}
 		}
+		System.out.println("------------");
+		System.out.println("must delete " + toDelete.size() + " entries: " + toDelete);
+		toDelete.stream().forEach(id -> trackDbAdapter.deleteEntry(id));
+		System.out.println("------------");
 		headline = new StringBuilder()
 				.append(DateUtil.formatDateRange(dateStart == null ? DEFAULT_START : dateStart, dateEnd == null ? DEFAULT_END : dateEnd, DateUtil.Format.LONG))
 				.append(":\n").append(i).append(" tracks: ").append(DateUtil.durationSecondsToString(time)).append("\n").append(Distance.getKm(distH))
@@ -174,6 +186,37 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 			getList().onRestoreInstanceState(listViewState);
 			listViewState = null;
 		}
+	}
+
+	private boolean isSameTrack(TrackDescriptionNG lastTrack, TrackDescriptionNG track) {
+		if (lastTrack == null) {
+			return track == null;
+		}
+		boolean isSame =  Objects.equals(lastTrack.getStartTime(), track.getStartTime())
+				&& Objects.equals(lastTrack.getEndTime(), track.getEndTime());
+		boolean sameNamePathUriAndActiviti = Objects.equals(lastTrack.getPath(), track.getPath())
+				&& Objects.equals(lastTrack.getName(), track.getName())
+				&& Objects.equals(lastTrack.getPathUri(), track.getPathUri())
+				&& Objects.equals(lastTrack.getActivity(), track.getActivity());
+
+		if (isSame && !sameNamePathUriAndActiviti) {
+			System.out.println("NEARLY SAME TRACK:");
+			System.out.println(lastTrack.getStartTime() + "  -  " + lastTrack.getEndTime());
+			if (!Objects.equals(lastTrack.getName() , track.getName())) {
+				System.out.println("Name: " + lastTrack.getName() + "  -  " + track.getName());
+			}
+			if (!Objects.equals(lastTrack.getPath() , track.getPath())) {
+				System.out.println("Path: " + lastTrack.getPath() + "  -  " + track.getPath());
+			}
+			if (!Objects.equals( lastTrack.getPathUri() , track.getPathUri())) {
+				System.out.println("PathUri: " + lastTrack.getPathUri() + "  -  " + track.getPathUri());
+			}
+			if (!Objects.equals( lastTrack.getActivity() ,track.getActivity())) {
+				System.out.println("Activity: " + lastTrack.getActivity() + "  -  " + track.getActivity());
+			}
+			System.out.println("-----\n");
+		}
+		return isSame && sameNamePathUriAndActiviti;
 	}
 
 	private void loadSearchParamsFromBundle(Bundle extras) {
