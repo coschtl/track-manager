@@ -26,6 +26,7 @@ import at.dcosta.android.fw.db.DbUtil;
 import at.dcosta.tracks.CombatFactory;
 import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.TmgrReader;
 import at.dcosta.tracks.util.ActivityFactory;
 
 /**
@@ -104,8 +105,7 @@ public class TrackDbAdapter extends AbstractDbAdapter implements AutoCloseable {
     }
 
     public int clear() {
-        return db().delete(DB.DATABASE_TABLE, DB.COL_STATUS + ">0", null);
-        // return db().delete(DB.DATABASE_TABLE, DB.COL_PATH + " not like 'copy%'", null);
+        return db().delete(DB.DATABASE_TABLE, null, null);
     }
 
     public long copyEntry(Long trackId, String nameOfCopy, String pathOfCopy, long microsecondsAfterOriginal) {
@@ -406,7 +406,7 @@ public class TrackDbAdapter extends AbstractDbAdapter implements AutoCloseable {
     }
 
     public long findLatestEndTimeEpochMillis() throws SQLException {
-        Cursor cursor = db().query(false, DB.DATABASE_TABLE, new String[]{DB.COL_END_TIME}, DB.COL_STATUS + ">=0",
+        Cursor cursor = db().query(false, DB.DATABASE_TABLE, new String[]{DB.COL_END_TIME}, DB.COL_STATUS + ">=0 and " +DB.COL_PATH + " not like '%"+  TmgrReader.SUFFIX+ "'",
                 null, null, null, DB.COL_END_TIME + " DESC", null);
         if (cursor != null && cursor.moveToFirst()) {
             long now = System.currentTimeMillis();
