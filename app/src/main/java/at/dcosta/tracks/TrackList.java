@@ -275,7 +275,7 @@ public class TrackList extends IconListActivity implements OnItemClickListener, 
 			case CONTEXT_DELETE:
 				closeDbs();
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle(R.string.delete_track).setMessage(R.string.are_you_sure).setCancelable(false)
+				builder.setTitle(R.string.delete_track).setMessage(R.string.are_you_sure_delete).setCancelable(false)
 						.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int id) {

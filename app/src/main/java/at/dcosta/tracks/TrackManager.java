@@ -196,7 +196,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.exit_application).setMessage(R.string.are_you_sure).setCancelable(false)
+        builder.setTitle(R.string.exit_application).setMessage(R.string.are_you_sure_exit).setCancelable(false)
                 .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
@@ -705,7 +705,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     }
 
     private void showDateChooser() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this, android.R.style.Theme_Holo_Dialog, this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this, android.R.style.Theme_Holo_Dialog, this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 }

@@ -37,7 +37,8 @@
     <string name="menu_delete_track">Delete track</string>
     <string name="menu_share_track_bt">Share Track via Bluetooth</string>
     <string name="menu_save_search">Save search</string>
-    <string name="are_you_sure">Are you sure?</string>
+    <string name="are_you_sure_exit">Are you sure?</string>
+    <string name="are_you_sure_delete">Are you sure?</string>
     <string name="merge_select_only_two_tracks">Only two tracks can get merged at one time!</string>
     <string name="merge_tracks_overlapping">Can not merge: The End-Time of Track 1 is after the Start-Time of Track 2!</string>
     <string name="this_wil_delete_all">This will delete all modifications and activity-mappings of all tracks!</string>
