@@ -48,19 +48,19 @@ public class Validators {
     );
 
     public static final DistanceValidator SKITOUR = new DistanceValidator("SKITOUR", 1000d / HOUR, // horizontal min: 0,1 km/h
-            20000d / HOUR, // horizontal max: 20km/h
+            60000d / HOUR, // horizontal max: 60km/h
             100d / HOUR, // vertical up min: 100 HM / h
-            5000d / HOUR, // vertical up max: 3000 HM / h
+            5000d / HOUR, // vertical up max: 5000 HM / h
             100d / HOUR, // vertical down min: 100 HM / h
-            10000d / HOUR // vertical down max: 10000 HM / h
+            20000d / HOUR // vertical down max: 20000 HM / h
     );
 
     public static final DistanceValidator SLEDGE = new DistanceValidator("SLEDGE", 1000d / HOUR, // horizontal min: 1 km/h
-            15000d / HOUR, // horizontal max: 15km/h
+            50000d / HOUR, // horizontal max: 50km/h
             100d / HOUR, // vertical up min: 100 HM / h
             3000d / HOUR, // vertical up max: 3000 HM / h
             100d / HOUR, // vertical down min: 100 HM / h
-            7000d / HOUR // vertical down max: 7000 HM / h
+            10000d / HOUR // vertical down max: 10000 HM / h
     );
 
 }

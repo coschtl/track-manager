@@ -26,6 +26,7 @@ import java.util.Set;
 
 import at.dcosta.android.fw.DateUtil;
 import at.dcosta.android.fw.IOUtil;
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Point;
@@ -92,12 +93,12 @@ public class TrackCopy extends Activity implements OnClickListener {
             startDate = DateUtil.DATE_TIME_FORMAT_NUMERIC_LONG.parse(new StringBuilder(date.getText()).append(" ").append(time.getText()).append(":00")
                     .toString());
             long timeDiffMillis = startDate.getTime() - origTrack.getStartTime().getTime();
-            copyTrack(this, origTrack, TrackIO.loadTrack(new SAFContent(this, origTrack.getPathUri(), origTrack.getStartTime())), name.getText().toString(), timeDiffMillis, trackDbAdapter);
+            Content origContent = CombatFactory.getFileLocator(this).findTrack(origTrack.getPath());
+            copyTrack(this, origTrack, TrackIO.loadTrack(origContent), name.getText().toString(), timeDiffMillis, trackDbAdapter);
+// xxx           copyTrack(this, origTrack, TrackIO.loadTrack(new SAFContent(this, origTrack.getPathUri(), origTrack.getStartTime())), name.getText().toString(), timeDiffMillis, trackDbAdapter);
             setResult(TrackList.CONTEXT_EDIT_ID, getIntent());
             finish();
-        } catch (ParseException e) {
-            Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
-        } catch (ParsingException e) {
+        } catch (ParseException | ParsingException e) {
             Toast.makeText(this, e.toString(), Toast.LENGTH_LONG).show();
         }
     }

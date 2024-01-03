@@ -5,7 +5,7 @@
     <string name="property_size">Size: </string>
     <string name="property_location">Ort: </string>
     <string name="property_address">Adresse: </string>
-    <string name="appName">TrackManager</string>
+    <string name="appName">Track-Manager</string>
     <string name="CFG_WIPE_SENSITIVITY">100</string>
     <string name="CFG_DATE_FORMAT">dd.MM.yyyy</string>
     <string name="CFG_TRACK_FOTO_TOLERANCE_MINUTES">45</string>
@@ -98,7 +98,7 @@
     <string name="label_end">Ende:</string>
     <string name="label_distance">Entfernung:</string>
     <string name="label_height">Höhe:</string>
-    <string name="label_avg_pulse">Durchschnitts-Puls:</string>
+    <string name="label_avg_pulse">Ø-Puls:</string>
     <string name="label_max_pulse">Max. Puls:</string>
     <string name="label_duration">Dauer:</string>
     <string name="label_ascent">Aufstieg:</string>

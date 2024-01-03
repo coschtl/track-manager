@@ -28,6 +28,7 @@ import at.dcosta.tracks.track.TrackDescription;
 import at.dcosta.tracks.track.TrackDescriptionNG;
 import at.dcosta.tracks.track.file.FileLocator;
 import at.dcosta.tracks.util.ActivityFactory;
+import at.dcosta.tracks.util.Configuration;
 import at.dcosta.tracks.util.SavedSearch;
 
 public class BackupIO {
@@ -48,17 +49,28 @@ public class BackupIO {
         this.savedSearchesDbAdapter = savedSearchesDbAdapter;
     }
 
-    public final void backup(String filename, Activity activity, ProgressBar progressBar) throws IOException {
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put(KEY_DB_TRACKS, serializeTrackDb(activity, progressBar));
+    public final void backup(String filename, ProgressBar progressBar) throws IOException {
+        Map<String, Object> data = new HashMap<>();
+        data.put(KEY_DB_TRACKS, serializeTrackDb( progressBar));
         data.put(KEY_DB_PROPERTIES, serializePropertyDb());
         data.put(KEY_DB_SEARCHES, serializeSearchDb());
         writeData(data, filename);
     }
 
     private void deserializePropertyDb(List<Property> l) {
+        List<Property> toRestore = new ArrayList<>();
+        propertyDbAdapter.fetchAllProperties(Configuration.PROPERTY_WORKING_DIR).forEachRemaining(toRestore::add);
+        propertyDbAdapter.fetchAllProperties(Configuration.PROPERTY_TRACK_FOLDER).forEachRemaining(toRestore::add);
+        propertyDbAdapter.fetchAllProperties(Configuration.PROPERTY_WORKING_DIR).forEachRemaining(toRestore::add);
         propertyDbAdapter.clear();
         for (Property p : l) {
+            if (p != null) {
+                propertyDbAdapter.createPropertyEntry(p);
+            }
+        }
+        for (Property p : toRestore) {
+            do {
+            } while (propertyDbAdapter.deleteProperty(p.getName()));
             propertyDbAdapter.createPropertyEntry(p);
         }
     }
@@ -66,7 +78,9 @@ public class BackupIO {
     private void deserializeSearchDb(List<SavedSearch> l) {
         savedSearchesDbAdapter.clear();
         for (SavedSearch s : l) {
-            savedSearchesDbAdapter.add(s);
+            if (s != null) {
+                savedSearchesDbAdapter.add(s);
+            }
         }
     }
 
@@ -126,7 +140,7 @@ public class BackupIO {
 
     private List<Property> serializePropertyDb() {
         Iterator<Property> all = propertyDbAdapter.fetchAllProperties();
-        List<Property> l = new ArrayList<Property>();
+        List<Property> l = new ArrayList<>();
         while (all.hasNext()) {
             l.add(all.next());
         }
@@ -135,18 +149,18 @@ public class BackupIO {
 
     private List<SavedSearch> serializeSearchDb() {
         Iterator<SavedSearch> all = savedSearchesDbAdapter.fetchAllEntries();
-        List<SavedSearch> l = new ArrayList<SavedSearch>();
+        List<SavedSearch> l = new ArrayList<>();
         while (all.hasNext()) {
             l.add(all.next());
         }
         return l;
     }
 
-    private List<TrackDescriptionNG> serializeTrackDb(Activity activity, ProgressBar progressBar) {
+    private List<TrackDescriptionNG> serializeTrackDb( ProgressBar progressBar) {
         final float increment = (100f / (float) trackDbAdapter.countAllEntries(false));
         float totalInc = 0f;
         Iterator<TrackDescriptionNG> all = trackDbAdapter.fetchAllEntries(true);
-        List<TrackDescriptionNG> l = new ArrayList<TrackDescriptionNG>();
+        List<TrackDescriptionNG> l = new ArrayList<>();
         while (all.hasNext()) {
             l.add(all.next());
             totalInc += increment;

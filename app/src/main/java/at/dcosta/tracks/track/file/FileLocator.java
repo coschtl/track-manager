@@ -34,15 +34,9 @@ public abstract class FileLocator {
 
     public abstract Stream<Content> list(Uri path, long newerThanEpochMillis, boolean clearCache);
 
-    public Content findPhoto(String fileName) {
-        return findFile(fileName, Configuration.getInstance().getTrackFolders(), name -> getFileNameFromPath(name, getPathSeparators()));
-    }
+    public abstract Content findPhoto(String fileName);
 
-    public Content findTrack(String trackName) {
-        return findFile(trackName, Configuration.getInstance().getTrackFolders(), name -> getPlainTrackNameNoSuffix(name));
-    }
-
-    abstract Content findFile(String fileName, List<Uri> possibleFolders, Function<String, String> plainNameEvaluation);
+    public abstract Content findTrack(String trackName);
 
     public abstract boolean fileExists(String fullFilePath, boolean isTreeUri);
 
@@ -53,7 +47,7 @@ public abstract class FileLocator {
 
     public abstract String[] getPathSeparators();
 
-    private String getPlainTrackNameNoSuffix(String trackName) {
+    protected String getPlainTrackNameNoSuffix(String trackName) {
         // remove suffix
         String plainTrackName = getFileNameFromPath(trackName, getPathSeparators());
         int pos = plainTrackName.lastIndexOf('.');

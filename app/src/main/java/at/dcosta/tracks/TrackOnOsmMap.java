@@ -16,6 +16,7 @@ import org.osmdroid.views.MapView;
 
 import java.util.List;
 
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Distance;
@@ -66,10 +67,12 @@ public class TrackOnOsmMap extends Activity {
                     painter.processPoint(p);
                 }
             } else {
-                String path = extras.getString(TrackDescriptionNG.KEY_PATH);
+//  xxx              String path = extras.getString(TrackDescriptionNG.KEY_PATH);
                 try (TrackDbAdapter trackDbAdapter = new TrackDbAdapter(Configuration.getInstance().getDatabaseHelper(), this)) {
                     final TrackDescriptionNG track = trackDbAdapter.fetchEntry(trackId);
-                    TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(TrackManager.context(), Uri.parse(path), track.getStartTime()), Validators.DEFAULT);
+                    Content content = CombatFactory.getFileLocator(TrackManager.context()).findTrack(track.getPath());
+                    TrackReader reader = TrackReaderFactory.getTrackReader(content, Validators.DEFAULT);
+// xxx                   TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(TrackManager.context(), Uri.parse(path), track.getStartTime()), Validators.DEFAULT);
                     reader.setListener(painter);
                     reader.readTrack();
                 } catch (ParsingException e) {

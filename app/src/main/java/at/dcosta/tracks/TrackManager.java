@@ -216,11 +216,11 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                         System.exit(0);
                     }
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
         builder.create().show();
     }
 
@@ -490,7 +490,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                             String prefix = "exportedDatabase";
                             String suffix = ".dat";
                             String file = config.getWorkingDir() + "/" + prefix + new SimpleDateFormat("_yyyyMMdd_HHmm").format(new Date()) + suffix;
-                            backupIO.backup(file, TrackManager.this, progressBar);
+                            backupIO.backup(file, progressBar);
                             File aktFile = new File(config.getWorkingDir() + "/" + prefix + suffix);
                             if (aktFile.exists()) {
                                 aktFile.delete();
@@ -523,22 +523,17 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 ssa = new SavedSearchesDbAdapter(config.getDatabaseHelper(), this);
                 backupIO = new BackupIO(trackDbAdapter, propertyDbAdapter, ssa);
                 progress.setVisibility(View.VISIBLE);
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            backupIO.restore(config.getWorkingDir() + "/exportedDatabase.dat", TrackManager.this, progressBar);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            Toast.makeText(TrackManager.this, "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                        runOnUiThread(new Runnable() {
-                                          @Override
-                                          public void run() {
-                                              progress.setVisibility(View.GONE);
-                                          }
-                                      }
+                new Thread(() -> {
+                    try {
+                        backupIO.restore(config.getWorkingDir() + "/exportedDatabase.dat", TrackManager.this, progressBar);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        runOnUiThread(() -> Toast.makeText(TrackManager.this, "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show()
                         );
+
                     }
+                    runOnUiThread(() -> progress.setVisibility(View.GONE)
+                    );
                 }).start();
                 ssa.close();
                 return true;

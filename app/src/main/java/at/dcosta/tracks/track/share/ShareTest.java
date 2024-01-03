@@ -10,8 +10,10 @@ import java.net.Socket;
 import java.util.Iterator;
 
 import at.dcosta.android.fw.IOUtil;
+import at.dcosta.tracks.CombatFactory;
 import at.dcosta.tracks.TrackCopy;
 import at.dcosta.tracks.TrackManager;
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
@@ -113,7 +115,8 @@ public class ShareTest {
             descr = it.next();
         }
         try {
-            data = new TrackToShare[]{new TrackToShare(descr, TrackIO.loadTrack(new SAFContent(TrackManager.context(), descr.getPathUri(), descr.getStartTime())))};
+            Content content = CombatFactory.getFileLocator(TrackManager.context()).findTrack(descr.getPath());
+            data = new TrackToShare[]{new TrackToShare(descr, TrackIO.loadTrack(content))};
         } catch (ParsingException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();

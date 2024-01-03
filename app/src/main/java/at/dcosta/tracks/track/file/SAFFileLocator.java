@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 import at.dcosta.android.fw.IOUtil;
 import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.SAFContent;
+import at.dcosta.tracks.util.Configuration;
 
 public class SAFFileLocator extends FileLocator {
 
@@ -48,7 +49,15 @@ public class SAFFileLocator extends FileLocator {
     }
 
     @Override
-    Content findFile(String fileName, List<Uri> possibleFolders, Function<String, String> plainNameEvaluation) {
+    public Content findPhoto(String fileName) {
+        return findFile(fileName, Configuration.getInstance().getPhotoFolders(), name -> getFileNameFromPath(name, getPathSeparators()));
+    }
+
+    @Override
+    public Content findTrack(String trackName) {
+        return findFile(trackName, Configuration.getInstance().getTrackFolders(), this::getPlainTrackNameNoSuffix);
+    }
+    private Content findFile(String fileName, List<Uri> possibleFolders, Function<String, String> plainNameEvaluation) {
         if (fileExists(fileName)) {
             return new SAFContent(context, Uri.parse(fileName), getModificationDate(fileName));
         }

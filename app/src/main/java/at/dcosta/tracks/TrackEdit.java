@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.SAFContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.Track;
@@ -41,8 +42,9 @@ public class TrackEdit extends Activity implements OnClickListener {
     private Spinner activitySpinner;
 
     public static void updateTrack(Context context, TrackDescriptionNG trackDescription, String icon, ActivityFactory activityFactory) {
-        String path = trackDescription.getPath();
-        TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(context, trackDescription.getPathUri(), trackDescription.getStartTime()), activityFactory.fromIcon(icon).getDistanceValidator());
+        Content content = CombatFactory.getFileLocator(context).findTrack(trackDescription.getPath());
+        TrackReader reader = TrackReaderFactory.getTrackReader(content, activityFactory.fromIcon(icon).getDistanceValidator());
+// xxx       TrackReader reader = TrackReaderFactory.getTrackReader(new SAFContent(context, trackDescription.getPathUri(), trackDescription.getStartTime()), activityFactory.fromIcon(icon).getDistanceValidator());
         updateTrack(trackDescription, reader, icon);
     }
 

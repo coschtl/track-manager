@@ -35,8 +35,8 @@ import at.dcosta.tracks.db.DatabaseHelper;
 public class Configuration {
 
     public static final String AVAILABLE_PROPS_XML = "at/dcosta/tracks/availableProps" + (CombatFactory.isLegacy() ? "_legacy.xml" : ".xml");
-    private static final String PROPERTY_TRACK_FOLDER = "trackFolder";
-    private static final String PROPERTY_PHOTO_FOLDER = "photoFolder";
+    public static final String PROPERTY_TRACK_FOLDER = "trackFolder";
+    public static final String PROPERTY_PHOTO_FOLDER = "photoFolder";
     public static final String PROPERTY_TRACKING_SERVER = "trackingServer";
     public static final String PROPERTY_SERVER_SAVE_PATH = "serverSavePath";
     public static final String PROPERTY_SERVER_CLOSE_PATH = "serverClosePath";
@@ -49,7 +49,7 @@ public class Configuration {
     // xxx
     public static final String TYPE_FOLDER = "folder";
     public static final String TYPE_PROPERTY = "property";
-    private static final String PROPERTY_WORKING_DIR = "workingDir";
+    public static final String PROPERTY_WORKING_DIR = "workingDir";
     private static final String RECORDED_TRACKS_SUBDIR = "recordedTracks";
     private static final String COPIED_TRACKS_SUBDIR = "copiedTracks";
     private static Configuration _instance;

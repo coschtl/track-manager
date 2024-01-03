@@ -1,6 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\Stephan\\.android\\debug.keystore')
+            storePassword 'android'
+        }
+    }
     compileSdkVersion 'Google Inc.:Google APIs:23'
 
     defaultConfig {
@@ -8,6 +14,7 @@ android {
         targetSdkVersion 23
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
 
     }
 
@@ -15,6 +22,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+        debug {
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions {
@@ -22,6 +33,7 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     buildToolsVersion '30.0.3'
+    namespace 'at.dcosta.android.fw'
 
 }
 
