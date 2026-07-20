@@ -222,6 +222,11 @@ public class TrackDbAdapter extends AbstractDbAdapter implements AutoCloseable {
         return success;
     }
 
+    public boolean deleteEntryPhysically(long rowId) {
+        String idString = Long.toString(rowId);
+        return db().delete(DB.DATABASE_TABLE, DB.COL_ID + "=?", new String[]{idString}) > 0;
+    }
+
     public boolean extraIsInDb(String type, String value) {
         Cursor cursor = db().query(true, DB_EXT.DATABASE_TABLE, new String[]{DB_EXT.COL_TRACK_ID}, DB_EXT.COL_NAME + "=? and " + DB_EXT.COL_VALUE + "=?",
                 new String[]{type, value}, null, null, null, null);

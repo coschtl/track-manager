@@ -136,7 +136,8 @@ public class TrackDetails extends ListActivity implements OnClickListener {
 		List<IdValuePair> properties = new ArrayList<IdValuePair>();
 		properties.add(new IdValuePair(R.string.label_start, DateUtil.DATE_TIME_FORMAT_NUMERIC_SHORT.format(trackDescription.getStartTime())));
 		properties.add(new IdValuePair(R.string.label_end, DateUtil.DATE_TIME_FORMAT_NUMERIC_SHORT.format(trackDescription.getEndTime())));
-		properties.add(new IdValuePair(R.string.label_duration, DateUtil.durationSecondsToString(trackDescription.getMovingTimeSeconds())));
+		properties.add(new IdValuePair(R.string.label_duration, DateUtil.durationSecondsToString(trackDescription.getTotalTimeSeconds())));
+		properties.add(new IdValuePair(R.string.label_moving_time, DateUtil.durationSecondsToString(trackDescription.getMovingTimeSeconds())));
 		properties.add(new IdValuePair(R.string.label_distance, Distance.getKm(trackDescription.getHorizontalDistance())));
 		properties.add(new IdValuePair(R.string.label_height, trackDescription.getVerticalUp() + " HM"));
 		if (trackDescription.getMovingTimeSeconds() != 0) {

@@ -2,12 +2,15 @@ package at.dcosta.tracks.graph;
 
 import at.dcosta.tracks.track.Distance;
 import at.dcosta.tracks.track.Point;
+import at.dcosta.tracks.util.TrackActivity;
 import at.dcosta.tracks.validator.DistanceValidator;
+import at.dcosta.tracks.validator.Validators;
 
 public class GraphData {
 
     public static final int HIGHT_RESOLUTION = -1;
 
+    private final DistanceValidator validator;
     private final DataSeries<Long> timestamps;
     private final DataSeries<Integer> heights;
     private final DataSeries<Float> speed;
@@ -16,7 +19,8 @@ public class GraphData {
     private Point previousPoint;
     private int pulse;
 
-    public GraphData() {
+    public GraphData(TrackActivity activity) {
+        this.validator =  activity == null ? Validators.DEFAULT : activity.getDistanceValidator();;
         timestamps = new DataSeries<>();
         heights = new DataSeries<>();
         speed = new DataSeries<>();
@@ -42,9 +46,10 @@ public class GraphData {
     public void processPoint(Point p) {
         int h = p.getHeight();
         int diff = previousPoint == null ? 0 : previousPoint.getHeight() - h;
-        if (Math.abs(diff) > HIGHT_RESOLUTION) {
+        int hDiff = Math.abs(diff);
+        if (hDiff > HIGHT_RESOLUTION) {
             timestamps.add(p.getTimeStampAsLong());
-            heights.add(h);
+            addPointHeight(p);
             if (speed.isEmpty()) {
                 speed.add(0.0f);
             } else {
@@ -61,6 +66,21 @@ public class GraphData {
             previousPoint = p;
         } else {
             System.out.println("throw point away: " + p + " (previous point was: " + previousPoint + ")");
+        }
+    }
+
+    private void addPointHeight(Point p ) {
+        if (previousPoint == null) {
+            heights.add(p.getHeight());
+        } else {
+            int hDiff =  Math.abs(previousPoint.getHeight() - p.getHeight());
+            int diffSeconds = (int) (p.getTimeStampAsLong() - previousPoint.getTimeStampAsLong())/1000;
+            double hDiffPerSec =  (double) hDiff / diffSeconds;
+            if ( hDiffPerSec >= validator.getVerticalMin() && hDiffPerSec <= validator.getVerticalMax()) {
+                heights.add(p.getHeight());
+            } else {
+                heights.add(previousPoint.getHeight());
+            }
         }
     }
 

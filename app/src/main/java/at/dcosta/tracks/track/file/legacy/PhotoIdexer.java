@@ -2,7 +2,7 @@ package at.dcosta.tracks.track.file.legacy;
 
 import android.content.Context;
 import android.media.ExifInterface;
-import android.net.Uri;
+
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,6 +20,7 @@ import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.FileContent;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.FolderUri;
 import at.dcosta.tracks.track.file.PathValidator;
 import at.dcosta.tracks.util.Configuration;
 import at.dcosta.tracks.util.Photo;
@@ -40,7 +41,7 @@ public class PhotoIdexer {
     private int position;
     private final boolean fullScan;
 
-    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, Uri photoPath, boolean fullScan) {
+    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, FolderUri photoPath, boolean fullScan) {
         this(context, trackDbAdapter, photoPath, new PathValidator() {
 
             @Override
@@ -50,7 +51,7 @@ public class PhotoIdexer {
         }, fullScan);
     }
 
-    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, Uri photoPath, PathValidator pathValidator, boolean fullScan) {
+    public PhotoIdexer(Context context, TrackDbAdapter trackDbAdapter, FolderUri photoPath, PathValidator pathValidator, boolean fullScan) {
         this.trackDbAdapter = trackDbAdapter;
         this.pathValidator = pathValidator;
         this.fullScan = fullScan;
@@ -60,20 +61,20 @@ public class PhotoIdexer {
         }
         maxId = fileList.size() - 1;
         tolerance = 60000L * Configuration.getInstance().getTrackFotoTolerance();
-        pathRegistry = new TreeSet<String>();
+        pathRegistry = new TreeSet<>();
     }
 
     public static void clear() {
         PHOTO_REGISTRY.clear();
     }
 
-    private void addFilePaths(Context context, Uri photoPath, List<Content> filelist) {
-        filelist.addAll(list(context, photoPath).filter(path -> {
-            return path.getName().toLowerCase().endsWith(".jpg") || path.getName().toLowerCase().endsWith(".jpeg");
-        }).collect(Collectors.toList()));
+    private void addFilePaths(Context context, FolderUri photoPath, List<Content> filelist) {
+        filelist.addAll(list(context, photoPath).filter(path ->
+             path.getName().toLowerCase().endsWith(".jpg") || path.getName().toLowerCase().endsWith(".jpeg")
+        ).collect(Collectors.toList()));
     }
 
-    private Stream<Content> list(Context context, Uri photoPath) {
+    private Stream<Content> list(Context context, FolderUri photoPath) {
         if (fullScan) {
             return CombatFactory.getFileLocator(context).list(photoPath, -1);
         }

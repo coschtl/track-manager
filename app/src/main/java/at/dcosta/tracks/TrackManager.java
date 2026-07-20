@@ -3,16 +3,19 @@ package at.dcosta.tracks;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.storage.StorageManager;
 import android.provider.DocumentsContract;
+import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.view.GestureDetector;
@@ -55,6 +58,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import at.dcosta.android.fw.DateUtil;
@@ -68,7 +72,9 @@ import at.dcosta.tracks.backup.BackupIO;
 import at.dcosta.tracks.db.SavedSearchesDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
-import at.dcosta.tracks.track.file.SAFFileLocator;
+import at.dcosta.tracks.track.file.FileLocator;
+import at.dcosta.tracks.track.file.FileUri;
+import at.dcosta.tracks.track.file.FolderUri;
 import at.dcosta.tracks.track.file.legacy.PhotoIdexer;
 import at.dcosta.tracks.track.share.BluetoothReceiver;
 import at.dcosta.tracks.track.share.BluetoothSender;
@@ -158,6 +164,66 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        String action = intent.getAction();
+        if (Intent.ACTION_SEND.equals(action)) {
+            Uri uri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+            if (uri != null) {
+                importSharedTrack(uri);
+            }
+        }
+    }
+
+    private void importSharedTrack(Uri uri) {
+        try {
+            ContentResolver resolver = getContentResolver();
+            String name = "shared_track_" + System.currentTimeMillis() + ".trk";
+
+            // Try to get the original filename from the URI
+            try (Cursor cursor = resolver.query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (nameIndex != -1) name = cursor.getString(nameIndex);
+                }
+            }
+            int posHash = name.indexOf('#');
+            int posSuffix = name.lastIndexOf('.');
+            if (posHash > 0) {
+                name = name.substring(0, posHash) + (posSuffix > 0 ? name.substring(posSuffix) : "");
+            }
+            FileLocator fileLocator = CombatFactory.getFileLocator(this);
+            String toastText = getString(R.string.toast_track_imported, name);
+            try (InputStream in = resolver.openInputStream(uri)) {
+                boolean copied = fileLocator.writeToFile(config.getTrackFolders().get(0), name, in, FileLocator.OverwriteAction.SKIP_SILENT);
+                if (!copied) {
+                    toastText = getString(R.string.toast_track_exists, name);
+                    Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(this, toastText, Toast.LENGTH_SHORT).show();
+            }
+            TrackDescriptionNG entry = trackDbAdapter.findEntryLikePath("%" + name + "%");
+            if (entry == null) {
+                entry = trackDbAdapter.findEntryLikePath("%" + name.replace(" ", "%20") + "%");
+                if (entry != null) {
+                    LOGGER.log(Level.INFO, "Deleting existing track from the database");
+                    trackDbAdapter.deleteEntryPhysically(entry.getId());
+                }
+            }
+            reloadTracksAndPhotos();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Failed to import shared track", e);
+            Toast.makeText(this, "Import failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == APP_STORAGE_ACCESS_REQUEST_CODE) {
@@ -171,6 +237,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
             }
             if (!assurePermissions()) {
                 renderUi();
+                handleIntent(getIntent());
             }
             return;
         }
@@ -178,7 +245,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
             if (data != null && data.getData() != null) {
                 Uri uri = data.getData();
                 config.addTrackFolder(uri);
-                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             }
             if (!assurePermissions()) {
                 renderUi();
@@ -248,13 +315,17 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
                 break;
             case R.id.but_reload:
                 System.out.println("-------------------> latest time: " + trackDbAdapter.findLatestEndTimeEpochMillis());
-                closeDbs();
-                intent = new Intent(this, Loader.class);
-                intent.putExtra(Loader.KEY_ACTION, Loader.ACTION_LOAD_NEW_TRACKS_AND_PHOTOS);
-                startActivityForResult(intent, ID_LOAD_TRACK);
-                renderCalendar();
+                reloadTracksAndPhotos();
                 break;
         }
+    }
+
+    private void reloadTracksAndPhotos() {
+        closeDbs();
+        Intent intent = new Intent(this, Loader.class);
+        intent.putExtra(Loader.KEY_ACTION, Loader.ACTION_LOAD_NEW_TRACKS_AND_PHOTOS);
+        startActivityForResult(intent, ID_LOAD_TRACK);
+        renderCalendar();
     }
 
     private boolean assurePermissions() {
@@ -273,7 +344,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         if (mustCheckTrackDirReadPermission) {
             mustCheckTrackDirReadPermission = false;
             if (!foldersValid(config.getTrackFolders())) {
-                config.clearTrackFolders();
+                //config.clearTrackFolders();
                 askForTrackFolder();
                 return true;
             }
@@ -286,15 +357,15 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         assureDocumentTreeReadPermission("Android/data", REQUEST_ACTION_OPEN_TRACK_DOCUMENT_TREE);
     }
 
-    private boolean foldersValid(List<Uri> folders) {
+    private boolean foldersValid(List<FolderUri> folders) {
         if (folders == null || folders.isEmpty()) {
             return false;
         }
-        for (Uri uri : folders) {
-            if (uri == null || uri.toString().trim().length() == 0) {
+        for (FolderUri uri : folders) {
+            if (uri == null || uri.toString().trim().isEmpty()) {
                 return false;
             }
-            if (!CombatFactory.getFileLocator(this).fileExists(uri.toString(), true)) {
+            if (!CombatFactory.getFileLocator(this).fileExists(uri)) {
                 return false;
             }
         }
@@ -327,6 +398,7 @@ public class TrackManager extends AppCompatActivity implements OnGestureListener
         config = Configuration.getInstance(this);
         if (!assurePermissions()) {
             renderUi();
+            handleIntent(getIntent());
         }
 
         // Intent i = new Intent(this, BluetoothTransfer.class);

@@ -32,11 +32,11 @@ public class TrackDirectoryAnalyzer {
     private TrackDescriptionNG description;
     private Handler handler;
 
-    public TrackDirectoryAnalyzer(Context context, TrackDbAdapter trackDbAdapter, ActivityFactory activityFactory, Uri trackFolderUri, PathValidator pathValidator) {
+    public TrackDirectoryAnalyzer(Context context, TrackDbAdapter trackDbAdapter, ActivityFactory activityFactory, FolderUri trackFolderUri, PathValidator pathValidator) {
         this(context, trackDbAdapter, activityFactory, CombatFactory.getFileLocator(context), trackFolderUri, pathValidator);
     }
 
-    public TrackDirectoryAnalyzer(Context context, TrackDbAdapter trackDbAdapter, ActivityFactory activityFactory, FileLocator fileLocator, Uri folder, PathValidator pathValidator) {
+    public TrackDirectoryAnalyzer(Context context, TrackDbAdapter trackDbAdapter, ActivityFactory activityFactory, FileLocator fileLocator, FolderUri folder, PathValidator pathValidator) {
         long latestEndTimeEpochMillis = trackDbAdapter.findLatestEndTimeEpochMillis();
         this.statistic = new TrackStatistic();
         this.track = new Track();

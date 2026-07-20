@@ -31,6 +31,7 @@ import at.dcosta.tracks.ServerProperties;
 import at.dcosta.tracks.TrackOnMap;
 import at.dcosta.tracks.TrackOnOsmMap;
 import at.dcosta.tracks.db.DatabaseHelper;
+import at.dcosta.tracks.track.file.FolderUri;
 
 public class Configuration {
 
@@ -55,8 +56,8 @@ public class Configuration {
     private static Configuration _instance;
     private final SimpleDateFormat dateFormat;
     private final int wipeSensitivity, trackFotoTolerance;
-    private final Map<String, Property> singleValues = new HashMap<String, Property>();
-    private final Map<String, List<Property>> multiValues = new HashMap<String, List<Property>>();
+    private final Map<String, Property> singleValues = new HashMap<>();
+    private final Map<String, List<Property>> multiValues = new HashMap<>();
     private final SQLiteOpenHelper databaseHelper;
     private final PropertyConfiguration propertyConfiguration;
     private final PropertyDbAdapter propertyDbAdapter;
@@ -106,15 +107,19 @@ public class Configuration {
         Property prop = new Property(propertyConfiguration.getByName(PROPERTY_TRACK_FOLDER));
         prop.setValue(trackFolder.toString());
         propertyDbAdapter.updateProperty(prop);
-        multiValues.get(PROPERTY_TRACK_FOLDER).add(prop);
+        multiValues.computeIfAbsent(PROPERTY_TRACK_FOLDER, k -> new ArrayList<>()).add(prop);
     }
 
-    public List<Uri> getTrackFolders() {
-        return getMultiValueDbProperty(PROPERTY_TRACK_FOLDER).stream().filter(prop -> prop.getValue() != null).map(prop -> Uri.parse(prop.getValue())).collect(Collectors.toList());
+    public List<FolderUri> getTrackFolders() {
+        return getMultiValueDbProperty(PROPERTY_TRACK_FOLDER).stream().filter(prop -> prop.getValue() != null)
+                .map(prop -> new FolderUri(prop.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public List<Uri> getPhotoFolders() {
-        return getMultiValueDbProperty(PROPERTY_PHOTO_FOLDER).stream().filter(prop -> prop.getValue() != null).map(prop -> Uri.parse(prop.getValue())).collect(Collectors.toList());
+    public List<FolderUri> getPhotoFolders() {
+        return getMultiValueDbProperty(PROPERTY_PHOTO_FOLDER).stream().filter(prop -> prop.getValue() != null)
+                .map(prop -> new FolderUri(prop.getValue()))
+                .collect(Collectors.toList());
     }
 
     public void clearTrackFolders() {

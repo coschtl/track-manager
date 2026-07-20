@@ -101,6 +101,7 @@
     <string name="label_avg_pulse">Avg. pulse:</string>
     <string name="label_max_pulse">Max. pulse:</string>
     <string name="label_duration">Duration:</string>
+    <string name="label_moving_time">Moving time:</string>
     <string name="label_ascent">Ascent:</string>
     <string name="label_select_device">Select device:</string>
     <string name="label_receiving_tracks">Receiving tracks...</string>
@@ -119,13 +120,15 @@
     <string name="label_discover_devices">Search for more...</string>
     <string name="label_sending_timeout">Can not send track: Timeout ocured!</string>
     <string name="label_pulse_0">Very Light</string>
-    <string name="label_pulse_1_2">Light (fat burning)</string>
+    <string name="label_pulse_1_2">Light (fat)</string>
     <string name="label_pulse_3_4">Moderate (aerobic)</string>
     <string name="label_pulse_5_6">Hard (anaerobic)</string>
     <string name="label_pulse_7_8">Maximum</string>
     <string name="label_pulse_zones">Pulse Zones</string>
     <string name="toast_export_finished">Export finished</string>
     <string name="toast_import_finished">Import finished</string>
+    <string name="toast_track_imported">Track %1$s imported.</string>
+    <string name="toast_track_exists">Track %1$s already exists.</string>
 
 
     <string-array name="do_not_ask_again">

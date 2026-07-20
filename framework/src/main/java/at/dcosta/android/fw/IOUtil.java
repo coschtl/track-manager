@@ -115,23 +115,30 @@ public class IOUtil {
         }
     }
 
-    public static boolean copy(File from, File to) {
-        InputStream in = null;
-        OutputStream out = null;
+    public static boolean copy(InputStream in, OutputStream out) {
         try {
-            in = new FileInputStream(from);
-            out = new FileOutputStream(to);
-            byte[] buffer = new byte[512];
-            int length = in.read(buffer);
-            out.write(buffer, 0, length);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = in.read(buffer)) >= 0) {
+                out.write(buffer, 0, length);
+            }
             out.flush();
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
-        } finally {
-            close(in);
-            close(out);
+        }
+    }
+
+    public static boolean copy(File from, File to) {
+        try (InputStream in = new FileInputStream(from);
+             OutputStream out = new FileOutputStream(to)) {
+            copy(in, out);
+            out.flush();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

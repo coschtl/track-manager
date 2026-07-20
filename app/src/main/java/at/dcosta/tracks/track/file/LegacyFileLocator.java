@@ -3,6 +3,9 @@ package at.dcosta.tracks.track.file;
 import android.net.Uri;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
+import at.dcosta.android.fw.IOUtil;
 import at.dcosta.tracks.combat.Content;
 import at.dcosta.tracks.combat.FileContent;
 import at.dcosta.tracks.util.Configuration;
@@ -23,7 +27,7 @@ public class LegacyFileLocator extends FileLocator {
     private List<File> allPhotoFiles;
 
     @Override
-    public int getContentCount(Uri path, long newerThanEpochMillis) {
+    public int getContentCount(FolderUri path, long newerThanEpochMillis) {
         if (path == null) {
             return 0;
         }
@@ -34,7 +38,7 @@ public class LegacyFileLocator extends FileLocator {
     }
 
     @Override
-    public Stream<Content> list(Uri path, long newerThanEpochMillis, boolean clearCache) {
+    public Stream<Content> list(FolderUri path, long newerThanEpochMillis, boolean clearCache) {
         if (path == null) {
             return Stream.empty();
         }
@@ -61,7 +65,7 @@ public class LegacyFileLocator extends FileLocator {
     }
 
     private Content findFileContent(String fileName, List<File> allFiles, Function<String, String> plainNameEvaluation) {
-        if (fileExists(fileName)) {
+        if (fileExists(new FileUri(fileName))) {
             return new FileContent(new File(fileName));
         }
         try {
@@ -79,10 +83,10 @@ public class LegacyFileLocator extends FileLocator {
         return null;
     }
 
-    private List<File> readAllFilesFromFolders(List<Uri> folders) {
+    private List<File> readAllFilesFromFolders(List<FolderUri> folders) {
         List<File> l = new ArrayList<>();
         if (folders != null) {
-            for (Uri trackFolder : folders) {
+            for (FolderUri trackFolder : folders) {
                 File dir = new File(trackFolder.toString());
                 File[] files = dir.listFiles();
                 if (files != null)
@@ -93,9 +97,31 @@ public class LegacyFileLocator extends FileLocator {
     }
 
     @Override
-    public boolean fileExists(String fullTrackPath, boolean isTreeUri) {
-        File file = new File(fullTrackPath);
+    public boolean fileExists(FilesystemUri uri) {
+        File file = new File(uri.getUri().toString());
         return file.exists() && file.canRead();
+    }
+
+    @Override
+    public boolean writeToFile (FolderUri parentFolder, String fileName, InputStream content, OverwriteAction overwriteAction) {
+        File file = new File(parentFolder.getUri().toString(), fileName);
+        if (file.exists()) {
+            if (overwriteAction == OverwriteAction.FAIL) {
+                throw new IllegalArgumentException("File already exists: " + file.getAbsolutePath());
+            }
+            if (overwriteAction == OverwriteAction.SKIP_SILENT) {
+                return false;
+            }
+        }
+        if (!file.canWrite()) {
+            throw new IllegalArgumentException("File not writable: " + file.getAbsolutePath());
+        }
+        try (OutputStream out = new FileOutputStream(file)) {
+            IOUtil.copy(content, out);
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

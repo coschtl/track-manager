@@ -5,12 +5,12 @@
         <permission android:name="at.dcosta.tracks.permission.MAPS_RECEIVE"
             android:protectionLevel="signature"/>
     -->
-    <permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <permission android:name="android.permission.READ_PHONE_STATE" />
-    <permission android:name="android.permission.BLUETOOTH" />
-    <permission android:name="android.permission.BLUETOOTH_ADMIN" />
+<!--    <permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+<!--    <permission android:name="android.permission.READ_PHONE_STATE" />-->
+<!--    <permission android:name="android.permission.BLUETOOTH" />-->
+<!--    <permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
 
-    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />
+<!--    <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE" />-->
     <uses-permission android:name="com.javapapers.currentlocationinmap.permission.MAPS_RECEIVE" />
 
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
@@ -59,11 +59,20 @@
 
         <activity
             android:name="at.dcosta.tracks.TrackManager"
-            android:label="@string/appName">
+            android:label="@string/appName"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <!-- apemap likely uses octet-stream or text/plain for tracks -->
+                <data android:mimeType="application/octet-stream" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
         <!-- start props -->

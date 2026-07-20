@@ -18,6 +18,7 @@ import java.util.Set;
 import at.dcosta.android.fw.props.PropertyDbAdapter;
 import at.dcosta.tracks.db.TrackDbAdapter;
 import at.dcosta.tracks.track.TrackDescriptionNG;
+import at.dcosta.tracks.track.file.FolderUri;
 import at.dcosta.tracks.track.file.LegacyFileLocator;
 import at.dcosta.tracks.track.file.PathValidator;
 import at.dcosta.tracks.track.file.TrackDirectoryAnalyzer;
@@ -121,7 +122,7 @@ public class Loader extends Activity {
 
         @Override
         protected void doLoad() {
-            for (Uri photoFolder : Configuration.getInstance().getPhotoFolders()) {
+            for (FolderUri photoFolder : Configuration.getInstance().getPhotoFolders()) {
                 PhotoIdexer photoIdexer = new PhotoIdexer(parent, trackDbAdapter, photoFolder, isFullReload());
                 Message msg = handler.obtainMessage();
                 msg.arg1 = MSG_INIT;
@@ -211,13 +212,13 @@ public class Loader extends Activity {
             }
         }
 
-        private void analyzeDirectory(ActivityFactory activityFactory, Uri trackFolder) {
+        private void analyzeDirectory(ActivityFactory activityFactory, FolderUri trackFolder) {
             TrackDirectoryAnalyzer trackDirectoryAnalyzer = new TrackDirectoryAnalyzer(parent, trackDbAdapter, activityFactory, trackFolder, this);
             analyzeDirectory( trackDirectoryAnalyzer, trackFolder.toString());
         }
 
         private void analyzeInternalDirectory(ActivityFactory activityFactory, File dir) {
-            analyzeDirectory( new TrackDirectoryAnalyzer(parent, trackDbAdapter, activityFactory, new LegacyFileLocator(), Uri.parse(dir.getAbsolutePath()), this), dir.getAbsolutePath());
+            analyzeDirectory( new TrackDirectoryAnalyzer(parent, trackDbAdapter, activityFactory, new LegacyFileLocator(), new FolderUri(dir.getAbsolutePath()), this), dir.getAbsolutePath());
         }
 
         private void analyzeDirectory(TrackDirectoryAnalyzer analyzer, String trackLocation) {
@@ -273,7 +274,7 @@ public class Loader extends Activity {
             completeList = trackDbAdapter.getAllTrackPaths(true);
             ActivityFactory activityFactory = new ActivityFactory(parent);
             Configuration config = Configuration.getInstance();
-            for (Uri trackFolder : config.getTrackFolders()) {
+            for (FolderUri trackFolder : config.getTrackFolders()) {
                 analyzeDirectory(activityFactory, trackFolder);
             }
             analyzeInternalDirectory(activityFactory, config.getRecordedTracksDir());

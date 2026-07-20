@@ -36,8 +36,7 @@ public class TrackEkg extends Activity {
 
     public static final int SELECTED_SEGMENT_OFFSET = 50;
     private static final DecimalFormat DF = new DecimalFormat("#0.#");
-    public PieChart pie;
-    private PieChart myPieChart;
+    private PieChart pieChart;
     private String path;
     private TrackDbAdapter trackDbAdapter;
     private boolean active;
@@ -70,36 +69,36 @@ public class TrackEkg extends Activity {
             ekg.processPoint(pointIterator.next());
         }
 
-        myPieChart = findViewById(R.id.myPieChart);
-        myPieChart.getLegend().setVisible(false);
+        pieChart = findViewById(R.id.myPieChart);
+        pieChart.getLegend().setVisible(false);
 
         final float padding = PixelUtils.dpToPix(30);
-        myPieChart.getPie().setPadding(padding, padding, padding, padding);
+        pieChart.getPie().setPadding(padding, padding, padding, padding);
 
         // detect segment clicks:
-        myPieChart.setOnTouchListener(new View.OnTouchListener() {
+        pieChart.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 PointF click = new PointF(motionEvent.getX(), motionEvent.getY());
-                if (myPieChart.getPie().containsPoint(click)) {
-                    Segment segment = myPieChart.getRenderer(PieRenderer.class).getContainingSegment(click);
+                if (pieChart.getPie().containsPoint(click)) {
+                    Segment segment = pieChart.getRenderer(PieRenderer.class).getContainingSegment(click);
 
                     if (segment != null) {
                         final boolean isSelected = getFormatter(segment).getOffset() != 0;
                         deselectAll();
                         setSelected(segment, !isSelected);
-                        myPieChart.redraw();
+                        pieChart.redraw();
                     }
                 }
                 return false;
             }
 
             private SegmentFormatter getFormatter(Segment segment) {
-                return myPieChart.getFormatter(segment, PieRenderer.class);
+                return pieChart.getFormatter(segment, PieRenderer.class);
             }
 
             private void deselectAll() {
-                List<Segment> segments = myPieChart.getRegistry().getSeriesList();
+                List<Segment> segments = pieChart.getRegistry().getSeriesList();
                 for (Segment segment : segments) {
                     setSelected(segment, false);
                 }
@@ -123,9 +122,9 @@ public class TrackEkg extends Activity {
             addSegment(zone, ekg, emf);
         }
 
-        myPieChart.getBorderPaint().setColor(Color.TRANSPARENT);
-        myPieChart.getBackgroundPaint().setColor(Color.TRANSPARENT);
-        myPieChart.getTitle().getLabelPaint().setARGB(255, 150, 150, 150);
+        pieChart.getBorderPaint().setColor(Color.TRANSPARENT);
+        pieChart.getBackgroundPaint().setColor(Color.TRANSPARENT);
+        pieChart.getTitle().getLabelPaint().setARGB(255, 150, 150, 150);
 
         int i = 0;
         addPercentToLegend(R.id.text_pulse_0, ekg, pulseZoneFactory, i++);
@@ -150,6 +149,10 @@ public class TrackEkg extends Activity {
             if (zoneIds.length > 1) {
                 txt.append(pulseZoneFactory.getPulseZoneByZoneId(zoneIds[0]).getMinPulse());
                 txt.append(" - ");
+                if (zoneIds.length == 2) {
+                    txt.append(pulseZoneFactory.getPulseZoneByZoneId(zoneIds[0]).getMaxPulse());
+                    txt.append(" - ");
+                }
                 txt.append(pulseZoneFactory.getPulseZoneByZoneId(zoneIds[zoneIds.length - 1]).getMaxPulse());
             } else {
                 txt.append("<");
@@ -171,7 +174,7 @@ public class TrackEkg extends Activity {
             sf.getLabelPaint().setShadowLayer(3, 0, 0, Color.BLACK);
             sf.getFillPaint().setMaskFilter(emf);
             sf.getFillPaint().setColor(color);
-            myPieChart.addSegment(new Segment(zone.getLabel(), zonePercent), sf);
+            pieChart.addSegment(new Segment(zone.getLabel(), zonePercent), sf);
         }
     }
 
@@ -186,7 +189,7 @@ public class TrackEkg extends Activity {
             return;
         }
 
-        final PieRenderer renderer = myPieChart.getRenderer(PieRenderer.class);
+        final PieRenderer renderer = pieChart.getRenderer(PieRenderer.class);
         // start with a zero degrees pie:
 
         renderer.setExtentDegs(0);
@@ -201,7 +204,7 @@ public class TrackEkg extends Activity {
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float scale = valueAnimator.getAnimatedFraction();
                 renderer.setExtentDegs(360 * scale);
-                myPieChart.redraw();
+                pieChart.redraw();
             }
         });
 

@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="45dip"
+        android:layout_height="55dip"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
         android:paddingTop="5dp">
@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/track_name"
             android:layout_width="fill_parent"
-            android:layout_height="20dip"
+            android:layout_height="25dip"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_toRightOf="@id/activity_icon"
@@ -35,7 +35,7 @@
         <TextView
             android:id="@+id/track_activity"
             android:layout_width="fill_parent"
-            android:layout_height="25dip"
+            android:layout_height="30dip"
             android:layout_below="@id/track_name"
             android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"

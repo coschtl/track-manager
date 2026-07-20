@@ -101,6 +101,7 @@
     <string name="label_avg_pulse">Ø-Puls:</string>
     <string name="label_max_pulse">Max. Puls:</string>
     <string name="label_duration">Dauer:</string>
+    <string name="label_moving_time">In Bewegung:</string>
     <string name="label_ascent">Aufstieg:</string>
     <string name="label_select_device">Gerät wählen:</string>
     <string name="label_receiving_tracks">Tracks werden empfangen...</string>
@@ -119,14 +120,15 @@
     <string name="label_discover_devices">Weitere suchen...</string>
     <string name="label_sending_timeout">Track kann nicht gesendet werden: Es ist ein Timeout aufgetreten!</string>
     <string name="label_pulse_0">Sehr leicht</string>
-    <string name="label_pulse_1_2">Leicht (Fett-Verbrennung)</string>
-    <string name="label_pulse_3_4">Moderat (aerobisch)</string>
-    <string name="label_pulse_5_6">Intensiv (anaerobisch)</string>
+    <string name="label_pulse_1_2">Leicht (Fett)</string>
+    <string name="label_pulse_3_4">Moderat (aerob)</string>
+    <string name="label_pulse_5_6">Intensiv (anaerob)</string>
     <string name="label_pulse_7_8">Maximum</string>
     <string name="label_pulse_zones">Puls-Zonen</string>
     <string name="toast_export_finished">Export abgeschlossen</string>
     <string name="toast_import_finished">Import abgeschlossen</string>
-
+    <string name="toast_track_imported">Track %1$s wurde importiert.</string>
+    <string name="toast_track_exists">Track %1$s existiert bereits.</string>
 
     <string-array name="do_not_ask_again">
         <item>Nicht erneut fragen</item>

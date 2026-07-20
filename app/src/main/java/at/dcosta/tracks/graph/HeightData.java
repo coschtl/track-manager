@@ -17,7 +17,7 @@ abstract class HeightData extends TrackProfileData {
     private int lastHeight;
 
     public HeightData() {
-        heights = new ArrayList<Integer>();
+        heights = new ArrayList<>();
         height = new MinMaxValue();
     }
 
@@ -36,7 +36,7 @@ abstract class HeightData extends TrackProfileData {
             lastHeight = h;
             processValidPoint(p);
         } else {
-            System.out.println("throw pint away: " + p);
+            System.out.println("throw point away: " + p);
         }
     }
 

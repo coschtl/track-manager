@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -22,10 +23,10 @@ public class PropertyDbAdapter extends AbstractDbAdapter {
     public PropertyDbAdapter(Context context, PropertyConfiguration propertyConfiguration) {
         super(new PropertyDatabaseHelper(context));
         this.propertyConfiguration = propertyConfiguration;
-    }
+        }
 
-    public void assurePropertiesInDb() {
-        for (PropertyTemplate template : propertyConfiguration.getProperties()) {
+        public void assurePropertiesInDb() {
+            for (PropertyTemplate template : propertyConfiguration.getProperties()) {
             if (getProperty(template.getName()) == null) {
                 createPropertyEntry(new Property(template));
             }
@@ -61,7 +62,9 @@ public class PropertyDbAdapter extends AbstractDbAdapter {
      * @return rowId or -1 if failed
      */
     public long createPropertyEntry(Property property) {
-        return db().insert(DB.DATABASE_TABLE, null, toContentValues(property));
+        try (SQLiteDatabase db = db()) {
+            return db.insert(DB.DATABASE_TABLE, null, toContentValues(property));
+        }
     }
 
     /**
@@ -148,7 +151,12 @@ public class PropertyDbAdapter extends AbstractDbAdapter {
      * @return true if the property was successfully updated, false otherwise
      */
     public boolean updateProperty(Property property) {
-        return db().update(DB.DATABASE_TABLE, toContentValues(property), DB.COL_ID + "=" + property.getId(), null) > 0;
+        boolean success =  db().update(DB.DATABASE_TABLE, toContentValues(property), DB.COL_ID + "=" + property.getId(), null) > 0;
+        if (!success) {
+            createPropertyEntry(property);
+        }
+        return true;
+
     }
 
     public static class DB {

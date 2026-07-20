@@ -110,7 +110,7 @@ public class TrackProfile extends Activity implements OnTouchListener, OnClickLi
 
     private void drawGraph() {
         track = trackDbAdapter.findEntryByPath(path);
-        graphData = new GraphData();
+        graphData = new GraphData(track.getActivity());
 
         String name = track.getName();
         Iterator<Point> pointIterator = config.getTrackCache().load(track.getId()).iterator();

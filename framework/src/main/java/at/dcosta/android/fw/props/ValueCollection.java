@@ -1,6 +1,5 @@
 package at.dcosta.android.fw.props;
 
-import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ public class ValueCollection implements Serializable, Iterable<NameValuePair> {
         return values;
     }
 
-    @NonNull
     @Override
     public Iterator<NameValuePair> iterator() {
         return values.iterator();

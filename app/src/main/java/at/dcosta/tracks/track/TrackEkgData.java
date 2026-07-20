@@ -21,11 +21,13 @@ public class TrackEkgData implements TrackListener {
     @Override
     public void processPoint(Point point) {
         int pulse = point.getPulse();
-        if (pulse < 10) {
-            pulse = lastPulse;
-        }
         long time = point.getTimeStampAsLong();
-        if (lastPointTime == 0) {
+        if (pulse < 10) {
+           // pulse = lastPulse;
+            lastPointTime = time;
+            return;
+        }
+        if (lastPointTime == 0 || pulseZoneFactory == null) {
             pulseZoneFactory = new PulseZoneFactory(configuration, point.getTimeStampAsDate());
         } else {
             long millis = time - lastPointTime;

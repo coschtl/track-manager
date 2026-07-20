@@ -138,6 +138,10 @@ public class TrackDescriptionNG implements Serializable {
         return movingTimeSeconds;
     }
 
+    public int getTotalTimeSeconds() {
+        return (int) ((endTime.getTime()  - startTime.getTime()) / 1000L);
+    }
+
     public List<String> getMultiValueExtra(String name) {
         return getMultiValueExtras().get(name);
     }

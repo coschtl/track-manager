@@ -27,6 +27,18 @@ public class DistanceValidator {
         return valid;
     }
 
+    public double getVerticalMin() {
+        return Math.min(Math.abs(verticalUpMin), Math.abs(verticalDownMin));
+    }
+
+    public double getVerticalMax() {
+        return Math.min(Math.abs(verticalUpMax), Math.abs(verticalDownMax));
+    }
+
+    public double getHorizontalMin() {
+        return horizontalMin;
+    }
+
     public void setDistance(Distance distance) {
         validate(distance);
     }
